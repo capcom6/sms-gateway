@@ -30,6 +30,10 @@ func (r *MessagesRepository) Get(deviceID, ID string) (message models.Message, e
 	return
 }
 
+func (r *MessagesRepository) Insert(message *models.Message) error {
+	return r.db.Create(message).Error
+}
+
 func (r *MessagesRepository) UpdateState(message *models.Message) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(message).Select("State").Updates(message).Error; err != nil {

@@ -18,7 +18,7 @@ func Register(router fiber.Router, db *gorm.DB) error {
 	messagesSvc := services.NewMessagesService(messages)
 
 	newMobileHandler(validator, authSvc, messagesSvc).register(router.Group("/mobile/v1"))
-	newThirdPartyHandler().register(router.Group("/3rdparty/v1"))
+	newThirdPartyHandler(validator, authSvc, messagesSvc).register(router.Group("/3rdparty/v1"))
 
 	return nil
 }

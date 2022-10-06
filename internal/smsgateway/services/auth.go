@@ -49,6 +49,15 @@ func (s *AuthService) AuthorizeDevice(token string) (models.Device, error) {
 	return s.devices.GetByToken(token)
 }
 
+func (s *AuthService) AuthorizeUser(username, password string) (models.User, error) {
+	user, err := s.users.GetByLogin(username)
+	if err != nil {
+		return user, err
+	}
+
+	return user, crypto.CompareBCryptHash(user.PasswordHash, password)
+}
+
 func NewAuthService(users *repositories.UsersRepository, devices *repositories.DevicesRepository) *AuthService {
 	idgen, _ := nanoid.Standard(21)
 

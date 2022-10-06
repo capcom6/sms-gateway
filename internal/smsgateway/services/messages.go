@@ -43,11 +43,37 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	return s.messages.UpdateState(&existing)
 }
 
+func (s *MessagesService) Enqeue(deviceID string, message smsgateway.Message) error {
+	msg := models.Message{
+		DeviceID:   deviceID,
+		ExtID:      message.ID,
+		Message:    message.Message,
+		Recipients: s.recipientsToModel(message.PhoneNumbers),
+	}
+	if msg.ExtID == "" {
+		msg.ExtID = s.idgen()
+	}
+
+	return s.messages.Insert(&msg)
+}
+
 func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {
 	output := make([]string, len(input))
 
 	for i, v := range input {
 		output[i] = v.PhoneNumber
+	}
+
+	return output
+}
+
+func (s *MessagesService) recipientsToModel(input []string) []models.MessageRecipient {
+	output := make([]models.MessageRecipient, len(input))
+
+	for i, v := range input {
+		output[i] = models.MessageRecipient{
+			PhoneNumber: v,
+		}
 	}
 
 	return output
