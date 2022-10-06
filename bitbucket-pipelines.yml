@@ -1,0 +1,53 @@
+image: atlassian/default-image:3
+
+definitions:
+  caches:
+    gomodules: ~/.cache/go-build
+  steps:
+    - step: &docker-lint
+        name: Lint the Dockerfile
+        image: hadolint/hadolint:latest-debian
+        script:
+          - hadolint build/package/Dockerfile*
+    - step: &unit-tests
+        name: Run unit tests
+        image: golang:1.18
+        caches:
+          - gomodules
+        script:
+          - echo '[url "ssh://git@bitbucket.org/"]' >> ~/.gitconfig
+          - echo '        insteadOf = https://bitbucket.org/' >> ~/.gitconfig
+          - go env -w GOPRIVATE="bitbucket.org/soft-c/*"
+          - go test ./...
+    - step: &build-docker
+        name: Build and push Docker image
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - docker version
+          - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_CR} --username "$DOCKER_USERNAME" --password-stdin
+          - export SSH_PRV_KEY="$(cat /opt/atlassian/pipelines/agent/ssh/id_rsa)"
+          - ./scripts/docker-build.sh
+
+pipelines:
+  default:
+    - parallel:
+        - step: *docker-lint
+        - step: *unit-tests
+    - step: *build-docker
+  branches:
+    testing:
+      - parallel:
+          - step: *docker-lint
+          - step: *unit-tests
+      - step: *build-docker
+    master:
+      - parallel:
+          - step: *docker-lint
+          - step: *unit-tests
+      - step: *build-docker
+  tags:
+    v*:
+      - step: *build-docker

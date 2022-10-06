@@ -1,0 +1,21 @@
+basePath: /api
+host: localhost:3000
+info:
+  contact:
+    email: capcom@soft-c.ru
+    name: Aleksandr Soloshenko
+  description: Авторизацию устройства по токену
+  title: SMS-шлюз - API сервера
+  version: 1.0.0
+paths: {}
+schemes:
+- http
+securityDefinitions:
+  ApiAuth:
+    type: basic
+  MobileToken:
+    description: Авторизацию устройства по токену
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

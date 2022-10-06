@@ -1,0 +1,29 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Авторизацию устройства по токену",
+        "title": "SMS-шлюз - API сервера",
+        "contact": {
+            "name": "Aleksandr Soloshenko",
+            "email": "capcom@soft-c.ru"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api",
+    "paths": {},
+    "securityDefinitions": {
+        "ApiAuth": {
+            "type": "basic"
+        },
+        "MobileToken": {
+            "description": "Авторизацию устройства по токену",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

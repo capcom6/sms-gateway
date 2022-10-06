@@ -1,0 +1,13 @@
+http:
+  listen: 127.0.0.1:3000
+  prefork: false
+  proxies:
+    - "127.0.0.1"
+    - "localhost"
+database:
+  host: localhost
+  port: 3306
+  user: root
+  password: root
+  database: notifications
+  debug: true
