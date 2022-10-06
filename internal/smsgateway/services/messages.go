@@ -31,11 +31,36 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 	return result, nil
 }
 
+func (s *MessagesService) UpdateState(deviceID string, message smsgateway.MessageState) error {
+	existing, err := s.messages.Get(deviceID, message.ID)
+	if err != nil {
+		return err
+	}
+
+	existing.State = models.MessageState(message.State)
+	existing.Recipients = s.recipientsStateToModel(message.Recipients)
+
+	return s.messages.UpdateState(&existing)
+}
+
 func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {
 	output := make([]string, len(input))
 
 	for i, v := range input {
 		output[i] = v.PhoneNumber
+	}
+
+	return output
+}
+
+func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientState) []models.MessageRecipient {
+	output := make([]models.MessageRecipient, len(input))
+
+	for i, v := range input {
+		output[i] = models.MessageRecipient{
+			PhoneNumber: v.PhoneNumber,
+			State:       models.MessageState(v.State),
+		}
 	}
 
 	return output

@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
 	"bitbucket.org/soft-c/gohelpers/pkg/fiber/middleware/apikey"
@@ -71,7 +73,14 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	return fiber.ErrNotImplemented
+	for _, v := range req {
+		err := h.messagesSvc.UpdateState(device.ID, v)
+		if err != nil && !errors.Is(err, repositories.ErrMessageNotFound) {
+			errorLog.Printf("Can't update message status: %s\n", err.Error())
+		}
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error) fiber.Handler {

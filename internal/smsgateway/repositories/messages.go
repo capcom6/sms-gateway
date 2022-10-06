@@ -5,6 +5,10 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	ErrMessageNotFound = gorm.ErrRecordNotFound
+)
+
 type MessagesRepository struct {
 	db *gorm.DB
 }
@@ -18,6 +22,28 @@ func (r *MessagesRepository) SelectPending(deviceID string) (messages []models.M
 		Error
 
 	return
+}
+
+func (r *MessagesRepository) Get(deviceID, ID string) (message models.Message, err error) {
+	err = r.db.Where("device_id = ? AND ext_id = ?", deviceID, ID).Take(&message).Error
+
+	return
+}
+
+func (r *MessagesRepository) UpdateState(message *models.Message) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(message).Select("State").Updates(message).Error; err != nil {
+			return err
+		}
+
+		for _, v := range message.Recipients {
+			if err := tx.Model(&v).Where("message_id = ? AND phone_number = ?", message.ID, v.PhoneNumber).Update("state", v.State).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
 
 func NewMessagesRepository(db *gorm.DB) *MessagesRepository {
