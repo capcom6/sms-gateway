@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/config"
+	_ "bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway"
 	microbase "bitbucket.org/soft-c/gomicrobase"
 )
 

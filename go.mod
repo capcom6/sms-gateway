@@ -3,22 +3,24 @@ module bitbucket.org/capcom6/smsgatewaybackend
 go 1.18
 
 require (
-	bitbucket.org/soft-c/gomicrobase v1.1.2-0.20221004142125-98b1dad322bc
+	bitbucket.org/soft-c/gohelpers v1.0.3-0.20221006072847-aee2524b5192
+	bitbucket.org/soft-c/gomicrobase v1.1.2-0.20221006080527-7eeddcd13770
+	github.com/go-playground/validator/v10 v10.11.0
+	github.com/gofiber/fiber/v2 v2.38.1
+	github.com/jaevor/go-nanoid v1.3.0
 	github.com/joho/godotenv v1.4.0
+	gorm.io/gorm v1.23.8
 )
 
 require (
-	bitbucket.org/soft-c/gohelpers v1.0.2 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/ansrivas/fiberprometheus/v2 v2.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/go-playground/validator/v10 v10.11.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/gofiber/adaptor/v2 v2.1.27 // indirect
-	github.com/gofiber/fiber/v2 v2.38.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -38,5 +40,4 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.3.6 // indirect
-	gorm.io/gorm v1.23.8 // indirect
 )
