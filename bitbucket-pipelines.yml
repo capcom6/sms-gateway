@@ -29,7 +29,7 @@ definitions:
           - docker version
           - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_CR} --username "$DOCKER_USERNAME" --password-stdin
           - export SSH_PRV_KEY="$(cat /opt/atlassian/pipelines/agent/ssh/id_rsa)"
-          - ./scripts/docker-build.sh
+          - chmod +x ./scripts/docker-build.sh && ./scripts/docker-build.sh
 
 pipelines:
   default:
