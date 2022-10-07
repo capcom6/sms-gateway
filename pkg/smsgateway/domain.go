@@ -12,7 +12,7 @@ const (
 type Message struct {
 	ID           string   `json:"id,omitempty" validate:"omitempty,max=36"`
 	Message      string   `json:"message" validate:"required,max=256"`
-	PhoneNumbers []string `json:"phoneNumbers" validate:"required,min=1,max=100"`
+	PhoneNumbers []string `json:"phoneNumbers" validate:"required,min=1,max=100,dive,required,min=10"`
 }
 
 type MessageState struct {

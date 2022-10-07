@@ -3,6 +3,7 @@ package handlers
 import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
+	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
 	microbase "bitbucket.org/soft-c/gomicrobase"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +18,18 @@ type thirdPartyHandler struct {
 }
 
 func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
-	return fiber.ErrNotImplemented
+	req := smsgateway.Message{}
+	if err := h.BodyParserValidator(c, &req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	if len(user.Devices) < 1 {
+		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройтсва в учетной записи")
+	}
+
+	device := user.Devices[0]
+
+	return h.messagesSvc.Enqeue(device.ID, req)
 }
 
 func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) error) fiber.Handler {

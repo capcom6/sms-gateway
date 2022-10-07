@@ -1,9 +1,12 @@
 package services
 
 import (
+	"fmt"
+
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
+	"bitbucket.org/soft-c/gohelpers/pkg/filters"
 	"github.com/jaevor/go-nanoid"
 )
 
@@ -44,6 +47,14 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 }
 
 func (s *MessagesService) Enqeue(deviceID string, message smsgateway.Message) error {
+	for i, v := range message.PhoneNumbers {
+		phone, err := filters.FilterPhone(v, false)
+		if err != nil {
+			return fmt.Errorf("некорректный номер телефона в строке %d: %w", i+1, err)
+		}
+		message.PhoneNumbers[i] = phone
+	}
+
 	msg := models.Message{
 		DeviceID:   deviceID,
 		ExtID:      message.ID,

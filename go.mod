@@ -3,7 +3,7 @@ module bitbucket.org/capcom6/smsgatewaybackend
 go 1.18
 
 require (
-	bitbucket.org/soft-c/gohelpers v1.0.3-0.20221006072847-aee2524b5192
+	bitbucket.org/soft-c/gohelpers v1.0.3-0.20221007032455-694a304f5909
 	bitbucket.org/soft-c/gomicrobase v1.1.2-0.20221006080527-7eeddcd13770
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/gofiber/fiber/v2 v2.38.1
