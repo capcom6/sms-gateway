@@ -49,6 +49,8 @@ type Message struct {
 
 	Device     Device             `gorm:"foreignKey:DeviceID;constraint:OnDelete:CASCADE"`
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`
+
+	TimedModel
 }
 
 type MessageRecipient struct {
