@@ -44,6 +44,7 @@ ENV GOOSE_MIGRATION_DIR=/app/migrations
 COPY --from=build /go/bin/goose /app/goose
 
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # `boilerplate` should be replaced here as well
 COPY db/migrations /app/migrations
