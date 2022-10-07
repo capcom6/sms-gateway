@@ -4,7 +4,7 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "Авторизацию устройства по токену",
+        "description": "Предоставляет методы для взаимодействия с SMS-шлюзом",
         "title": "SMS-шлюз - API сервера",
         "contact": {
             "name": "Aleksandr Soloshenko",
@@ -14,7 +14,318 @@
     },
     "host": "localhost:3000",
     "basePath": "/api",
-    "paths": {},
+    "paths": {
+        "/3rdparty/v1/message": {
+            "post": {
+                "description": "Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Пользователь",
+                    "Сообщения"
+                ],
+                "summary": "Поставить сообщение в очередь",
+                "parameters": [
+                    {
+                        "description": "Сообщение",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.Message"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Сообщение поставлено в очередь"
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mobile/v1/message": {
+            "get": {
+                "description": "Воззвращает список сообщений, требующих отправки",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Устройство",
+                    "Сообщения"
+                ],
+                "summary": "Получить сообщения для отправки",
+                "responses": {
+                    "200": {
+                        "description": "Список сообщений",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smsgateway.Message"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Обновляет состояние сообщений. Состояние обновляется индивидуально для каждого сообщения, игнорируя ошибки",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Устройство",
+                    "Сообщения"
+                ],
+                "summary": "Обновить состояние сообщений",
+                "parameters": [
+                    {
+                        "description": "Состояние сообщений",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smsgateway.MessageState"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Обновление выполнено"
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mobile/v1/register": {
+            "post": {
+                "description": "Регистрирует устройство на сервере, генерируя авторизационные данные",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Устройство",
+                    "Регистрация"
+                ],
+                "summary": "Регистрация устройства",
+                "parameters": [
+                    {
+                        "description": "Запрос на регистрацию",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MobileRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Успешная регистрация",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MobileRegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "smsgateway.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "код ошибки",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "контекст"
+                },
+                "message": {
+                    "description": "текст ошибки",
+                    "type": "string",
+                    "example": "Произошла ошибка"
+                }
+            }
+        },
+        "smsgateway.Message": {
+            "type": "object",
+            "required": [
+                "message",
+                "phoneNumbers"
+            ],
+            "properties": {
+                "id": {
+                    "description": "Идентификатор",
+                    "type": "string",
+                    "maxLength": 36,
+                    "example": "PyDmBQZZXYmyxMwED8Fzy"
+                },
+                "message": {
+                    "description": "Текст сообщения",
+                    "type": "string",
+                    "maxLength": 256,
+                    "example": "Hello World!"
+                },
+                "phoneNumbers": {
+                    "description": "Получатели",
+                    "type": "array",
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "79990001234"
+                    ]
+                }
+            }
+        },
+        "smsgateway.MessageState": {
+            "type": "object",
+            "required": [
+                "recipients",
+                "state"
+            ],
+            "properties": {
+                "id": {
+                    "description": "Идентификатор",
+                    "type": "string",
+                    "maxLength": 36,
+                    "example": "PyDmBQZZXYmyxMwED8Fzy"
+                },
+                "recipients": {
+                    "description": "Детализация состояния по получателям",
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/smsgateway.RecipientState"
+                    }
+                },
+                "state": {
+                    "description": "Состояние",
+                    "type": "string",
+                    "example": "Pending"
+                }
+            }
+        },
+        "smsgateway.MobileRegisterRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "Имя устройства",
+                    "type": "string",
+                    "maxLength": 128,
+                    "example": "Android Phone"
+                },
+                "pushToken": {
+                    "description": "Токен для отправки PUSH-уведомлений",
+                    "type": "string",
+                    "maxLength": 256,
+                    "example": "gHz-T6NezDlOfllr7F-Be"
+                }
+            }
+        },
+        "smsgateway.MobileRegisterResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Идентификатор",
+                    "type": "string",
+                    "example": "QslD_GefqiYV6RQXdkM6V"
+                },
+                "login": {
+                    "description": "Логин пользователя",
+                    "type": "string",
+                    "example": "VQ4GII"
+                },
+                "password": {
+                    "description": "Пароль пользователя",
+                    "type": "string",
+                    "example": "cp2pydvxd2zwpx"
+                },
+                "token": {
+                    "description": "Ключ доступа",
+                    "type": "string",
+                    "example": "bP0ZdK6rC6hCYZSjzmqhQ"
+                }
+            }
+        },
+        "smsgateway.RecipientState": {
+            "type": "object",
+            "required": [
+                "phoneNumber",
+                "state"
+            ],
+            "properties": {
+                "phoneNumber": {
+                    "description": "Номер телефона",
+                    "type": "string",
+                    "example": "79990001234"
+                },
+                "state": {
+                    "description": "Состояние",
+                    "type": "string",
+                    "example": "Pending"
+                }
+            }
+        }
+    },
     "securityDefinitions": {
         "ApiAuth": {
             "type": "basic"

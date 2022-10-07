@@ -1,13 +1,232 @@
 basePath: /api
+definitions:
+  smsgateway.ErrorResponse:
+    properties:
+      code:
+        description: код ошибки
+        type: integer
+      data:
+        description: контекст
+      message:
+        description: текст ошибки
+        example: Произошла ошибка
+        type: string
+    type: object
+  smsgateway.Message:
+    properties:
+      id:
+        description: Идентификатор
+        example: PyDmBQZZXYmyxMwED8Fzy
+        maxLength: 36
+        type: string
+      message:
+        description: Текст сообщения
+        example: Hello World!
+        maxLength: 256
+        type: string
+      phoneNumbers:
+        description: Получатели
+        example:
+        - "79990001234"
+        items:
+          type: string
+        maxItems: 100
+        minItems: 1
+        type: array
+    required:
+    - message
+    - phoneNumbers
+    type: object
+  smsgateway.MessageState:
+    properties:
+      id:
+        description: Идентификатор
+        example: PyDmBQZZXYmyxMwED8Fzy
+        maxLength: 36
+        type: string
+      recipients:
+        description: Детализация состояния по получателям
+        items:
+          $ref: '#/definitions/smsgateway.RecipientState'
+        minItems: 1
+        type: array
+      state:
+        description: Состояние
+        example: Pending
+        type: string
+    required:
+    - recipients
+    - state
+    type: object
+  smsgateway.MobileRegisterRequest:
+    properties:
+      name:
+        description: Имя устройства
+        example: Android Phone
+        maxLength: 128
+        type: string
+      pushToken:
+        description: Токен для отправки PUSH-уведомлений
+        example: gHz-T6NezDlOfllr7F-Be
+        maxLength: 256
+        type: string
+    type: object
+  smsgateway.MobileRegisterResponse:
+    properties:
+      id:
+        description: Идентификатор
+        example: QslD_GefqiYV6RQXdkM6V
+        type: string
+      login:
+        description: Логин пользователя
+        example: VQ4GII
+        type: string
+      password:
+        description: Пароль пользователя
+        example: cp2pydvxd2zwpx
+        type: string
+      token:
+        description: Ключ доступа
+        example: bP0ZdK6rC6hCYZSjzmqhQ
+        type: string
+    type: object
+  smsgateway.RecipientState:
+    properties:
+      phoneNumber:
+        description: Номер телефона
+        example: "79990001234"
+        type: string
+      state:
+        description: Состояние
+        example: Pending
+        type: string
+    required:
+    - phoneNumber
+    - state
+    type: object
 host: localhost:3000
 info:
   contact:
     email: capcom@soft-c.ru
     name: Aleksandr Soloshenko
-  description: Авторизацию устройства по токену
+  description: Предоставляет методы для взаимодействия с SMS-шлюзом
   title: SMS-шлюз - API сервера
   version: 1.0.0
-paths: {}
+paths:
+  /3rdparty/v1/message:
+    post:
+      consumes:
+      - application/json
+      description: Ставит сообщение в очередь на отправку. Если идентификатор не указан,
+        то он будет сгенерирован автоматически
+      parameters:
+      - description: Сообщение
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/smsgateway.Message'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Сообщение поставлено в очередь
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Поставить сообщение в очередь
+      tags:
+      - Пользователь
+      - Сообщения
+  /mobile/v1/message:
+    get:
+      consumes:
+      - application/json
+      description: Воззвращает список сообщений, требующих отправки
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список сообщений
+          schema:
+            items:
+              $ref: '#/definitions/smsgateway.Message'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Получить сообщения для отправки
+      tags:
+      - Устройство
+      - Сообщения
+    patch:
+      consumes:
+      - application/json
+      description: Обновляет состояние сообщений. Состояние обновляется индивидуально
+        для каждого сообщения, игнорируя ошибки
+      parameters:
+      - description: Состояние сообщений
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/smsgateway.MessageState'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Обновление выполнено
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Обновить состояние сообщений
+      tags:
+      - Устройство
+      - Сообщения
+  /mobile/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует устройство на сервере, генерируя авторизационные данные
+      parameters:
+      - description: Запрос на регистрацию
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/smsgateway.MobileRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Успешная регистрация
+          schema:
+            $ref: '#/definitions/smsgateway.MobileRegisterResponse'
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Регистрация устройства
+      tags:
+      - Устройство
+      - Регистрация
 schemes:
 - http
 securityDefinitions:

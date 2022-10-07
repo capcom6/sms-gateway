@@ -3,25 +3,28 @@ package smsgateway
 type ProcessState string
 
 const (
-	MessageStatePending   ProcessState = "Pending"
-	MessageStateSent      ProcessState = "Sent"
-	MessageStateDelivered ProcessState = "Delivered"
-	MessageStateFailed    ProcessState = "Failed"
+	MessageStatePending   ProcessState = "Pending"   // В ожидании
+	MessageStateSent      ProcessState = "Sent"      // Отправлено
+	MessageStateDelivered ProcessState = "Delivered" // Доставлено
+	MessageStateFailed    ProcessState = "Failed"    // Ошибка
 )
 
+// Сообщение
 type Message struct {
-	ID           string   `json:"id,omitempty" validate:"omitempty,max=36"`
-	Message      string   `json:"message" validate:"required,max=256"`
-	PhoneNumbers []string `json:"phoneNumbers" validate:"required,min=1,max=100,dive,required,min=10"`
+	ID           string   `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"`                  // Идентификатор
+	Message      string   `json:"message" validate:"required,max=256" example:"Hello World!"`                                // Текст сообщения
+	PhoneNumbers []string `json:"phoneNumbers" validate:"required,min=1,max=100,dive,required,min=10" example:"79990001234"` // Получатели
 }
 
+// Состояние сообщения
 type MessageState struct {
-	ID         string           `json:"id,omitempty" validate:"omitempty,max=36"`
-	State      ProcessState     `json:"state" validate:"required"`
-	Recipients []RecipientState `json:"recipients" validate:"required,min=1,dive"`
+	ID         string           `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"` // Идентификатор
+	State      ProcessState     `json:"state" validate:"required" example:"Pending"`                              // Состояние
+	Recipients []RecipientState `json:"recipients" validate:"required,min=1,dive"`                                // Детализация состояния по получателям
 }
 
+// Детализация состояния
 type RecipientState struct {
-	PhoneNumber string       `json:"phoneNumber" validate:"required,len=11"`
-	State       ProcessState `json:"state" validate:"required"`
+	PhoneNumber string       `json:"phoneNumber" validate:"required,len=11" example:"79990001234"` // Номер телефона
+	State       ProcessState `json:"state" validate:"required" example:"Pending"`                  // Состояние
 }
