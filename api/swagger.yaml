@@ -109,7 +109,7 @@ info:
   contact:
     email: capcom@soft-c.ru
     name: Aleksandr Soloshenko
-  description: Предоставляет методы для взаимодействия с SMS-шлюзом
+  description: Авторизацию пользователя по логин-паролю
   title: SMS-шлюз - API сервера
   version: 1.0.0
 paths:
@@ -139,6 +139,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
       summary: Поставить сообщение в очередь
       tags:
       - Пользователь
@@ -147,7 +149,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Воззвращает список сообщений, требующих отправки
+      description: Возвращает список сообщений, требующих отправки
       produces:
       - application/json
       responses:
@@ -161,6 +163,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - MobileToken: []
       summary: Получить сообщения для отправки
       tags:
       - Устройство
@@ -192,6 +196,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - MobileToken: []
       summary: Обновить состояние сообщений
       tags:
       - Устройство

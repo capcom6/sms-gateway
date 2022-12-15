@@ -65,7 +65,8 @@ func (h *mobileHandler) postRegister(c *fiber.Ctx) error {
 }
 
 // @Summary     Получить сообщения для отправки
-// @Description Воззвращает список сообщений, требующих отправки
+// @Description Возвращает список сообщений, требующих отправки
+// @Security    MobileToken
 // @Tags        Устройство, Сообщения
 // @Accept      json
 // @Produce     json
@@ -83,6 +84,7 @@ func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 
 // @Summary     Обновить состояние сообщений
 // @Description Обновляет состояние сообщений. Состояние обновляется индивидуально для каждого сообщения, игнорируя ошибки
+// @Security    MobileToken
 // @Tags        Устройство, Сообщения
 // @Accept      json
 // @Produce     json

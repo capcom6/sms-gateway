@@ -31,9 +31,9 @@ type User struct {
 
 type Device struct {
 	ID        string `gorm:"primaryKey;type:char(21)"`
-	Name      string `gorm:"type:varchar(128)"`
+	Name      *string `gorm:"type:varchar(128)"`
 	AuthToken string `gorm:"not null;uniqueIndex;type:char(21)"`
-	PushToken string `gorm:"type:varchar(256)"`
+	PushToken *string `gorm:"type:varchar(256)"`
 
 	UserID string `gorm:"not null;type:varchar(32)"`
 

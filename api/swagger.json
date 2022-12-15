@@ -4,7 +4,7 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "Предоставляет методы для взаимодействия с SMS-шлюзом",
+        "description": "Авторизацию пользователя по логин-паролю",
         "title": "SMS-шлюз - API сервера",
         "contact": {
             "name": "Aleksandr Soloshenko",
@@ -17,6 +17,11 @@
     "paths": {
         "/3rdparty/v1/message": {
             "post": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
                 "description": "Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически",
                 "consumes": [
                     "application/json"
@@ -61,7 +66,12 @@
         },
         "/mobile/v1/message": {
             "get": {
-                "description": "Воззвращает список сообщений, требующих отправки",
+                "security": [
+                    {
+                        "MobileToken": []
+                    }
+                ],
+                "description": "Возвращает список сообщений, требующих отправки",
                 "consumes": [
                     "application/json"
                 ],
@@ -92,6 +102,11 @@
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "MobileToken": []
+                    }
+                ],
                 "description": "Обновляет состояние сообщений. Состояние обновляется индивидуально для каждого сообщения, игнорируя ошибки",
                 "consumes": [
                     "application/json"

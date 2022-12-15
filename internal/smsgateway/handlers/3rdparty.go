@@ -19,6 +19,7 @@ type thirdPartyHandler struct {
 
 // @Summary     Поставить сообщение в очередь
 // @Description Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
+// @Security    ApiAuth
 // @Tags        Пользователь, Сообщения
 // @Accept      json
 // @Produce     json

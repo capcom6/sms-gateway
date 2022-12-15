@@ -21,6 +21,7 @@ import (
 // @description                Авторизацию устройства по токену
 
 // @securitydefinitions.basic ApiAuth
+// @description               Авторизацию пользователя по логин-паролю
 
 // @host     localhost:3000
 // @schemes  http

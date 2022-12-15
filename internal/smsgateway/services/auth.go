@@ -33,7 +33,7 @@ func (s *AuthService) RegisterUser(login, password string) (models.User, error) 
 	return user, nil
 }
 
-func (s *AuthService) RegisterDevice(userID, name, pushToken string) (models.Device, error) {
+func (s *AuthService) RegisterDevice(userID string, name, pushToken *string) (models.Device, error) {
 	device := models.Device{
 		ID:        s.idgen(),
 		Name:      name,
