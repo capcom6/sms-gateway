@@ -45,6 +45,10 @@ func (s *AuthService) RegisterDevice(userID string, name, pushToken *string) (mo
 	return device, s.devices.Insert(&device)
 }
 
+func (s *AuthService) UpdateDevice(id, pushToken string) error {
+	return s.devices.UpdateToken(id, pushToken)
+}
+
 func (s *AuthService) AuthorizeDevice(token string) (models.Device, error) {
 	return s.devices.GetByToken(token)
 }

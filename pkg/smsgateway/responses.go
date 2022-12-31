@@ -1,6 +1,6 @@
 package smsgateway
 
-// Успешная регистрация устройтсва
+// Успешная регистрация устройства
 type MobileRegisterResponse struct {
 	Id       string `json:"id" example:"QslD_GefqiYV6RQXdkM6V"`    // Идентификатор
 	Token    string `json:"token" example:"bP0ZdK6rC6hCYZSjzmqhQ"` // Ключ доступа

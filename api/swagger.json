@@ -64,6 +64,102 @@
                 }
             }
         },
+        "/mobile/v1/device": {
+            "post": {
+                "description": "Регистрирует устройство на сервере, генерируя авторизационные данные",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Устройство",
+                    "Регистрация"
+                ],
+                "summary": "Регистрация устройства",
+                "parameters": [
+                    {
+                        "description": "Запрос на регистрацию",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MobileRegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Успешная регистрация",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MobileRegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "MobileToken": []
+                    }
+                ],
+                "description": "Обновляет push-токен устройства",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Устройство"
+                ],
+                "summary": "Обновление устройства",
+                "parameters": [
+                    {
+                        "description": "Запрос на обновление",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MobileUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Успешное обновление"
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Операция запрещена",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/mobile/v1/message": {
             "get": {
                 "security": [
@@ -136,53 +232,6 @@
                 "responses": {
                     "204": {
                         "description": "Обновление выполнено"
-                    },
-                    "400": {
-                        "description": "Некорректный запрос",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/mobile/v1/register": {
-            "post": {
-                "description": "Регистрирует устройство на сервере, генерируя авторизационные данные",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Устройство",
-                    "Регистрация"
-                ],
-                "summary": "Регистрация устройства",
-                "parameters": [
-                    {
-                        "description": "Запрос на регистрацию",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.MobileRegisterRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Успешная регистрация",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.MobileRegisterResponse"
-                        }
                     },
                     "400": {
                         "description": "Некорректный запрос",
@@ -318,6 +367,22 @@
                     "description": "Ключ доступа",
                     "type": "string",
                     "example": "bP0ZdK6rC6hCYZSjzmqhQ"
+                }
+            }
+        },
+        "smsgateway.MobileUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Идентификатор, если есть",
+                    "type": "string",
+                    "example": "QslD_GefqiYV6RQXdkM6V"
+                },
+                "pushToken": {
+                    "description": "Токен для отправки PUSH-уведомлений",
+                    "type": "string",
+                    "maxLength": 256,
+                    "example": "gHz-T6NezDlOfllr7F-Be"
                 }
             }
         },

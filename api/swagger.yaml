@@ -90,6 +90,18 @@ definitions:
         example: bP0ZdK6rC6hCYZSjzmqhQ
         type: string
     type: object
+  smsgateway.MobileUpdateRequest:
+    properties:
+      id:
+        description: Идентификатор, если есть
+        example: QslD_GefqiYV6RQXdkM6V
+        type: string
+      pushToken:
+        description: Токен для отправки PUSH-уведомлений
+        example: gHz-T6NezDlOfllr7F-Be
+        maxLength: 256
+        type: string
+    type: object
   smsgateway.RecipientState:
     properties:
       phoneNumber:
@@ -145,6 +157,68 @@ paths:
       tags:
       - Пользователь
       - Сообщения
+  /mobile/v1/device:
+    patch:
+      consumes:
+      - application/json
+      description: Обновляет push-токен устройства
+      parameters:
+      - description: Запрос на обновление
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/smsgateway.MobileUpdateRequest'
+      responses:
+        "204":
+          description: Успешное обновление
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "403":
+          description: Операция запрещена
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - MobileToken: []
+      summary: Обновление устройства
+      tags:
+      - Устройство
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует устройство на сервере, генерируя авторизационные данные
+      parameters:
+      - description: Запрос на регистрацию
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/smsgateway.MobileRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Успешная регистрация
+          schema:
+            $ref: '#/definitions/smsgateway.MobileRegisterResponse'
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Регистрация устройства
+      tags:
+      - Устройство
+      - Регистрация
   /mobile/v1/message:
     get:
       consumes:
@@ -202,37 +276,6 @@ paths:
       tags:
       - Устройство
       - Сообщения
-  /mobile/v1/register:
-    post:
-      consumes:
-      - application/json
-      description: Регистрирует устройство на сервере, генерируя авторизационные данные
-      parameters:
-      - description: Запрос на регистрацию
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/smsgateway.MobileRegisterRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Успешная регистрация
-          schema:
-            $ref: '#/definitions/smsgateway.MobileRegisterResponse'
-        "400":
-          description: Некорректный запрос
-          schema:
-            $ref: '#/definitions/smsgateway.ErrorResponse'
-        "500":
-          description: Внутренняя ошибка сервера
-          schema:
-            $ref: '#/definitions/smsgateway.ErrorResponse'
-      summary: Регистрация устройства
-      tags:
-      - Устройство
-      - Регистрация
 schemes:
 - http
 securityDefinitions:

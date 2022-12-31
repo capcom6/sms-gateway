@@ -34,8 +34,8 @@ type mobileHandler struct {
 // @Success     201     {object} smsgateway.MobileRegisterResponse "Успешная регистрация"
 // @Failure     400     {object} smsgateway.ErrorResponse          "Некорректный запрос"
 // @Failure     500     {object} smsgateway.ErrorResponse          "Внутренняя ошибка сервера"
-// @Router      /mobile/v1/register [post]
-func (h *mobileHandler) postRegister(c *fiber.Ctx) error {
+// @Router      /mobile/v1/device [post]
+func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 	req := smsgateway.MobileRegisterRequest{}
 
 	if err := h.BodyParserValidator(c, &req); err != nil {
@@ -62,6 +62,35 @@ func (h *mobileHandler) postRegister(c *fiber.Ctx) error {
 		Login:    login,
 		Password: password,
 	})
+}
+
+// @Summary     Обновление устройства
+// @Description Обновляет push-токен устройства
+// @Security    MobileToken
+// @Tags        Устройство
+// @Accept      json
+// @Param       request body smsgateway.MobileUpdateRequest true "Запрос на обновление"
+// @Success     204     "Успешное обновление"
+// @Failure     400     {object} smsgateway.ErrorResponse "Некорректный запрос"
+// @Failure     403     {object} smsgateway.ErrorResponse "Операция запрещена"
+// @Failure     500     {object} smsgateway.ErrorResponse "Внутренняя ошибка сервера"
+// @Router      /mobile/v1/device [patch]
+func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
+	req := smsgateway.MobileUpdateRequest{}
+
+	if err := h.BodyParserValidator(c, &req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	if req.Id != device.ID {
+		return fiber.ErrForbidden
+	}
+
+	if err := h.authSvc.UpdateDevice(req.Id, req.PushToken); err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }
 
 // @Summary     Получить сообщения для отправки
@@ -128,13 +157,15 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 }
 
 func (h *mobileHandler) register(router fiber.Router) {
-	router.Post("/register", h.postRegister)
+	router.Post("/device", h.postDevice)
 
 	router.Use(apikey.New(apikey.Config{
 		Authorizer: func(token string) bool {
 			return len(token) > 0
 		},
 	}))
+
+	router.Patch("/device", h.authorize(h.patchDevice))
 
 	router.Get("/message", h.authorize(h.getMessage))
 	router.Patch("/message", h.authorize(h.patchMessage))
