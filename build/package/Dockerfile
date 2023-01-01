@@ -5,7 +5,7 @@ ARG SSH_PRV_KEY
 ARG APP
 WORKDIR /go/src
 
-RUN apk add --no-cache git=2.36.2-r0 openssh-client-default=9.0_p1-r2
+RUN apk add --no-cache git=2.38.2-r0 openssh-client-default=9.1_p1-r1
 
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
@@ -44,7 +44,6 @@ ENV GOOSE_MIGRATION_DIR=/app/migrations
 COPY --from=build /go/bin/goose /app/goose
 
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
 
 # `boilerplate` should be replaced here as well
 COPY db/migrations /app/migrations

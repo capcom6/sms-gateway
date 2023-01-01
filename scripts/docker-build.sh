@@ -16,7 +16,7 @@ else
     GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 fi
 
-TAG=${GIT_TAG:-v"${GIT_BRANCH}"}
+TAG=${GIT_TAG:-v"${GIT_BRANCH////-}"}
 if [ -z "$TAG" ]; then
     exit 0
 fi
@@ -39,6 +39,8 @@ fi
 FULL_VERSION=${TAG:1}
 PARTS=$(echo ${FULL_VERSION} | tr "." "\n")
 VERSION=
+
+set -e
 
 docker build ${DOCKER_PARAMS[*]} -t ${DOCKER_IMAGE}:${FULL_VERSION} --build-arg SSH_PRV_KEY="$SSH_PRV_KEY" --build-arg APP="$APP" .
 docker push ${DOCKER_IMAGE}:${FULL_VERSION}
