@@ -30,7 +30,7 @@ func (r *DevicesRepository) Insert(device *models.Device) error {
 }
 
 func (r *DevicesRepository) UpdateToken(id, token string) error {
-	return r.db.Model(&models.Device{}).Where("id", id).Update("token", token).Error
+	return r.db.Model(&models.Device{}).Where("id", id).Update("push_token", token).Error
 }
 
 func NewDevicesRepository(db *gorm.DB) *DevicesRepository {
