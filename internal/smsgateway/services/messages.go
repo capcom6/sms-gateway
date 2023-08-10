@@ -1,7 +1,9 @@
 package services
 
 import (
+	"context"
 	"fmt"
+	"log"
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
@@ -11,13 +13,24 @@ import (
 )
 
 type MessagesService struct {
-	messages *repositories.MessagesRepository
+	Messages *repositories.MessagesRepository
+	PushSvc  *PushService
 
 	idgen func() string
 }
 
+func NewMessagesService(pushSvc *PushService, messages *repositories.MessagesRepository) *MessagesService {
+	idgen, _ := nanoid.Standard(21)
+
+	return &MessagesService{
+		Messages: messages,
+		PushSvc:  pushSvc,
+		idgen:    idgen,
+	}
+}
+
 func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, error) {
-	messages, err := s.messages.SelectPending(deviceID)
+	messages, err := s.Messages.SelectPending(deviceID)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +48,7 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 }
 
 func (s *MessagesService) UpdateState(deviceID string, message smsgateway.MessageState) error {
-	existing, err := s.messages.Get(deviceID, message.ID)
+	existing, err := s.Messages.Get(deviceID, message.ID)
 	if err != nil {
 		return err
 	}
@@ -43,10 +56,10 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	existing.State = models.MessageState(message.State)
 	existing.Recipients = s.recipientsStateToModel(message.Recipients)
 
-	return s.messages.UpdateState(&existing)
+	return s.Messages.UpdateState(&existing)
 }
 
-func (s *MessagesService) Enqeue(deviceID string, message smsgateway.Message) error {
+func (s *MessagesService) Enqeue(ctx context.Context, device models.Device, message smsgateway.Message) error {
 	for i, v := range message.PhoneNumbers {
 		phone, err := filters.FilterPhone(v, false)
 		if err != nil {
@@ -56,7 +69,7 @@ func (s *MessagesService) Enqeue(deviceID string, message smsgateway.Message) er
 	}
 
 	msg := models.Message{
-		DeviceID:   deviceID,
+		DeviceID:   device.ID,
 		ExtID:      message.ID,
 		Message:    message.Message,
 		Recipients: s.recipientsToModel(message.PhoneNumbers),
@@ -65,7 +78,19 @@ func (s *MessagesService) Enqeue(deviceID string, message smsgateway.Message) er
 		msg.ExtID = s.idgen()
 	}
 
-	return s.messages.Insert(&msg)
+	if err := s.Messages.Insert(&msg); err != nil {
+		return err
+	}
+
+	if device.PushToken == nil {
+		return nil
+	}
+
+	if err := s.PushSvc.Send(ctx, *device.PushToken, map[string]string{}); err != nil {
+		log.Printf("failed to send message to %s: %v", *device.PushToken, err)
+	}
+
+	return nil
 }
 
 func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {
@@ -101,13 +126,4 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 	}
 
 	return output
-}
-
-func NewMessagesService(messages *repositories.MessagesRepository) *MessagesService {
-	idgen, _ := nanoid.Standard(21)
-
-	return &MessagesService{
-		messages: messages,
-		idgen:    idgen,
-	}
 }

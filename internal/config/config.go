@@ -13,6 +13,7 @@ import (
 type Config struct {
 	HTTP     microbase.HTTPConfig     `yaml:"http"`
 	Database microbase.DatabaseConfig `yaml:"database"`
+	FCM      FCMConfig                `yaml:"fcm"`
 }
 
 var instance *Config

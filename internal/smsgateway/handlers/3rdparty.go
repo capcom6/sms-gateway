@@ -39,7 +39,7 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	}
 
 	device := user.Devices[0]
-	if err := h.messagesSvc.Enqeue(device.ID, req); err != nil {
+	if err := h.messagesSvc.Enqeue(c.Context(), device, req); err != nil {
 		return err
 	}
 

@@ -1,0 +1,22 @@
+@baseUrl=http://localhost:3000
+
+###
+POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Android Phone",
+  "pushToken": "eTxx88nfSla87gZuJcW5mS:APA91bHGxVgSqqRtxwFHD1q9em5Oa6xSP4gO_OZRrqOoP1wjf_7UMfXKsc4uws6rWkqn73jYCc1owyATB1v61mqak4ntpqtmRkNtTey7NQXa0Wz3uQZBWY-Ecbn2rWG2VJRihOzXRId-"
+}
+
+###
+POST {{baseUrl}}/api/3rdparty/v1/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic OIRA7S:gmtjuocjmi4_gt
+
+{
+    "message": "Test",
+    "phoneNumbers": [
+        "79990001234"
+    ]
+}
