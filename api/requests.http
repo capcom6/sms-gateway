@@ -1,4 +1,4 @@
-@baseUrl=http://localhost:3000
+@baseUrl=https://sms.capcom.me
 
 ###
 POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1
@@ -12,7 +12,7 @@ Content-Type: application/json
 ###
 POST {{baseUrl}}/api/3rdparty/v1/message HTTP/1.1
 Content-Type: application/json
-Authorization: Basic OIRA7S:gmtjuocjmi4_gt
+Authorization: Basic IUGFXE:v4ejpbeydvjo1h
 
 {
     "message": "Test",

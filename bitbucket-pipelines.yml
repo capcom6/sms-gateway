@@ -11,7 +11,7 @@ definitions:
           - hadolint build/package/Dockerfile*
     - step: &unit-tests
         name: Run unit tests
-        image: golang:1.18
+        image: golang:1.20
         caches:
           - gomodules
         script:
