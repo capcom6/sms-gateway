@@ -16,8 +16,8 @@ const (
 )
 
 type TimedModel struct {
-	CreatedAt time.Time `gorm:"not null;default:CURRENT_TIMESTAMP(3)"`
-	UpdatedAt time.Time `gorm:"not null;default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
+	CreatedAt time.Time `gorm:"not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
+	UpdatedAt time.Time `gorm:"not null;autoupdatetime:false;default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 	DeletedAt gorm.DeletedAt
 }
 
@@ -30,9 +30,9 @@ type User struct {
 }
 
 type Device struct {
-	ID        string `gorm:"primaryKey;type:char(21)"`
+	ID        string  `gorm:"primaryKey;type:char(21)"`
 	Name      *string `gorm:"type:varchar(128)"`
-	AuthToken string `gorm:"not null;uniqueIndex;type:char(21)"`
+	AuthToken string  `gorm:"not null;uniqueIndex;type:char(21)"`
 	PushToken *string `gorm:"type:varchar(256)"`
 
 	UserID string `gorm:"not null;type:varchar(32)"`
