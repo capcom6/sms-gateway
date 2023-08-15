@@ -5,7 +5,7 @@ ARG SSH_PRV_KEY
 ARG APP
 WORKDIR /go/src
 
-RUN apk add --no-cache git=2.38.5-r0 openssh-client-default=9.1_p1-r4
+RUN apk add --no-cache git=2.40.1-r0 openssh-client-default=9.3_p2-r0
 
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
