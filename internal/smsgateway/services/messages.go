@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
@@ -59,7 +60,7 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	return s.Messages.UpdateState(&existing)
 }
 
-func (s *MessagesService) Enqeue(ctx context.Context, device models.Device, message smsgateway.Message) error {
+func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message) error {
 	for i, v := range message.PhoneNumbers {
 		phone, err := filters.FilterPhone(v, false)
 		if err != nil {
@@ -86,9 +87,14 @@ func (s *MessagesService) Enqeue(ctx context.Context, device models.Device, mess
 		return nil
 	}
 
-	if err := s.PushSvc.Send(ctx, *device.PushToken, map[string]string{}); err != nil {
-		log.Printf("failed to send message to %s: %v", *device.PushToken, err)
-	}
+	go func(token string) {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := s.PushSvc.Send(ctx, token, map[string]string{}); err != nil {
+			log.Printf("failed to send push to %s: %v", *device.PushToken, err)
+		}
+	}(*device.PushToken)
 
 	return nil
 }
