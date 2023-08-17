@@ -30,6 +30,21 @@ definitions:
           - echo ${DOCKER_PASSWORD} | docker login ${DOCKER_CR} --username "$DOCKER_USERNAME" --password-stdin
           - export SSH_PRV_KEY="$(cat /opt/atlassian/pipelines/agent/ssh/id_rsa)"
           - chmod +x ./scripts/docker-build.sh && ./scripts/docker-build.sh
+    - step: &deploy
+        name: Deploy to Docker Swarm
+        image: hashicorp/terraform:1.4
+        deployment: production
+        script:
+          - terraform -chdir=./deployments/docker-swarm-terraform init
+          - |
+            terraform -chdir=./deployments/docker-swarm-terraform apply -auto-approve -input=false \
+              -var "swarm-manager-host=${SWARM_MANAGER_HOST}" \
+              -var "registry-password=${DOCKER_PASSWORD}" \
+              -var "app-name=${APP_NAME}" \
+              -var "app-version=${BITBUCKET_TAG#v}" \
+              -var "app-host=${APP_HOST}" \
+              -var "app-config-b64=${APP_CONFIG_B64}" \
+              -var "app-dotenv-b64=${APP_DOTENV_B64}"
 
 pipelines:
   default:
@@ -51,3 +66,4 @@ pipelines:
   tags:
     v*:
       - step: *build-docker
+      - step: *deploy
