@@ -44,7 +44,7 @@ definitions:
               -var "app-version=${BITBUCKET_TAG#v}" \
               -var "app-host=${APP_HOST}" \
               -var "app-config-b64=${APP_CONFIG_B64}" \
-              -var "app-dotenv-b64=${APP_DOTENV_B64}"
+              -var "app-env-json-b64=${APP_ENV_JSON_B64}"
 
 pipelines:
   default:
