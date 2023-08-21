@@ -25,16 +25,16 @@ type mobileHandler struct {
 	idGen func() string
 }
 
-// @Summary     Регистрация устройства
-// @Description Регистрирует устройство на сервере, генерируя авторизационные данные
-// @Tags        Устройство, Регистрация
-// @Accept      json
-// @Produce     json
-// @Param       request body     smsgateway.MobileRegisterRequest  true "Запрос на регистрацию"
-// @Success     201     {object} smsgateway.MobileRegisterResponse "Успешная регистрация"
-// @Failure     400     {object} smsgateway.ErrorResponse          "Некорректный запрос"
-// @Failure     500     {object} smsgateway.ErrorResponse          "Внутренняя ошибка сервера"
-// @Router      /mobile/v1/device [post]
+//	@Summary		Регистрация устройства
+//	@Description	Регистрирует устройство на сервере, генерируя авторизационные данные
+//	@Tags			Устройство, Регистрация
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		smsgateway.MobileRegisterRequest	true	"Запрос на регистрацию"
+//	@Success		201		{object}	smsgateway.MobileRegisterResponse	"Успешная регистрация"
+//	@Failure		400		{object}	smsgateway.ErrorResponse			"Некорректный запрос"
+//	@Failure		500		{object}	smsgateway.ErrorResponse			"Внутренняя ошибка сервера"
+//	@Router			/mobile/v1/device [post]
 func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 	req := smsgateway.MobileRegisterRequest{}
 
@@ -64,17 +64,17 @@ func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 	})
 }
 
-// @Summary     Обновление устройства
-// @Description Обновляет push-токен устройства
-// @Security    MobileToken
-// @Tags        Устройство
-// @Accept      json
-// @Param       request body smsgateway.MobileUpdateRequest true "Запрос на обновление"
-// @Success     204     "Успешное обновление"
-// @Failure     400     {object} smsgateway.ErrorResponse "Некорректный запрос"
-// @Failure     403     {object} smsgateway.ErrorResponse "Операция запрещена"
-// @Failure     500     {object} smsgateway.ErrorResponse "Внутренняя ошибка сервера"
-// @Router      /mobile/v1/device [patch]
+//	@Summary		Обновление устройства
+//	@Description	Обновляет push-токен устройства
+//	@Security		MobileToken
+//	@Tags			Устройство
+//	@Accept			json
+//	@Param			request	body	smsgateway.MobileUpdateRequest	true	"Запрос на обновление"
+//	@Success		204		"Успешное обновление"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		403		{object}	smsgateway.ErrorResponse	"Операция запрещена"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/mobile/v1/device [patch]
 func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
 	req := smsgateway.MobileUpdateRequest{}
 
@@ -93,15 +93,15 @@ func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-// @Summary     Получить сообщения для отправки
-// @Description Возвращает список сообщений, требующих отправки
-// @Security    MobileToken
-// @Tags        Устройство, Сообщения
-// @Accept      json
-// @Produce     json
-// @Success     200 {array}  smsgateway.Message       "Список сообщений"
-// @Failure     500 {object} smsgateway.ErrorResponse "Внутренняя ошибка сервера"
-// @Router      /mobile/v1/message [get]
+//	@Summary		Получить сообщения для отправки
+//	@Description	Возвращает список сообщений, требующих отправки
+//	@Security		MobileToken
+//	@Tags			Устройство, Сообщения
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}		smsgateway.Message			"Список сообщений"
+//	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/mobile/v1/message [get]
 func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 	messages, err := h.messagesSvc.SelectPending(device.ID)
 	if err != nil {
@@ -111,17 +111,17 @@ func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 	return c.JSON(messages)
 }
 
-// @Summary     Обновить состояние сообщений
-// @Description Обновляет состояние сообщений. Состояние обновляется индивидуально для каждого сообщения, игнорируя ошибки
-// @Security    MobileToken
-// @Tags        Устройство, Сообщения
-// @Accept      json
-// @Produce     json
-// @Param       request body     []smsgateway.MessageState true "Состояние сообщений"
-// @Success     204     {object} nil                       "Обновление выполнено"
-// @Failure     400     {object} smsgateway.ErrorResponse  "Некорректный запрос"
-// @Failure     500     {object} smsgateway.ErrorResponse  "Внутренняя ошибка сервера"
-// @Router      /mobile/v1/message [patch]
+//	@Summary		Обновить состояние сообщений
+//	@Description	Обновляет состояние сообщений. Состояние обновляется индивидуально для каждого сообщения, игнорируя ошибки
+//	@Security		MobileToken
+//	@Tags			Устройство, Сообщения
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		[]smsgateway.MessageState	true	"Состояние сообщений"
+//	@Success		204		{object}	nil							"Обновление выполнено"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/mobile/v1/message [patch]
 func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 	req := []smsgateway.MessageState{}
 	if err := c.BodyParser(&req); err != nil {

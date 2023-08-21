@@ -51,9 +51,10 @@ definitions:
         minItems: 1
         type: array
       state:
+        allOf:
+        - $ref: '#/definitions/smsgateway.ProcessState'
         description: Состояние
         example: Pending
-        type: string
     required:
     - recipients
     - state
@@ -102,6 +103,23 @@ definitions:
         maxLength: 256
         type: string
     type: object
+  smsgateway.ProcessState:
+    enum:
+    - Pending
+    - Sent
+    - Delivered
+    - Failed
+    type: string
+    x-enum-comments:
+      MessageStateDelivered: Доставлено
+      MessageStateFailed: Ошибка
+      MessageStatePending: В ожидании
+      MessageStateSent: Отправлено
+    x-enum-varnames:
+    - MessageStatePending
+    - MessageStateSent
+    - MessageStateDelivered
+    - MessageStateFailed
   smsgateway.RecipientState:
     properties:
       phoneNumber:
@@ -109,9 +127,10 @@ definitions:
         example: "79990001234"
         type: string
       state:
+        allOf:
+        - $ref: '#/definitions/smsgateway.ProcessState'
         description: Состояние
         example: Pending
-        type: string
     required:
     - phoneNumber
     - state
@@ -145,6 +164,10 @@ paths:
           description: Сообщение поставлено в очередь
         "400":
           description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "401":
+          description: Ошибка авторизации
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":

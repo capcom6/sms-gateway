@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -12,6 +13,8 @@ import (
 	"bitbucket.org/soft-c/gohelpers/pkg/filters"
 	"github.com/jaevor/go-nanoid"
 )
+
+var ErrValidation error = errors.New("validation error")
 
 type MessagesService struct {
 	Messages *repositories.MessagesRepository
@@ -64,7 +67,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	for i, v := range message.PhoneNumbers {
 		phone, err := filters.FilterPhone(v, false)
 		if err != nil {
-			return fmt.Errorf("некорректный номер телефона в строке %d: %w", i+1, err)
+			return fmt.Errorf("invalid phone number in row %d: %w", i+1, err)
 		}
 		message.PhoneNumbers[i] = phone
 	}

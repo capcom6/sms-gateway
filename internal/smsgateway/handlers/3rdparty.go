@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
@@ -17,17 +19,18 @@ type thirdPartyHandler struct {
 	messagesSvc *services.MessagesService
 }
 
-// @Summary     Поставить сообщение в очередь
-// @Description Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
-// @Security    ApiAuth
-// @Tags        Пользователь, Сообщения
-// @Accept      json
-// @Produce     json
-// @Param       request body     smsgateway.Message       true "Сообщение"
-// @Success     201     {object} nil                      "Сообщение поставлено в очередь"
-// @Failure     400     {object} smsgateway.ErrorResponse "Некорректный запрос"
-// @Failure     500     {object} smsgateway.ErrorResponse "Внутренняя ошибка сервера"
-// @Router      /3rdparty/v1/message [post]
+//	@Summary		Поставить сообщение в очередь
+//	@Description	Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
+//	@Security		ApiAuth
+//	@Tags			Пользователь, Сообщения
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		smsgateway.Message			true	"Сообщение"
+//	@Success		201		{object}	nil							"Сообщение поставлено в очередь"
+//	@Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/3rdparty/v1/message [post]
 func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	req := smsgateway.Message{}
 	if err := h.BodyParserValidator(c, &req); err != nil {
@@ -40,6 +43,10 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 
 	device := user.Devices[0]
 	if err := h.messagesSvc.Enqeue(device, req); err != nil {
+		if errors.Is(err, services.ErrValidation) {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+
 		return err
 	}
 

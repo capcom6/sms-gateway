@@ -8,24 +8,24 @@ import (
 	microbase "bitbucket.org/soft-c/gomicrobase"
 )
 
-// @title       SMS-шлюз - API сервера
-// @version     1.0.0
-// @description Предоставляет методы для взаимодействия с SMS-шлюзом
+//	@title			SMS-шлюз - API сервера
+//	@version		1.0.0
+//	@description	Предоставляет методы для взаимодействия с SMS-шлюзом
 
-// @contact.name  Aleksandr Soloshenko
-// @contact.email capcom@soft-c.ru
+//	@contact.name	Aleksandr Soloshenko
+//	@contact.email	capcom@soft-c.ru
 
-// @securitydefinitions.apikey MobileToken
-// @in                         header
-// @name                       Authorization
-// @description                Авторизацию устройства по токену
+//	@securitydefinitions.apikey	MobileToken
+//	@in							header
+//	@name						Authorization
+//	@description				Авторизацию устройства по токену
 
-// @securitydefinitions.basic ApiAuth
-// @description               Авторизацию пользователя по логин-паролю
+//	@securitydefinitions.basic	ApiAuth
+//	@description				Авторизацию пользователя по логин-паролю
 
-// @host     localhost:3000
-// @schemes  http
-// @BasePath /api
+//	@host		localhost:3000
+//	@schemes	http
+//	@BasePath	/api
 func main() {
 	cfg := config.GetConfig()
 

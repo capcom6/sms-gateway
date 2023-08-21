@@ -55,6 +55,12 @@
                             "$ref": "#/definitions/smsgateway.ErrorResponse"
                         }
                     },
+                    "401": {
+                        "description": "Ошибка авторизации",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
@@ -323,7 +329,11 @@
                 },
                 "state": {
                     "description": "Состояние",
-                    "type": "string",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.ProcessState"
+                        }
+                    ],
                     "example": "Pending"
                 }
             }
@@ -386,6 +396,27 @@
                 }
             }
         },
+        "smsgateway.ProcessState": {
+            "type": "string",
+            "enum": [
+                "Pending",
+                "Sent",
+                "Delivered",
+                "Failed"
+            ],
+            "x-enum-comments": {
+                "MessageStateDelivered": "Доставлено",
+                "MessageStateFailed": "Ошибка",
+                "MessageStatePending": "В ожидании",
+                "MessageStateSent": "Отправлено"
+            },
+            "x-enum-varnames": [
+                "MessageStatePending",
+                "MessageStateSent",
+                "MessageStateDelivered",
+                "MessageStateFailed"
+            ]
+        },
         "smsgateway.RecipientState": {
             "type": "object",
             "required": [
@@ -400,7 +431,11 @@
                 },
                 "state": {
                     "description": "Состояние",
-                    "type": "string",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.ProcessState"
+                        }
+                    ],
                     "example": "Pending"
                 }
             }
