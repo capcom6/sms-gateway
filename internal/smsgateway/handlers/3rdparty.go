@@ -26,7 +26,7 @@ type thirdPartyHandler struct {
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		smsgateway.Message			true	"Сообщение"
-//	@Success		201		{object}	nil							"Сообщение поставлено в очередь"
+//	@Success		201		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
 //	@Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
 //	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
@@ -42,7 +42,8 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	}
 
 	device := user.Devices[0]
-	if err := h.messagesSvc.Enqeue(device, req); err != nil {
+	state, err := h.messagesSvc.Enqeue(device, req)
+	if err != nil {
 		if errors.Is(err, services.ErrValidation) {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
@@ -50,7 +51,7 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.SendStatus(fiber.StatusCreated)
+	return c.Status(fiber.StatusCreated).JSON(state)
 }
 
 func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) error) fiber.Handler {

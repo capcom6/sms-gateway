@@ -1,4 +1,4 @@
-@baseUrl=http://sms.capcom.me
+@baseUrl=http://localhost:3000
 
 ###
 POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1

@@ -63,13 +63,24 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	return s.Messages.UpdateState(&existing)
 }
 
-func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message) error {
+func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message) (smsgateway.MessageState, error) {
+	state := smsgateway.MessageState{
+		ID:         "",
+		State:      smsgateway.MessageStatePending,
+		Recipients: make([]smsgateway.RecipientState, len(message.PhoneNumbers)),
+	}
+
 	for i, v := range message.PhoneNumbers {
 		phone, err := filters.FilterPhone(v, false)
 		if err != nil {
-			return fmt.Errorf("invalid phone number in row %d: %w", i+1, err)
+			return state, fmt.Errorf("invalid phone number in row %d: %w", i+1, err)
 		}
 		message.PhoneNumbers[i] = phone
+
+		state.Recipients[i] = smsgateway.RecipientState{
+			PhoneNumber: phone,
+			State:       smsgateway.MessageStatePending,
+		}
 	}
 
 	msg := models.Message{
@@ -81,13 +92,14 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	if msg.ExtID == "" {
 		msg.ExtID = s.idgen()
 	}
+	state.ID = msg.ExtID
 
 	if err := s.Messages.Insert(&msg); err != nil {
-		return err
+		return state, err
 	}
 
 	if device.PushToken == nil {
-		return nil
+		return state, nil
 	}
 
 	go func(token string) {
@@ -99,7 +111,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		}
 	}(*device.PushToken)
 
-	return nil
+	return state, nil
 }
 
 func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {

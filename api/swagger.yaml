@@ -162,6 +162,8 @@ paths:
       responses:
         "201":
           description: Сообщение поставлено в очередь
+          schema:
+            $ref: '#/definitions/smsgateway.MessageState'
         "400":
           description: Некорректный запрос
           schema:
