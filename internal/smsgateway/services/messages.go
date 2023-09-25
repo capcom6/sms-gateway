@@ -9,6 +9,7 @@ import (
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
+	"bitbucket.org/capcom6/smsgatewaybackend/pkg/slices"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
 	"bitbucket.org/soft-c/gohelpers/pkg/filters"
 	"github.com/jaevor/go-nanoid"
@@ -52,7 +53,7 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 }
 
 func (s *MessagesService) UpdateState(deviceID string, message smsgateway.MessageState) error {
-	existing, err := s.Messages.Get(deviceID, message.ID)
+	existing, err := s.Messages.Get(message.ID, repositories.MessagesSelectFilter{DeviceID: deviceID})
 	if err != nil {
 		return err
 	}
@@ -61,6 +62,15 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	existing.Recipients = s.recipientsStateToModel(message.Recipients)
 
 	return s.Messages.UpdateState(&existing)
+}
+
+func (s *MessagesService) GetState(deviceID, ID string) (smsgateway.MessageState, error) {
+	message, err := s.Messages.Get(ID, repositories.MessagesSelectFilter{DeviceID: deviceID}, repositories.MessagesSelectOptions{WithRecipients: true})
+	if err != nil {
+		return smsgateway.MessageState{}, fmt.Errorf("can't get message for device %s and ID %s: %w", deviceID, ID, err)
+	}
+
+	return modelToMessageState(message), nil
 }
 
 func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message) (smsgateway.MessageState, error) {
@@ -147,4 +157,19 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 	}
 
 	return output
+}
+
+func modelToMessageState(input models.Message) smsgateway.MessageState {
+	return smsgateway.MessageState{
+		ID:         input.ExtID,
+		State:      smsgateway.ProcessState(input.State),
+		Recipients: slices.Map(input.Recipients, modelToRecipientState),
+	}
+}
+
+func modelToRecipientState(input models.MessageRecipient) smsgateway.RecipientState {
+	return smsgateway.RecipientState{
+		PhoneNumber: input.PhoneNumber,
+		State:       smsgateway.ProcessState(input.State),
+	}
 }

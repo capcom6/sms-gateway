@@ -19,18 +19,18 @@ type thirdPartyHandler struct {
 	messagesSvc *services.MessagesService
 }
 
-//	@Summary		Поставить сообщение в очередь
-//	@Description	Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
-//	@Security		ApiAuth
-//	@Tags			Пользователь, Сообщения
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		smsgateway.Message			true	"Сообщение"
-//	@Success		201		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
-//	@Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
-//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
-//	@Router			/3rdparty/v1/message [post]
+// @Summary		Поставить сообщение в очередь
+// @Description	Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
+// @Security		ApiAuth
+// @Tags			Пользователь, Сообщения
+// @Accept			json
+// @Produce		json
+// @Param			request	body		smsgateway.Message			true	"Сообщение"
+// @Success		201		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
+// @Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
+// @Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+// @Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+// @Router			/3rdparty/v1/message [post]
 func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	req := smsgateway.Message{}
 	if err := h.BodyParserValidator(c, &req); err != nil {
@@ -52,6 +52,12 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(state)
+}
+
+func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
+	// id := c.Params("id")
+
+	return fiber.ErrNotImplemented
 }
 
 func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) error) fiber.Handler {
@@ -77,6 +83,7 @@ func (h *thirdPartyHandler) register(router fiber.Router) {
 	}))
 
 	router.Post("/message", h.authorize(h.postMessage))
+	router.Get("/message/:id", h.authorize(h.getMessage))
 }
 
 func newThirdPartyHandler(validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *thirdPartyHandler {

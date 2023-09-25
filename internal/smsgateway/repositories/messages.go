@@ -24,8 +24,24 @@ func (r *MessagesRepository) SelectPending(deviceID string) (messages []models.M
 	return
 }
 
-func (r *MessagesRepository) Get(deviceID, ID string) (message models.Message, err error) {
-	err = r.db.Where("device_id = ? AND ext_id = ?", deviceID, ID).Take(&message).Error
+func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options ...MessagesSelectOptions) (message models.Message, err error) {
+	query := r.db.Model(&message).
+		Where("ext_id = ?", ID)
+
+	if filter.DeviceID != "" {
+		query = query.Where("device_id = ?", filter.DeviceID)
+	}
+
+	if len(options) > 0 {
+		if options[0].WithRecipients {
+			query = query.Preload("Recipients")
+		}
+		if options[0].WithDevice {
+			query = query.Preload("Device")
+		}
+	}
+
+	err = query.Take(&message).Error
 
 	return
 }
@@ -54,4 +70,14 @@ func NewMessagesRepository(db *gorm.DB) *MessagesRepository {
 	return &MessagesRepository{
 		db: db,
 	}
+}
+
+// /////////////////////////////////////////////////////////////////////////////
+type MessagesSelectFilter struct {
+	DeviceID string
+}
+
+type MessagesSelectOptions struct {
+	WithRecipients bool
+	WithDevice     bool
 }
