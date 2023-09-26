@@ -9,9 +9,9 @@ import (
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
+	"bitbucket.org/capcom6/smsgatewaybackend/pkg/filters"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/slices"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
-	"bitbucket.org/soft-c/gohelpers/pkg/filters"
 	"github.com/jaevor/go-nanoid"
 )
 
@@ -81,7 +81,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	}
 
 	for i, v := range message.PhoneNumbers {
-		phone, err := filters.FilterPhone(v, false)
+		phone, err := filters.Phone(v, false, true)
 		if err != nil {
 			return state, fmt.Errorf("invalid phone number in row %d: %w", i+1, err)
 		}
