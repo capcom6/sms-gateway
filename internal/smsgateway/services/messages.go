@@ -64,10 +64,14 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	return s.Messages.UpdateState(&existing)
 }
 
-func (s *MessagesService) GetState(deviceID, ID string) (smsgateway.MessageState, error) {
-	message, err := s.Messages.Get(ID, repositories.MessagesSelectFilter{DeviceID: deviceID}, repositories.MessagesSelectOptions{WithRecipients: true})
+func (s *MessagesService) GetState(user models.User, ID string) (smsgateway.MessageState, error) {
+	message, err := s.Messages.Get(ID, repositories.MessagesSelectFilter{}, repositories.MessagesSelectOptions{WithRecipients: true, WithDevice: true})
 	if err != nil {
-		return smsgateway.MessageState{}, fmt.Errorf("can't get message for device %s and ID %s: %w", deviceID, ID, err)
+		return smsgateway.MessageState{}, repositories.ErrMessageNotFound
+	}
+
+	if message.Device.UserID != user.ID {
+		return smsgateway.MessageState{}, repositories.ErrMessageNotFound
 	}
 
 	return modelToMessageState(message), nil

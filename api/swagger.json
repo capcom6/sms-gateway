@@ -16,6 +16,57 @@
     "basePath": "/api",
     "paths": {
         "/3rdparty/v1/message": {
+            "get": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Возвращает состояние сообщения по его ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Пользователь",
+                    "Сообщения"
+                ],
+                "summary": "Получить состояние сообщения",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ИД сообщения",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Состояние сообщения",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MessageState"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Ошибка авторизации",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {

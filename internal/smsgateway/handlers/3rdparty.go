@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
 	microbase "bitbucket.org/soft-c/gomicrobase"
@@ -19,18 +20,18 @@ type thirdPartyHandler struct {
 	messagesSvc *services.MessagesService
 }
 
-// @Summary		Поставить сообщение в очередь
-// @Description	Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
-// @Security		ApiAuth
-// @Tags			Пользователь, Сообщения
-// @Accept			json
-// @Produce		json
-// @Param			request	body		smsgateway.Message			true	"Сообщение"
-// @Success		201		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
-// @Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
-// @Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-// @Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
-// @Router			/3rdparty/v1/message [post]
+//	@Summary		Поставить сообщение в очередь
+//	@Description	Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
+//	@Security		ApiAuth
+//	@Tags			Пользователь, Сообщения
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		smsgateway.Message			true	"Сообщение"
+//	@Success		201		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
+//	@Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/3rdparty/v1/message [post]
 func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	req := smsgateway.Message{}
 	if err := h.BodyParserValidator(c, &req); err != nil {
@@ -54,10 +55,30 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(state)
 }
 
+//	@Summary		Получить состояние сообщения
+//	@Description	Возвращает состояние сообщения по его ID
+//	@Security		ApiAuth
+//	@Tags			Пользователь, Сообщения
+//	@Produce		json
+//	@Param			id	path		string						true	"ИД сообщения"
+//	@Success		200	{object}	smsgateway.MessageState		"Состояние сообщения"
+//	@Failure		401	{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
+//	@Failure		400	{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/3rdparty/v1/message [get]
 func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
-	// id := c.Params("id")
+	id := c.Params("id")
 
-	return fiber.ErrNotImplemented
+	state, err := h.messagesSvc.GetState(user, id)
+	if err != nil {
+		if errors.Is(err, repositories.ErrMessageNotFound) {
+			return fiber.NewError(fiber.StatusNotFound, err.Error())
+		}
+
+		return err
+	}
+
+	return c.JSON(state)
 }
 
 func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) error) fiber.Handler {

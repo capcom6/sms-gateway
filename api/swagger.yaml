@@ -145,6 +145,39 @@ info:
   version: 1.0.0
 paths:
   /3rdparty/v1/message:
+    get:
+      description: Возвращает состояние сообщения по его ID
+      parameters:
+      - description: ИД сообщения
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Состояние сообщения
+          schema:
+            $ref: '#/definitions/smsgateway.MessageState'
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "401":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: Получить состояние сообщения
+      tags:
+      - Пользователь
+      - Сообщения
     post:
       consumes:
       - application/json

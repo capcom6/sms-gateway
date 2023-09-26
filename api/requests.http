@@ -20,3 +20,7 @@ Authorization: Basic IUGFXE:v4ejpbeydvjo1h
         "79990001234"
     ]
 }
+
+###
+GET {{baseUrl}}/api/3rdparty/v1/message/pRl1wf_yez5TikJb_xemU HTTP/1.1
+Authorization: Basic IUGFXE:v4ejpbeydvjo1h
