@@ -9,10 +9,10 @@ import (
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
-	"bitbucket.org/capcom6/smsgatewaybackend/pkg/filters"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/slices"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
 	"github.com/jaevor/go-nanoid"
+	"github.com/nyaruka/phonenumbers"
 )
 
 var ErrValidation error = errors.New("validation error")
@@ -85,10 +85,11 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	}
 
 	for i, v := range message.PhoneNumbers {
-		phone, err := filters.Phone(v, false, true)
+		phone, err := cleanPhoneNumber(v)
 		if err != nil {
-			return state, fmt.Errorf("invalid phone number in row %d: %w", i+1, err)
+			return state, fmt.Errorf("can't use phone in row %d: %w", i+1, err)
 		}
+
 		message.PhoneNumbers[i] = phone
 
 		state.Recipients[i] = smsgateway.RecipientState{
@@ -176,4 +177,20 @@ func modelToRecipientState(input models.MessageRecipient) smsgateway.RecipientSt
 		PhoneNumber: input.PhoneNumber,
 		State:       smsgateway.ProcessState(input.State),
 	}
+}
+
+func cleanPhoneNumber(input string) (string, error) {
+	phone, err := phonenumbers.Parse(input, "RU")
+	if err != nil {
+		return input, fmt.Errorf("can't parse phone number: %w", err)
+	}
+	if !phonenumbers.IsValidNumber(phone) {
+		return input, fmt.Errorf("invalid phone number")
+	}
+	phoneNumberType := phonenumbers.GetNumberType(phone)
+	if phoneNumberType != phonenumbers.MOBILE && phoneNumberType != phonenumbers.FIXED_LINE_OR_MOBILE {
+		return input, fmt.Errorf("not mobile phone number")
+	}
+
+	return phonenumbers.Format(phone, phonenumbers.E164), nil
 }

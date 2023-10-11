@@ -10,6 +10,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.38.1
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/joho/godotenv v1.4.0
+	github.com/nyaruka/phonenumbers v1.1.8
 	google.golang.org/api v0.114.0
 	gorm.io/gorm v1.23.8
 )
