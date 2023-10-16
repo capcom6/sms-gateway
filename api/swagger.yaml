@@ -107,6 +107,7 @@ definitions:
     enum:
     - Pending
     - Sent
+    - Processed
     - Delivered
     - Failed
     type: string
@@ -114,10 +115,12 @@ definitions:
       MessageStateDelivered: Доставлено
       MessageStateFailed: Ошибка
       MessageStatePending: В ожидании
+      MessageStateProcessed: Отправка подтверждена
       MessageStateSent: Отправлено
     x-enum-varnames:
     - MessageStatePending
     - MessageStateSent
+    - MessageStateProcessed
     - MessageStateDelivered
     - MessageStateFailed
   smsgateway.RecipientState:
@@ -125,6 +128,7 @@ definitions:
       phoneNumber:
         description: Номер телефона
         example: "79990001234"
+        minLength: 10
         type: string
       state:
         allOf:

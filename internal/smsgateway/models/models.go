@@ -10,6 +10,7 @@ type MessageState string
 
 const (
 	MessageStatePending   MessageState = "Pending"
+	MessageStateProcessed MessageState = "Processes"
 	MessageStateSent      MessageState = "Sent"
 	MessageStateDelivered MessageState = "Delivered"
 	MessageStateFailed    MessageState = "Failed"
@@ -45,7 +46,7 @@ type Message struct {
 	DeviceID string       `gorm:"not null;type:char(21);uniqueIndex:unq_messages_id_device,priority:2;index:idx_messages_device_state"`
 	ExtID    string       `gorm:"not null;type:varchar(36);uniqueIndex:unq_messages_id_device,priority:1"`
 	Message  string       `gorm:"not null;type:tinytext"`
-	State    MessageState `gorm:"not null;type:enum('Pending','Sent','Delivered','Failed');default:Pending;index:idx_messages_device_state"`
+	State    MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending;index:idx_messages_device_state"`
 
 	Device     Device             `gorm:"foreignKey:DeviceID;constraint:OnDelete:CASCADE"`
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`
@@ -56,7 +57,7 @@ type Message struct {
 type MessageRecipient struct {
 	MessageID   uint64       `gorm:"primaryKey;type:BIGINT UNSIGNED"`
 	PhoneNumber string       `gorm:"primaryKey;type:varchar(16)"`
-	State       MessageState `gorm:"not null;type:enum('Pending','Sent','Delivered','Failed');default:Pending"`
+	State       MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending"`
 }
 
 func Migrate(db *gorm.DB) error {

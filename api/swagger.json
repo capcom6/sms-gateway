@@ -455,6 +455,7 @@
             "enum": [
                 "Pending",
                 "Sent",
+                "Processed",
                 "Delivered",
                 "Failed"
             ],
@@ -462,11 +463,13 @@
                 "MessageStateDelivered": "Доставлено",
                 "MessageStateFailed": "Ошибка",
                 "MessageStatePending": "В ожидании",
+                "MessageStateProcessed": "Отправка подтверждена",
                 "MessageStateSent": "Отправлено"
             },
             "x-enum-varnames": [
                 "MessageStatePending",
                 "MessageStateSent",
+                "MessageStateProcessed",
                 "MessageStateDelivered",
                 "MessageStateFailed"
             ]
@@ -481,6 +484,7 @@
                 "phoneNumber": {
                     "description": "Номер телефона",
                     "type": "string",
+                    "minLength": 10,
                     "example": "79990001234"
                 },
                 "state": {
