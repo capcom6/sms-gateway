@@ -4,8 +4,8 @@ type ProcessState string
 
 const (
 	MessageStatePending   ProcessState = "Pending"   // В ожидании
+	MessageStateProcessed ProcessState = "Processed" // Обработано
 	MessageStateSent      ProcessState = "Sent"      // Отправлено
-	MessageStateProcessed ProcessState = "Processed" // Отправка подтверждена
 	MessageStateDelivered ProcessState = "Delivered" // Доставлено
 	MessageStateFailed    ProcessState = "Failed"    // Ошибка
 )

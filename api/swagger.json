@@ -454,8 +454,8 @@
             "type": "string",
             "enum": [
                 "Pending",
-                "Sent",
                 "Processed",
+                "Sent",
                 "Delivered",
                 "Failed"
             ],
@@ -463,13 +463,13 @@
                 "MessageStateDelivered": "Доставлено",
                 "MessageStateFailed": "Ошибка",
                 "MessageStatePending": "В ожидании",
-                "MessageStateProcessed": "Отправка подтверждена",
+                "MessageStateProcessed": "Обработано",
                 "MessageStateSent": "Отправлено"
             },
             "x-enum-varnames": [
                 "MessageStatePending",
-                "MessageStateSent",
                 "MessageStateProcessed",
+                "MessageStateSent",
                 "MessageStateDelivered",
                 "MessageStateFailed"
             ]
