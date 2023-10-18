@@ -64,4 +64,31 @@ resource "docker_service" "app" {
     label = "gateway.server.port"
     value = 3000
   }
+
+  # Traefik support
+  labels {
+    label = "traefik.enable"
+    value = true
+  }
+  labels {
+    label = "traefik.docker.network"
+    value = data.docker_network.proxy.name
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}.rule"
+    value = "Host(`${var.app-host}`)"
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}.entrypoints"
+    value = "https"
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}.tls"
+    value = true
+  }
+
+  labels {
+    label = "traefik.http.services.${var.app-name}.loadbalancer.server.port"
+    value = 3000
+  }
 }
