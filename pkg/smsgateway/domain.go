@@ -14,6 +14,7 @@ const (
 type Message struct {
 	ID           string   `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"`                  // Идентификатор
 	Message      string   `json:"message" validate:"required,max=256" example:"Hello World!"`                                // Текст сообщения
+	TTL          *uint64  `json:"ttl" validate:"omitempty,min=5" example:"86400"`                                            // Время жизни сообщения в секундах
 	PhoneNumbers []string `json:"phoneNumbers" validate:"required,min=1,max=100,dive,required,min=10" example:"79990001234"` // Получатели
 }
 

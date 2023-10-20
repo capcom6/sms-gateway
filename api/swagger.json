@@ -357,6 +357,12 @@
                     "example": [
                         "79990001234"
                     ]
+                },
+                "ttl": {
+                    "description": "Время жизни сообщения в секундах",
+                    "type": "integer",
+                    "minimum": 5,
+                    "example": 86400
                 }
             }
         },

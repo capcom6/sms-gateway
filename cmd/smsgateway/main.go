@@ -26,6 +26,8 @@ import (
 //	@host		localhost:3000
 //	@schemes	http
 //	@BasePath	/api
+//
+// SMS-шлюз
 func main() {
 	cfg := config.GetConfig()
 
