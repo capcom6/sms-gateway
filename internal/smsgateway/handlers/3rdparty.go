@@ -32,6 +32,8 @@ type thirdPartyHandler struct {
 //	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
 //	@Router			/3rdparty/v1/message [post]
+//
+// Поставить сообщение в очередь
 func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	req := smsgateway.Message{}
 	if err := h.BodyParserValidator(c, &req); err != nil {
@@ -39,7 +41,7 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	}
 
 	if len(user.Devices) < 1 {
-		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройтсва в учетной записи")
+		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройства в учетной записи")
 	}
 
 	device := user.Devices[0]
@@ -66,6 +68,8 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 //	@Failure		400	{object}	smsgateway.ErrorResponse	"Некорректный запрос"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
 //	@Router			/3rdparty/v1/message [get]
+//
+// Получить состояние сообщения
 func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
 	id := c.Params("id")
 

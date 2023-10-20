@@ -40,11 +40,26 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 		return nil, err
 	}
 
+	messages = s.filterTimeouted(messages)
+
 	result := make([]smsgateway.Message, len(messages))
 	for i, v := range messages {
+		var ttl *uint64 = nil
+		if !v.ValidUntil.IsZero() {
+			delta := time.Until(v.ValidUntil).Seconds()
+			if delta > 0 {
+				deltaInt := uint64(delta)
+				ttl = &deltaInt
+			} else {
+				deltaInt := uint64(0)
+				ttl = &deltaInt
+			}
+		}
+
 		result[i] = smsgateway.Message{
 			ID:           v.ExtID,
 			Message:      v.Message,
+			TTL:          ttl,
 			PhoneNumbers: s.recipientsToDomain(v.Recipients),
 		}
 	}
@@ -98,10 +113,16 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		}
 	}
 
+	validUntil := time.Time{}
+	if message.TTL != nil && *message.TTL > 0 {
+		validUntil = time.Now().Add(time.Duration(*message.TTL) * time.Second)
+	}
+
 	msg := models.Message{
 		DeviceID:   device.ID,
 		ExtID:      message.ID,
 		Message:    message.Message,
+		ValidUntil: validUntil,
 		Recipients: s.recipientsToModel(message.PhoneNumbers),
 	}
 	if msg.ExtID == "" {
@@ -127,6 +148,22 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	}(*device.PushToken)
 
 	return state, nil
+}
+
+func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Message {
+	result := make([]models.Message, 0, len(messages))
+	for _, v := range messages {
+		if v.ValidUntil.IsZero() || time.Now().Before(v.ValidUntil) {
+			result = append(result, v)
+		} else if v.State == models.MessageStatePending {
+			v.State = models.MessageStateFailed
+			for i, _ := range v.Recipients {
+				v.Recipients[i].State = models.MessageStateFailed
+			}
+			s.Messages.UpdateState(&v)
+		}
+	}
+	return result
 }
 
 func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {
