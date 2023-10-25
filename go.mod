@@ -6,6 +6,7 @@ require (
 	bitbucket.org/soft-c/gohelpers v1.0.3
 	firebase.google.com/go/v4 v4.12.1
 	github.com/go-playground/validator/v10 v10.15.5
+	github.com/gofiber/contrib/fiberzap/v2 v2.1.1
 	github.com/gofiber/fiber/v2 v2.50.0
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/joho/godotenv v1.5.1

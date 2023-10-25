@@ -6,9 +6,9 @@ import (
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http/jsonify"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http/statuscode"
+	"github.com/gofiber/contrib/fiberzap/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"go.uber.org/fx"
 )
@@ -29,7 +29,9 @@ func New(params Params) (*fiber.App, error) {
 	})
 
 	app.Use(recover.New())
-	app.Use(logger.New())
+	app.Use(fiberzap.New(fiberzap.Config{
+		Logger: params.Logger,
+	}))
 
 	api := app.Group("/api")
 	api.Use(cors.New())

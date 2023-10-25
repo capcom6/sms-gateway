@@ -7,6 +7,7 @@ import (
 	"go.uber.org/fx"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"moul.io/zapgorm2"
 )
 
@@ -27,11 +28,12 @@ func New(params Params) (*gorm.DB, error) {
 }
 
 func makeConfig(params Params) *gorm.Config {
-	logger := zapgorm2.New(params.Logger)
-	logger.SetAsDefault()
+	log := zapgorm2.New(params.Logger)
+	log.LogLevel = logger.Info
+	log.SetAsDefault()
 
 	return &gorm.Config{
-		Logger: logger,
+		Logger: log,
 	}
 }
 
