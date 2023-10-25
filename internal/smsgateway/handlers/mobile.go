@@ -10,14 +10,14 @@ import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
 	"bitbucket.org/soft-c/gohelpers/pkg/fiber/middleware/apikey"
-	microbase "bitbucket.org/soft-c/gomicrobase"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jaevor/go-nanoid"
+	"go.uber.org/zap"
 )
 
 type mobileHandler struct {
-	microbase.Handler
+	Handler
 
 	authSvc     *services.AuthService
 	messagesSvc *services.MessagesService
@@ -143,7 +143,7 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 	for _, v := range req {
 		err := h.messagesSvc.UpdateState(device.ID, v)
 		if err != nil && !errors.Is(err, repositories.ErrMessageNotFound) {
-			errorLog.Printf("Can't update message status: %s\n", err.Error())
+			h.Logger.Error("Can't update message status", zap.Error(err))
 		}
 	}
 
@@ -156,7 +156,7 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 
 		device, err := h.authSvc.AuthorizeDevice(token)
 		if err != nil {
-			errorLog.Println(err)
+			h.Logger.Error("Can't authorize device", zap.Error(err))
 			return fiber.ErrUnauthorized
 		}
 
@@ -164,7 +164,9 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 	}
 }
 
-func (h *mobileHandler) register(router fiber.Router) {
+func (h *mobileHandler) Register(router fiber.Router) {
+	router = router.Group("/mobile/v1")
+
 	router.Post("/device", h.postDevice)
 
 	router.Use(apikey.New(apikey.Config{
@@ -179,11 +181,14 @@ func (h *mobileHandler) register(router fiber.Router) {
 	router.Patch("/message", h.authorize(h.patchMessage))
 }
 
-func newMobileHandler(validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *mobileHandler {
+func newMobileHandler(logger *zap.Logger, validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *mobileHandler {
 	idGen, _ := nanoid.Standard(21)
 
 	return &mobileHandler{
-		Handler:     microbase.Handler{Validator: validator},
+		Handler: Handler{
+			Logger:    logger,
+			Validator: validator,
+		},
 		authSvc:     authSvc,
 		messagesSvc: messagesSvc,
 		idGen:       idGen,

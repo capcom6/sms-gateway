@@ -7,14 +7,14 @@ import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
-	microbase "bitbucket.org/soft-c/gomicrobase"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"go.uber.org/zap"
 )
 
 type thirdPartyHandler struct {
-	microbase.Handler
+	Handler
 
 	authSvc     *services.AuthService
 	messagesSvc *services.MessagesService
@@ -92,7 +92,7 @@ func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) erro
 
 		user, err := h.authSvc.AuthorizeUser(username, password)
 		if err != nil {
-			errorLog.Println(err)
+			h.Logger.Error("failed to authorize user", zap.Error(err))
 			return fiber.ErrUnauthorized
 		}
 
@@ -100,7 +100,9 @@ func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) erro
 	}
 }
 
-func (h *thirdPartyHandler) register(router fiber.Router) {
+func (h *thirdPartyHandler) Register(router fiber.Router) {
+	router = router.Group("/3rdparty/v1")
+
 	router.Use(basicauth.New(basicauth.Config{
 		Authorizer: func(username string, password string) bool {
 			return len(username) > 0 && len(password) > 0
@@ -111,9 +113,10 @@ func (h *thirdPartyHandler) register(router fiber.Router) {
 	router.Get("/message/:id", h.authorize(h.getMessage))
 }
 
-func newThirdPartyHandler(validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *thirdPartyHandler {
+func newThirdPartyHandler(logger *zap.Logger, validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *thirdPartyHandler {
 	return &thirdPartyHandler{
-		Handler: microbase.Handler{
+		Handler: Handler{
+			Logger:    logger,
 			Validator: validator,
 		},
 		authSvc:     authSvc,

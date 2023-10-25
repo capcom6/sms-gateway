@@ -1,11 +1,8 @@
 package main
 
 import (
-	"log"
-
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/config"
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway"
 	_ "bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway"
-	microbase "bitbucket.org/soft-c/gomicrobase"
 )
 
 //	@title			SMS-шлюз - API сервера
@@ -29,12 +26,5 @@ import (
 //
 // SMS-шлюз
 func main() {
-	cfg := config.GetConfig()
-
-	if err := microbase.Run(microbase.Config{
-		HTTP:     cfg.HTTP,
-		Database: cfg.Database,
-	}); err != nil {
-		log.Fatalln(err)
-	}
+	smsgateway.Run()
 }

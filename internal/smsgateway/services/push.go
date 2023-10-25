@@ -17,9 +17,13 @@ type PushService struct {
 	once sync.Once
 }
 
-func NewPushService(credsJson string) *PushService {
+type PushServiceConfig struct {
+	CredentialsJSON string
+}
+
+func NewPushService(config PushServiceConfig) *PushService {
 	return &PushService{
-		CredentialsJSON: credsJson,
+		CredentialsJSON: config.CredentialsJSON,
 	}
 }
 

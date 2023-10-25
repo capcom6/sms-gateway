@@ -60,7 +60,3 @@ type MessageRecipient struct {
 	PhoneNumber string       `gorm:"primaryKey;type:varchar(16)"`
 	State       MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending"`
 }
-
-func Migrate(db *gorm.DB) error {
-	return db.AutoMigrate(&User{}, &Device{}, &Message{}, &MessageRecipient{})
-}
