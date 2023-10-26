@@ -12,6 +12,8 @@ import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
+	"go.uber.org/zap"
 )
 
 var Module = fx.Module(
@@ -32,6 +34,9 @@ func Run() {
 		Module,
 		fx.Invoke(func(h *fiber.App) {
 
+		}),
+		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
+			return &fxevent.ZapLogger{Logger: log}
 		}),
 	).Run()
 }

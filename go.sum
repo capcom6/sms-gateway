@@ -1,5 +1,3 @@
-bitbucket.org/soft-c/gohelpers v1.0.3 h1:NGn8/8AU0YUl2oxzOhBYlhwHpEu6ovLGj3uvo9/MKnc=
-bitbucket.org/soft-c/gohelpers v1.0.3/go.mod h1:AlZzQ1xftfS8rWSwjwTj3/MPMFFfgfNCP3b7xLoEeKM=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.110.9 h1:e7ITSqGFFk4rbz/JFIqZh3G4VEHguhAL4BQcFlWtU68=
 cloud.google.com/go v0.110.9/go.mod h1:rpxevX/0Lqvlbc88b7Sc1SPNdyK1riNBTUU6JXhYNpM=

@@ -1,10 +1,8 @@
 package db
 
 import (
-	"context"
 	"fmt"
 
-	"go.uber.org/fx"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -15,14 +13,14 @@ func New(params Params) (*gorm.DB, error) {
 	dsn := makeDSN(params.Config)
 	cfgGorm := makeConfig(params)
 
-	params.LC.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			return nil
-		},
-	})
+	// params.LC.Append(fx.Hook{
+	// 	OnStart: func(ctx context.Context) error {
+	// 		return nil
+	// 	},
+	// 	OnStop: func(ctx context.Context) error {
+	// 		return nil
+	// 	},
+	// })
 
 	return gorm.Open(mysql.Open(dsn), cfgGorm)
 }

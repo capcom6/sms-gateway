@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http/apikey"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
 	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
-	"bitbucket.org/soft-c/gohelpers/pkg/fiber/middleware/apikey"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jaevor/go-nanoid"
