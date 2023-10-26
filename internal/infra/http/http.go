@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 const (
@@ -44,7 +45,12 @@ func New(params Params) (*fiber.App, error) {
 
 	params.LC.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			go app.Listen(config.Listen)
+			go func() {
+				err := app.Listen(config.Listen)
+				if err != nil {
+					params.Logger.Error("Error starting server", zap.Error(err))
+				}
+			}()
 
 			return nil
 		},

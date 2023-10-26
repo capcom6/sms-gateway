@@ -1,10 +1,13 @@
 package models
 
-import "go.uber.org/fx"
+import (
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/db"
+	"go.uber.org/fx"
+)
 
 var Module = fx.Module(
 	"models",
 	fx.Provide(
-		NewMigration,
+		db.AsMigration(NewMigration),
 	),
 )
