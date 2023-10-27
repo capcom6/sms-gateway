@@ -2,6 +2,7 @@ package smsgateway
 
 import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/config"
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/cli"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/db"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/logger"
@@ -10,14 +11,12 @@ import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
-	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
-	"go.uber.org/zap"
 )
 
 var Module = fx.Module(
 	"server",
+	cli.Module,
 	config.Module,
 	logger.Module,
 	http.Module,
@@ -32,11 +31,12 @@ var Module = fx.Module(
 func Run() {
 	fx.New(
 		Module,
-		fx.Invoke(func(h *fiber.App) {
+		// fx.Invoke(cli()),
+		// fx.Invoke(func(h *fiber.App) {
 
-		}),
-		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-			return &fxevent.ZapLogger{Logger: log}
-		}),
+		// }),
+		// fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
+		// 	return &fxevent.ZapLogger{Logger: log}
+		// }),
 	).Run()
 }

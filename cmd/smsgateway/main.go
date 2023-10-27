@@ -2,7 +2,6 @@ package main
 
 import (
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway"
-	_ "bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway"
 )
 
 //	@title			SMS-шлюз - API сервера

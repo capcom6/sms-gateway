@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"time"
 
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http/jsonify"
@@ -10,8 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"go.uber.org/fx"
-	"go.uber.org/zap"
 )
 
 const (
@@ -21,8 +18,6 @@ const (
 )
 
 func New(params Params) (*fiber.App, error) {
-	config := configDefault(params.Config)
-
 	app := fiber.New(fiber.Config{
 		ReadTimeout:  ReadTimeout,
 		WriteTimeout: WriteTimeout,
@@ -43,21 +38,21 @@ func New(params Params) (*fiber.App, error) {
 
 	app.Use(statuscode.New())
 
-	params.LC.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			go func() {
-				err := app.Listen(config.Listen)
-				if err != nil {
-					params.Logger.Error("Error starting server", zap.Error(err))
-				}
-			}()
+	// params.LC.Append(fx.Hook{
+	// 	OnStart: func(ctx context.Context) error {
+	// 		go func() {
+	// 			err := app.Listen(config.Listen)
+	// 			if err != nil {
+	// 				params.Logger.Error("Error starting server", zap.Error(err))
+	// 			}
+	// 		}()
 
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			return app.ShutdownWithContext(ctx)
-		},
-	})
+	// 		return nil
+	// 	},
+	// 	OnStop: func(ctx context.Context) error {
+	// 		return app.ShutdownWithContext(ctx)
+	// 	},
+	// })
 
 	return app, nil
 }

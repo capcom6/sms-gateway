@@ -13,15 +13,6 @@ func New(params Params) (*gorm.DB, error) {
 	dsn := makeDSN(params.Config)
 	cfgGorm := makeConfig(params)
 
-	// params.LC.Append(fx.Hook{
-	// 	OnStart: func(ctx context.Context) error {
-	// 		return nil
-	// 	},
-	// 	OnStop: func(ctx context.Context) error {
-	// 		return nil
-	// 	},
-	// })
-
 	return gorm.Open(mysql.Open(dsn), cfgGorm)
 }
 

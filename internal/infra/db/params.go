@@ -8,8 +8,8 @@ import (
 type Params struct {
 	fx.In
 
-	Logger     *zap.Logger
-	Config     Config
-	Migrations []Migrator `group:"migrations"`
-	LC         fx.Lifecycle
+	Logger *zap.Logger
+	Config Config
+	// Migrations []Migrator `group:"migrations"`
+	LC fx.Lifecycle
 }
