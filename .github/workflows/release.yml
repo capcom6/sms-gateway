@@ -48,7 +48,7 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}")
-          terraform plan -input=false \
+          terraform apply -auto-approve -input=false \
           -var 'swarm-manager-host=${{ secrets.SWARM_MANAGER_HOST }}' \
           -var 'app-name=${{ vars.APP_NAME }}' \
           -var "app-version=${{ needs.build.outputs.app-version }}" \
