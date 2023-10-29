@@ -1,34 +1,57 @@
 package config
 
 import (
-	"sync"
+	"errors"
+	"os"
 
-	microbase "bitbucket.org/soft-c/gomicrobase"
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	HTTP     microbase.HTTPConfig     `yaml:"http"`
-	Database microbase.DatabaseConfig `yaml:"database"`
-	FCM      FCMConfig                `yaml:"fcm"`
+	HTTP     HTTP      `yaml:"http"`
+	Database Database  `yaml:"database"`
+	FCM      FCMConfig `yaml:"fcm"`
 }
 
-var instance *Config
-var once = sync.Once{}
+type HTTP struct {
+	Listen string `yaml:"listen"`
+}
 
-func newConfig() *Config {
-	config := Config{}
+type Database struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	Database string `yaml:"database"`
+}
 
-	if err := microbase.LoadConfig(&config); err != nil {
-		errorLog.Fatalf("Can't load config from %s", err.Error())
+type FCMConfig struct {
+	CredentialsJSON string `yaml:"credentials_json"`
+}
+
+func GetConfig(logger *zap.Logger) Config {
+	err := godotenv.Load()
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		logger.Error("Error loading .env file", zap.Error(err))
 	}
 
-	return &config
-}
+	configPath := "config.yml"
+	if envPath := os.Getenv("CONFIG_PATH"); envPath != "" {
+		configPath = envPath
+	}
 
-func GetConfig() Config {
-	once.Do(func() {
-		instance = newConfig()
-	})
+	yamlFile, err := os.ReadFile(configPath)
+	if err != nil {
+		logger.Error("Error reading config file", zap.Error(err))
+	}
 
-	return *instance
+	var config Config
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		logger.Error("Error unmarshalling config file", zap.Error(err))
+	}
+
+	return config
 }

@@ -4,11 +4,11 @@ variable "swarm-manager-host" {
   description = "Address of swarm manager"
 }
 
-variable "registry-password" {
-  type        = string
-  description = "Password for Docker Images Registry"
-  sensitive   = true
-}
+# variable "registry-password" {
+#   type        = string
+#   description = "Password for Docker Images Registry"
+#   sensitive   = true
+# }
 
 variable "app-name" {
   type        = string

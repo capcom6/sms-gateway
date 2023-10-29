@@ -1,5 +1,5 @@
-project_name = smsgateway
-image_name = cr.selcloud.ru/soft-c/$(project_name):latest
+project_name = sms-gateway
+image_name = capcom6/$(project_name):latest
 
 extension=
 ifeq ($(OS),Windows_NT)

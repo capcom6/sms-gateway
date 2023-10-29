@@ -1,0 +1,39 @@
+name: docker-publish
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      # step 1: set up go
+      - name: Set up Go 1.20
+        uses: actions/setup-go@v4
+        with:
+          go-version: ">=1.20"
+
+      # step 2: checkout repository code
+      - name: Checkout code into workspace directory
+        uses: actions/checkout@v4
+
+      # step 3: install dependencies
+      - name: Install all Go dependencies
+        run: go mod download
+
+      # step 4: run test
+      - name: Run coverage
+        run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
+
+  build:
+    name: Build
+    needs:
+      - test
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      app-name: sms-gateway
+    secrets:
+      username: ${{ secrets.DOCKERHUB_USERNAME }}
+      password: ${{ secrets.DOCKERHUB_PASSWORD }}

@@ -1,22 +1,8 @@
 # Building the binary of the App
 FROM golang:1.20-alpine AS build
 
-ARG SSH_PRV_KEY
 ARG APP
 WORKDIR /go/src
-
-RUN apk add --no-cache git=2.40.1-r0 openssh-client-default=9.3_p2-r0
-
-RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh && \
-    echo "StrictHostKeyChecking no " > /root/.ssh/config && ls /root/.ssh/config
-
-RUN echo "$SSH_PRV_KEY" > /root/.ssh/id_rsa \
-    && chmod 600 /root/.ssh/id_rsa
-
-RUN echo '[url "ssh://git@bitbucket.org/"]' >> ~/.gitconfig \
-    && echo '        insteadOf = https://bitbucket.org/' >> ~/.gitconfig \
-    && go env -w GOPRIVATE="bitbucket.org/soft-c/*"
 
 RUN go install github.com/pressly/goose/v3/cmd/goose@latest
 
