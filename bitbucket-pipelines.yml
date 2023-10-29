@@ -5,11 +5,17 @@ definitions:
     gomodules: ~/.cache/go-build
   steps:
     - step: &docker-lint
+        runs-on:
+          - self.hosted
+          - linux
         name: Lint the Dockerfile
         image: hadolint/hadolint:latest-debian
         script:
           - hadolint build/package/Dockerfile*
     - step: &unit-tests
+        runs-on:
+          - self.hosted
+          - linux
         name: Run unit tests
         image: golang:1.20
         caches:
@@ -20,6 +26,9 @@ definitions:
           - go env -w GOPRIVATE="bitbucket.org/soft-c/*"
           - go test ./...
     - step: &build-docker
+        runs-on:
+          - self.hosted
+          - linux
         name: Build and push Docker image
         services:
           - docker
@@ -31,6 +40,9 @@ definitions:
           - export SSH_PRV_KEY="$(cat /opt/atlassian/pipelines/agent/ssh/id_rsa)"
           - chmod +x ./scripts/docker-build.sh && ./scripts/docker-build.sh
     - step: &deploy
+        runs-on:
+          - self.hosted
+          - linux
         name: Deploy to Docker Swarm
         image: hashicorp/terraform:1.4
         deployment: production

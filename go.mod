@@ -4,12 +4,11 @@ go 1.20
 
 require (
 	bitbucket.org/soft-c/gohelpers v1.0.3-0.20221007032455-694a304f5909
-	bitbucket.org/soft-c/gomicrobase v1.1.2-0.20221006080527-7eeddcd13770
+	bitbucket.org/soft-c/gomicrobase v1.3.1-0.20231020165939-64940c19df05
 	firebase.google.com/go/v4 v4.12.0
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/gofiber/fiber/v2 v2.38.1
 	github.com/jaevor/go-nanoid v1.3.0
-	github.com/joho/godotenv v1.4.0
 	github.com/nyaruka/phonenumbers v1.1.8
 	google.golang.org/api v0.114.0
 	gorm.io/gorm v1.23.8
@@ -41,6 +40,7 @@ require (
 	github.com/googleapis/gax-go/v2 v2.8.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.15.11 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2 // indirect

@@ -33,6 +33,11 @@ definitions:
         maxItems: 100
         minItems: 1
         type: array
+      ttl:
+        description: Время жизни сообщения в секундах
+        example: 86400
+        minimum: 5
+        type: integer
     required:
     - message
     - phoneNumbers

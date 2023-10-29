@@ -35,6 +35,8 @@ type mobileHandler struct {
 //	@Failure		400		{object}	smsgateway.ErrorResponse			"Некорректный запрос"
 //	@Failure		500		{object}	smsgateway.ErrorResponse			"Внутренняя ошибка сервера"
 //	@Router			/mobile/v1/device [post]
+//
+// Регистрация устройства
 func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 	req := smsgateway.MobileRegisterRequest{}
 
@@ -75,6 +77,8 @@ func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 //	@Failure		403		{object}	smsgateway.ErrorResponse	"Операция запрещена"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
 //	@Router			/mobile/v1/device [patch]
+//
+// Обновление устройства
 func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
 	req := smsgateway.MobileUpdateRequest{}
 
@@ -102,6 +106,8 @@ func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
 //	@Success		200	{array}		smsgateway.Message			"Список сообщений"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
 //	@Router			/mobile/v1/message [get]
+//
+// Получить сообщения для отправки
 func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 	messages, err := h.messagesSvc.SelectPending(device.ID)
 	if err != nil {
@@ -122,6 +128,8 @@ func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 //	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
 //	@Router			/mobile/v1/message [patch]
+//
+// Обновить состояние сообщений
 func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 	req := []smsgateway.MessageState{}
 	if err := c.BodyParser(&req); err != nil {
