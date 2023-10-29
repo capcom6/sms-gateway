@@ -3,7 +3,7 @@ data "docker_network" "proxy" {
 }
 
 resource "docker_image" "app" {
-  name         = "cr.selcloud.ru/soft-c/${var.app-name}:${var.app-version}"
+  name         = "capcom6/${var.app-name}:${var.app-version}"
   keep_locally = true
 }
 

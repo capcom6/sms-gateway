@@ -1,0 +1,57 @@
+name: docker-build
+
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        required: true
+        type: string
+    secrets:
+      username:
+        required: true
+      password:
+        required: true
+    outputs:
+      app-version:
+        value: ${{ jobs.build.outputs.app-version }}
+
+jobs:
+  build:
+    name: Docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      app-version: ${{ steps.meta.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: capcom6/${{ inputs.app-name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.username }}
+          password: ${{ secrets.password }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          file: build/package/Dockerfile
+          build-args: APP=${{ inputs.app-name }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max

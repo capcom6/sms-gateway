@@ -1,4 +1,4 @@
-module bitbucket.org/capcom6/smsgatewaybackend
+module github.com/capcom6/sms-gateway
 
 go 1.20
 

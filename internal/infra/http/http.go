@@ -3,8 +3,8 @@ package http
 import (
 	"time"
 
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http/jsonify"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http/statuscode"
+	"github.com/capcom6/sms-gateway/internal/infra/http/jsonify"
+	"github.com/capcom6/sms-gateway/internal/infra/http/statuscode"
 	"github.com/gofiber/contrib/fiberzap/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

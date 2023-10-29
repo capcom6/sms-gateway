@@ -3,9 +3,9 @@ package services
 import (
 	"fmt"
 
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/crypto"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
+	"github.com/capcom6/sms-gateway/internal/infra/crypto"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/jaevor/go-nanoid"
 )
 

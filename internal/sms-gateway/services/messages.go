@@ -7,10 +7,10 @@ import (
 	"log"
 	"time"
 
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
-	"bitbucket.org/capcom6/smsgatewaybackend/pkg/slices"
-	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
+	"github.com/capcom6/sms-gateway/pkg/slices"
+	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/jaevor/go-nanoid"
 	"github.com/nyaruka/phonenumbers"
 )

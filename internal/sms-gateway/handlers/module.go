@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http"
+	"github.com/capcom6/sms-gateway/internal/infra/http"
 	"go.uber.org/fx"
 )
 

@@ -10,9 +10,9 @@ terraform {
 provider "docker" {
   host     = var.swarm-manager-host
   ssh_opts = ["-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null"]
-  registry_auth {
-    address  = "cr.selcloud.ru/soft-c"
-    username = "token"
-    password = var.registry-password
-  }
+  # registry_auth {
+  #   address  = "cr.selcloud.ru/soft-c"
+  #   username = "token"
+  #   password = var.registry-password
+  # }
 }

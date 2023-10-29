@@ -1,9 +1,9 @@
 package config
 
 import (
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/db"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
+	"github.com/capcom6/sms-gateway/internal/infra/db"
+	"github.com/capcom6/sms-gateway/internal/infra/http"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"go.uber.org/fx"
 )
 

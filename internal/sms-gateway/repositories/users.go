@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"gorm.io/gorm"
 )
 

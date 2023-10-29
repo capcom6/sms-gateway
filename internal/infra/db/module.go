@@ -1,7 +1,7 @@
 package db
 
 import (
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/cli"
+	"github.com/capcom6/sms-gateway/internal/infra/cli"
 	"go.uber.org/fx"
 )
 

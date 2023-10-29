@@ -1,0 +1,57 @@
+# workflow name
+name: release
+
+# on events
+on:
+  release:
+    types:
+      - created
+
+# jobs
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/docker-build.yml
+    with:
+      app-name: sms-gateway
+    secrets:
+      username: ${{ secrets.DOCKERHUB_USERNAME }}
+      password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.4.6
+
+      - name: Initialize Terraform
+        working-directory: deployments/docker-swarm-terraform
+        run: terraform init
+
+      - name: Deploy Docker service to Swarm
+        working-directory: deployments/docker-swarm-terraform
+        env:
+          CPU_LIMIT: ${{ vars.CPU_LIMIT }}
+          MEMORY_LIMIT: ${{ vars.MEMORY_LIMIT }}
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}")
+          terraform plan -input=false \
+          -var 'swarm-manager-host=${{ secrets.SWARM_MANAGER_HOST }}' \
+          -var 'app-name=${{ vars.APP_NAME }}' \
+          -var "app-version=${{ needs.build.outputs.app-version }}" \
+          -var 'app-host=${{ secrets.APP_HOST }}' \
+          -var "app-config-b64=${{ secrets.APP_CONFIG_B64 }}" \
+          -var "app-env-json-b64=${{ secrets.APP_ENV_JSON_B64 }}"

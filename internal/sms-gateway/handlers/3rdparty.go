@@ -3,10 +3,10 @@ package handlers
 import (
 	"errors"
 
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/models"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/repositories"
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/smsgateway/services"
-	"bitbucket.org/capcom6/smsgatewaybackend/pkg/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
+	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"

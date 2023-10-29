@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 
 [build]
   bin = "tmp/main.exe"
-  cmd = "go build -o ./tmp/main.exe ./cmd/smsgateway"
+  cmd = "go build -o ./tmp/main.exe ./cmd/sms-gateway"
   delay = 1000
   exclude_dir = ["api", "assets", "tmp", "vendor", "testdata", "tmp"]
   exclude_file = []
