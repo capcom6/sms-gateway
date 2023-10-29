@@ -8,8 +8,24 @@ import (
 )
 
 var Module = fx.Module(
-	"config",
-	fx.Provide(GetConfig),
+	"appconfig",
+	fx.Provide(
+		fx.Annotate(
+			func() any {
+				return &Config{}
+			},
+			fx.ResultTags(`name:"config:source"`),
+		),
+	),
+	fx.Provide(
+		fx.Annotate(
+			func(cfg any) Config {
+				return *cfg.(*Config)
+			},
+			fx.ParamTags(`name:"config:result"`),
+		),
+	),
+	// fx.Provide(GetConfig),
 	fx.Provide(func(cfg Config) http.Config {
 		return http.Config{
 			Listen: cfg.HTTP.Listen,

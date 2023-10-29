@@ -1,8 +1,9 @@
 package smsgateway
 
 import (
-	"bitbucket.org/capcom6/smsgatewaybackend/internal/config"
+	appconfig "bitbucket.org/capcom6/smsgatewaybackend/internal/config"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/cli"
+	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/config"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/db"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/http"
 	"bitbucket.org/capcom6/smsgatewaybackend/internal/infra/logger"
@@ -17,6 +18,7 @@ import (
 var Module = fx.Module(
 	"server",
 	cli.Module,
+	appconfig.Module,
 	config.Module,
 	logger.Module,
 	http.Module,
