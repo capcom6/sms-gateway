@@ -34,7 +34,7 @@ func NewRunServer(params RunServerParams) *RunServer {
 }
 
 func (c *RunServer) Cmd() string {
-	return "runserver"
+	return "http:run"
 }
 
 func (c *RunServer) Run(args ...string) error {

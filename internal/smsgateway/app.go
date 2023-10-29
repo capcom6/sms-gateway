@@ -29,14 +29,8 @@ var Module = fx.Module(
 )
 
 func Run() {
+	cli.DefaultCommand = "http:run"
 	fx.New(
 		Module,
-		// fx.Invoke(cli()),
-		// fx.Invoke(func(h *fiber.App) {
-
-		// }),
-		// fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-		// 	return &fxevent.ZapLogger{Logger: log}
-		// }),
 	).Run()
 }

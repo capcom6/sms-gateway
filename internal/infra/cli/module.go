@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var DefaultCommand = "runserver"
+var DefaultCommand = ""
 
 var Module = fx.Module(
 	"cli",
@@ -29,15 +29,4 @@ var Module = fx.Module(
 		params.Logger.Info("Command is not supported", zap.String("command", cmd))
 		return params.Shut.Shutdown()
 	}),
-	// fx.Invoke(cli()),
-	// fx.Invoke(func(lc fx.Lifecycle) {
-	// 	lc.Append(fx.Hook{
-	// 		OnStart: func(ctx context.Context) error {
-	// 			return nil
-	// 		},
-	// 		OnStop: func(ctx context.Context) error {
-	// 			return nil
-	// 		},
-	// 	})
-	// }),
 )
