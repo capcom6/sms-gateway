@@ -11,6 +11,9 @@ var DefaultCommand = ""
 
 var Module = fx.Module(
 	"cli",
+	fx.Decorate(func(log *zap.Logger) *zap.Logger {
+		return log.Named("cli")
+	}),
 	fx.Invoke(func(params Params) error {
 		cmd := DefaultCommand
 		args := []string{}

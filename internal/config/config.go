@@ -31,6 +31,22 @@ type FCMConfig struct {
 	CredentialsJSON string `yaml:"credentials_json"`
 }
 
+var defaultConfig = Config{
+	HTTP: HTTP{
+		Listen: ":3000",
+	},
+	Database: Database{
+		Host:     "localhost",
+		Port:     3306,
+		User:     "sms",
+		Password: "sms",
+		Database: "sms",
+	},
+	FCM: FCMConfig{
+		CredentialsJSON: "",
+	},
+}
+
 func GetConfig(logger *zap.Logger) Config {
 	err := godotenv.Load()
 	if err != nil && !errors.Is(err, os.ErrNotExist) {

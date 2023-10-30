@@ -3,6 +3,7 @@ package logger
 import (
 	"context"
 	"errors"
+	"os"
 	"syscall"
 
 	"go.uber.org/fx"
@@ -10,7 +11,14 @@ import (
 )
 
 func New(lc fx.Lifecycle) (*zap.Logger, error) {
-	l, err := zap.NewProduction()
+	isDebug := os.Getenv("DEBUG") != ""
+
+	logConfig := zap.NewProductionConfig()
+	if isDebug {
+		logConfig = zap.NewDevelopmentConfig()
+	}
+
+	l, err := logConfig.Build()
 	if err != nil {
 		return nil, err
 	}

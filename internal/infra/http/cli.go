@@ -39,6 +39,8 @@ func (c *RunServer) Cmd() string {
 
 func (c *RunServer) Run(args ...string) error {
 	go func() {
+		c.Logger.Info("Starting server...")
+
 		err := c.App.Listen(c.Config.Listen)
 		if err != nil {
 			c.Logger.Error("Error starting server", zap.Error(err))

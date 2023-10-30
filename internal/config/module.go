@@ -12,7 +12,7 @@ var Module = fx.Module(
 	fx.Provide(
 		fx.Annotate(
 			func() any {
-				return &Config{}
+				return &defaultConfig
 			},
 			fx.ResultTags(`name:"config:source"`),
 		),

@@ -13,6 +13,9 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"go.uber.org/fx"
+	"go.uber.org/fx/fxevent"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var Module = fx.Module(
@@ -34,5 +37,10 @@ func Run() {
 	cli.DefaultCommand = "http:run"
 	fx.New(
 		Module,
+		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
+			logOption := fxevent.ZapLogger{Logger: logger}
+			logOption.UseLogLevel(zapcore.DebugLevel)
+			return &logOption
+		}),
 	).Run()
 }

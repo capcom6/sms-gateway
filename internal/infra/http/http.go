@@ -19,9 +19,10 @@ const (
 
 func New(params Params) (*fiber.App, error) {
 	app := fiber.New(fiber.Config{
-		ReadTimeout:  ReadTimeout,
-		WriteTimeout: WriteTimeout,
-		IdleTimeout:  IdleTimeout,
+		ReadTimeout:           ReadTimeout,
+		WriteTimeout:          WriteTimeout,
+		IdleTimeout:           IdleTimeout,
+		DisableStartupMessage: true,
 	})
 
 	app.Use(recover.New())
@@ -37,22 +38,6 @@ func New(params Params) (*fiber.App, error) {
 	}
 
 	app.Use(statuscode.New())
-
-	// params.LC.Append(fx.Hook{
-	// 	OnStart: func(ctx context.Context) error {
-	// 		go func() {
-	// 			err := app.Listen(config.Listen)
-	// 			if err != nil {
-	// 				params.Logger.Error("Error starting server", zap.Error(err))
-	// 			}
-	// 		}()
-
-	// 		return nil
-	// 	},
-	// 	OnStop: func(ctx context.Context) error {
-	// 		return app.ShutdownWithContext(ctx)
-	// 	},
-	// })
 
 	return app, nil
 }
