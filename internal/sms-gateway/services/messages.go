@@ -192,8 +192,13 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 	output := make([]models.MessageRecipient, len(input))
 
 	for i, v := range input {
+		phoneNumber := v.PhoneNumber
+		if len(phoneNumber) > 0 && phoneNumber[0] != '+' {
+			phoneNumber = "+" + phoneNumber
+		}
+
 		output[i] = models.MessageRecipient{
-			PhoneNumber: v.PhoneNumber,
+			PhoneNumber: phoneNumber,
 			State:       models.MessageState(v.State),
 		}
 	}
