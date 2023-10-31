@@ -9,7 +9,7 @@ import (
 func New() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		if err := c.Next(); err != nil {
-			return err
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
 		}
 
 		contentType := string(c.Response().Header.ContentType())
