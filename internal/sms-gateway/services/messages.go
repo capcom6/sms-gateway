@@ -11,6 +11,7 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/slices"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
+	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/jaevor/go-nanoid"
 	"github.com/nyaruka/phonenumbers"
 )
@@ -45,8 +46,8 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 	result := make([]smsgateway.Message, len(messages))
 	for i, v := range messages {
 		var ttl *uint64 = nil
-		if !v.ValidUntil.IsZero() {
-			delta := time.Until(v.ValidUntil).Seconds()
+		if v.ValidUntil != nil {
+			delta := time.Until(*v.ValidUntil).Seconds()
 			if delta > 0 {
 				deltaInt := uint64(delta)
 				ttl = &deltaInt
@@ -113,9 +114,9 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		}
 	}
 
-	validUntil := time.Time{}
+	var validUntil *time.Time = nil
 	if message.TTL != nil && *message.TTL > 0 {
-		validUntil = time.Now().Add(time.Duration(*message.TTL) * time.Second)
+		validUntil = types.AsPointer(time.Now().Add(time.Duration(*message.TTL) * time.Second))
 	}
 
 	msg := models.Message{
@@ -153,11 +154,11 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Message {
 	result := make([]models.Message, 0, len(messages))
 	for _, v := range messages {
-		if v.ValidUntil.IsZero() || time.Now().Before(v.ValidUntil) {
+		if v.ValidUntil == nil || time.Now().Before(*v.ValidUntil) {
 			result = append(result, v)
 		} else if v.State == models.MessageStatePending {
 			v.State = models.MessageStateFailed
-			for i, _ := range v.Recipients {
+			for i := range v.Recipients {
 				v.Recipients[i].State = models.MessageStateFailed
 			}
 			s.Messages.UpdateState(&v)
