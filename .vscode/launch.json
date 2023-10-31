@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceRoot}/cmd/smsgateway/main.go",
+            "program": "${workspaceRoot}/cmd/sms-gateway/main.go",
             "cwd": "${workspaceRoot}",
         }
     ]
