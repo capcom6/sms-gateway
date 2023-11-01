@@ -22,9 +22,21 @@ db-upgrade:
 
 db-upgrade-raw:
 	go run ./cmd/$(project_name)/main.go db-upgrade
+	
+run:
+	go run cmd/$(project_name)/main.go
 
 test:
-	go test ./...
+	go test -cover ./...
+
+build:
+	go build ./cmd/$(project_name)
+	
+install:
+	go install ./cmd/$(project_name)
+
+docker-dev:
+	docker-compose -f deployments/docker-compose/docker-compose.dev.yml up --build
 
 api-docs:
 	swag fmt -g ./cmd/$(project_name)/main.go \
@@ -33,4 +45,4 @@ api-docs:
 view-docs:
 	php -S 127.0.0.1:8080 -t ./api
 
-.PHONY: init init-dev air db-upgrade db-upgrade-raw test api-docs view-docs
+.PHONY: init init-dev air run test install api-docs docker-dev view-docs

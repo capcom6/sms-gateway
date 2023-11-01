@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  sms-gateway:
+    image: sms-gateway
+    build:
+      context: .
+      dockerfile: ../../build/package/Dockerfile.dev
+    container_name: sms-gateway
+    environment:
+      - DEBUG=1
+    ports:
+      - "4000:3000"
+      - "3456:2345"
+    volumes:
+      - "../..:/app"
+      - "/tmp/sms-gateway/go-cache:/go/pkg"
+    restart: 'no'
