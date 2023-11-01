@@ -2,7 +2,9 @@ package db
 
 import (
 	"fmt"
+	"log"
 
+	sql "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,6 +14,8 @@ import (
 func New(params Params) (*gorm.DB, error) {
 	dsn := makeDSN(params.Config)
 	cfgGorm := makeConfig(params)
+
+	sql.SetLogger(log.Default())
 
 	return gorm.Open(mysql.Open(dsn), cfgGorm)
 }
