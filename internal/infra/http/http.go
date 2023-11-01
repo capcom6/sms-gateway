@@ -23,6 +23,7 @@ func New(params Params) (*fiber.App, error) {
 		WriteTimeout:          WriteTimeout,
 		IdleTimeout:           IdleTimeout,
 		DisableStartupMessage: true,
+		ErrorHandler:          errorHandler,
 	})
 
 	app.Use(recover.New())
