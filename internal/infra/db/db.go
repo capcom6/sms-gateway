@@ -31,6 +31,7 @@ func makeConfig(params Params) *gorm.Config {
 }
 
 func makeDSN(cfg Config) string {
+	cfg = configDefault(cfg)
 	return fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4,utf8&parseTime=true&tls=preferred",
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database,
