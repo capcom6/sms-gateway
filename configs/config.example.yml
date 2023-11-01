@@ -11,3 +11,8 @@ database:
   password: root
   database: notifications
   debug: true
+fcm:
+  credentials_json: >
+    {
+    ...
+    }
