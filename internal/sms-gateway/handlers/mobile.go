@@ -12,6 +12,7 @@ import (
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/jaevor/go-nanoid"
 	"go.uber.org/zap"
 )
@@ -167,7 +168,7 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
-	router.Post("/device", h.postDevice)
+	router.Post("/device", limiter.New(), h.postDevice)
 
 	router.Use(apikey.New(apikey.Config{
 		Authorizer: func(token string) bool {
