@@ -1,31 +1,25 @@
 package config
 
 import (
+	"github.com/capcom6/sms-gateway/internal/infra/config"
 	"github.com/capcom6/sms-gateway/internal/infra/db"
 	"github.com/capcom6/sms-gateway/internal/infra/http"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 var Module = fx.Module(
 	"appconfig",
 	fx.Provide(
-		fx.Annotate(
-			func() any {
-				return &defaultConfig
-			},
-			fx.ResultTags(`name:"config:source"`),
-		),
+		func(log *zap.Logger) Config {
+			if err := config.LoadConfig(&defaultConfig); err != nil {
+				log.Error("Error loading config", zap.Error(err))
+			}
+
+			return defaultConfig
+		},
 	),
-	fx.Provide(
-		fx.Annotate(
-			func(cfg any) Config {
-				return *cfg.(*Config)
-			},
-			fx.ParamTags(`name:"config:result"`),
-		),
-	),
-	// fx.Provide(GetConfig),
 	fx.Provide(func(cfg Config) http.Config {
 		return http.Config{
 			Listen: cfg.HTTP.Listen,
