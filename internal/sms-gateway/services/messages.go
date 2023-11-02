@@ -74,6 +74,10 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 		return err
 	}
 
+	if message.State == smsgateway.MessageStatePending {
+		message.State = smsgateway.MessageStateProcessed
+	}
+
 	existing.State = models.MessageState(message.State)
 	existing.Recipients = s.recipientsStateToModel(message.Recipients)
 
@@ -193,6 +197,10 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 	output := make([]models.MessageRecipient, len(input))
 
 	for i, v := range input {
+		if v.State == smsgateway.MessageStatePending {
+			v.State = smsgateway.MessageStateProcessed
+		}
+
 		output[i] = models.MessageRecipient{
 			PhoneNumber: v.PhoneNumber,
 			State:       models.MessageState(v.State),

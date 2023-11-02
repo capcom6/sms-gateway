@@ -10,7 +10,7 @@ type MessageState string
 
 const (
 	MessageStatePending   MessageState = "Pending"
-	MessageStateProcessed MessageState = "Processes"
+	MessageStateProcessed MessageState = "Processed"
 	MessageStateSent      MessageState = "Sent"
 	MessageStateDelivered MessageState = "Delivered"
 	MessageStateFailed    MessageState = "Failed"

@@ -29,3 +29,21 @@ Authorization: Basic IUGFXE:v4ejpbeydvjo1h
 ###
 GET {{baseUrl}}/api/mobile/v1/message HTTP/1.1
 Authorization: Bearer KuvE4LBXzvy8QO2ZXDDMP
+
+###
+PATCH {{baseUrl}}/api/mobile/v1/message HTTP/1.1
+Authorization: Bearer KuvE4LBXzvy8QO2ZXDDMP
+Content-Type: application/json
+
+[
+  {
+    "id": "8GHr-tUz6JBRFpTUXDV4w",
+    "state": "Pending",
+    "recipients": [
+      {
+        "phoneNumber": "79990001234",
+        "state": "Pending"
+      }
+    ]
+  }
+]
