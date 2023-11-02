@@ -16,14 +16,14 @@ Authorization: Basic IUGFXE:v4ejpbeydvjo1h
 
 {
     "message": "Test",
-    "ttl": {{$randomInt 0 86400}},
+    "ttl": 60,
     "phoneNumbers": [
         "79990001234"
     ]
 }
 
 ###
-GET {{baseUrl}}/api/3rdparty/v1/message/pRl1wf_yez5TikJb_xemU HTTP/1.1
+GET {{baseUrl}}/api/3rdparty/v1/message/iZo6T9hw7wTuKLQUIP29I HTTP/1.1
 Authorization: Basic IUGFXE:v4ejpbeydvjo1h
 
 ###
