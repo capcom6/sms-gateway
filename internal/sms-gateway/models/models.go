@@ -10,7 +10,7 @@ type MessageState string
 
 const (
 	MessageStatePending   MessageState = "Pending"
-	MessageStateProcessed MessageState = "Processes"
+	MessageStateProcessed MessageState = "Processed"
 	MessageStateSent      MessageState = "Sent"
 	MessageStateDelivered MessageState = "Delivered"
 	MessageStateFailed    MessageState = "Failed"
@@ -47,7 +47,7 @@ type Message struct {
 	ExtID      string       `gorm:"not null;type:varchar(36);uniqueIndex:unq_messages_id_device,priority:1"`
 	Message    string       `gorm:"not null;type:tinytext"`
 	State      MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending;index:idx_messages_device_state"`
-	ValidUntil time.Time    `gorm:"type:datetime"`
+	ValidUntil *time.Time   `gorm:"type:datetime"`
 
 	Device     Device             `gorm:"foreignKey:DeviceID;constraint:OnDelete:CASCADE"`
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`

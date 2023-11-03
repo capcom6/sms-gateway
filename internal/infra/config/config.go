@@ -5,19 +5,28 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"go.uber.org/zap"
+	"github.com/kelseyhightower/envconfig"
 	"gopkg.in/yaml.v3"
 )
 
-type Config struct {
-}
-
-func New(params Param) any {
+func LoadConfig(config any) error {
 	err := godotenv.Load()
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		params.Logger.Error("Error loading .env file", zap.Error(err))
+		return err
 	}
 
+	if err := loadFromYaml(config); err != nil {
+		return err
+	}
+
+	if err := loadFromEnv(config); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func loadFromYaml(config any) error {
 	configPath := "config.yml"
 	if envPath := os.Getenv("CONFIG_PATH"); envPath != "" {
 		configPath = envPath
@@ -25,13 +34,16 @@ func New(params Param) any {
 
 	yamlFile, err := os.ReadFile(configPath)
 	if err != nil {
-		params.Logger.Error("Error reading config file", zap.Error(err))
+		return err
 	}
 
-	err = yaml.Unmarshal(yamlFile, params.Config)
-	if err != nil {
-		params.Logger.Error("Error unmarshalling config file", zap.Error(err))
+	if err := yaml.Unmarshal(yamlFile, config); err != nil {
+		return err
 	}
 
-	return params.Config
+	return nil
+}
+
+func loadFromEnv(config any) error {
+	return envconfig.Process("", config)
 }

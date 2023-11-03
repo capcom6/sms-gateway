@@ -16,3 +16,17 @@ func AsApiHandler(f any) any {
 		fx.ResultTags(`group:"api-routes"`),
 	)
 }
+
+func errorHandler(c *fiber.Ctx, err error) error {
+	code := fiber.StatusInternalServerError
+
+	// Retrieve the custom status code if it's an fiber.*Error
+	if e, ok := err.(*fiber.Error); ok {
+		code = e.Code
+	}
+
+	// Send json error
+	return c.Status(code).JSON(&fiber.Map{
+		"message": err.Error(),
+	})
+}

@@ -14,6 +14,7 @@ type Config struct {
 	User     string
 	Password string
 	Database string
+	Timezone string
 }
 
 // Helper function to set default values

@@ -3,7 +3,6 @@ package smsgateway
 import (
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/infra/cli"
-	"github.com/capcom6/sms-gateway/internal/infra/config"
 	"github.com/capcom6/sms-gateway/internal/infra/db"
 	"github.com/capcom6/sms-gateway/internal/infra/http"
 	"github.com/capcom6/sms-gateway/internal/infra/logger"
@@ -22,7 +21,6 @@ var Module = fx.Module(
 	"server",
 	cli.Module,
 	appconfig.Module,
-	config.Module,
 	logger.Module,
 	http.Module,
 	validator.Module,
