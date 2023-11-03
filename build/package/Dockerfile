@@ -27,6 +27,8 @@ WORKDIR /app
 ENV GOOSE_DRIVER=mysql
 ENV GOOSE_MIGRATION_DIR=/app/migrations
 
+RUN apk add --no-cache tzdata
+
 COPY --from=build /go/bin/goose /app/goose
 
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
