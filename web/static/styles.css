@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+header {
+    background: #50a8a8;
+    color: white;
+    padding-top: 30px;
+    min-height: 70px;
+    border-bottom: #396969 3px solid;
+}
+
+header a {
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+header h1 {
+    float: left;
+    margin: 0;
+}
+
+header #underline {
+    color: #396969;
+}
+
+h2 {
+    color: #396969;
+}

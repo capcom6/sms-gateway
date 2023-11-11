@@ -8,6 +8,7 @@ import (
 var Module = fx.Module(
 	"handlers",
 	fx.Provide(
+		http.AsRootHandler(newRootHandler),
 		http.AsApiHandler(newThirdPartyHandler),
 		http.AsApiHandler(newMobileHandler),
 	),
