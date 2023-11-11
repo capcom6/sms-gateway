@@ -31,6 +31,10 @@ func New(params Params) (*fiber.App, error) {
 		Logger: params.Logger,
 	}))
 
+	for _, handler := range params.RootHandlers {
+		handler.Register(app)
+	}
+
 	api := app.Group("/api")
 	api.Use(cors.New())
 	api.Use(jsonify.New())

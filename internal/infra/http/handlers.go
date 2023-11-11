@@ -9,11 +9,23 @@ type ApiHanlder interface {
 	Register(app fiber.Router)
 }
 
+type RootHanlder interface {
+	Register(app *fiber.App)
+}
+
 func AsApiHandler(f any) any {
 	return fx.Annotate(
 		f,
 		fx.As(new(ApiHanlder)),
 		fx.ResultTags(`group:"api-routes"`),
+	)
+}
+
+func AsRootHandler(f any) any {
+	return fx.Annotate(
+		f,
+		fx.As(new(RootHanlder)),
+		fx.ResultTags(`group:"root-routes"`),
 	)
 }
 
