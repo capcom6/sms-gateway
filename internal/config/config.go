@@ -16,15 +16,15 @@ type Config struct {
 }
 
 type HTTP struct {
-	Listen string `yaml:"listen"`
+	Listen string `yaml:"listen" env:"HTTP_LISTEN"`
 }
 
 type Database struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	Database string `yaml:"database"`
+	Host     string `yaml:"host" env:"DATABASE_HOST"`
+	Port     int    `yaml:"port" env:"DATABASE_PORT"`
+	User     string `yaml:"user" env:"DATABASE_USER"`
+	Password string `yaml:"password" env:"DATABASE_PASSWORD"`
+	Database string `yaml:"database" env:"DATABASE_DATABASE"`
 }
 
 type FCMConfig struct {

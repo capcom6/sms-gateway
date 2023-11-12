@@ -19,6 +19,18 @@ COPY . .
 # RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o app .
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app ./cmd/${APP}/main.go
 
+# Build MkDocs
+FROM squidfunk/mkdocs-material AS mkdocs
+
+WORKDIR /docs
+
+RUN pip install mkdocs-render-swagger-plugin
+
+COPY web/mkdocs .
+
+RUN mkdocs build
+
+
 # Moving the binary to the 'final Image' to make it smaller
 FROM alpine:3 as prod
 
@@ -31,7 +43,7 @@ COPY --from=build /go/bin/goose /app/goose
 
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
 
-# `boilerplate` should be replaced here as well
+COPY --from=mkdocs /docs/site /app/static
 COPY db/migrations /app/migrations
 COPY --from=build /go/src/app /app
 

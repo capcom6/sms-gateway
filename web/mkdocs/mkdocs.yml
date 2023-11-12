@@ -1,0 +1,22 @@
+site_name: Android SMS Gateway
+site_url: https://sms.capcom.me
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Getting Started: getting-started.md
+  - API: api.md
+  - Pricing: pricing.md
+  - Contributing: contributing.md
+  - License: license.md
+plugins:
+  - search
+  - render_swagger
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      cache_safe: true

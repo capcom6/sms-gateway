@@ -1,3 +1,4 @@
+@localUrl=http://localhost:8080
 @baseUrl=http://localhost:3000
 
 ###
@@ -12,20 +13,33 @@ Content-Type: application/json
 ###
 POST {{baseUrl}}/api/3rdparty/v1/message HTTP/1.1
 Content-Type: application/json
-Authorization: Basic IUGFXE:v4ejpbeydvjo1h
+Authorization: Basic RMTJTU:yv3sqcidpqeoxc
 
 {
     "message": "Test",
-    "ttl": {{$randomInt 0 86400}},
+    "ttl": 600,
     "phoneNumbers": [
         "79990001234"
     ]
 }
 
 ###
-GET {{baseUrl}}/api/3rdparty/v1/message/pRl1wf_yez5TikJb_xemU HTTP/1.1
-Authorization: Basic IUGFXE:v4ejpbeydvjo1h
+GET {{baseUrl}}/api/3rdparty/v1/message/HE9_eR12bfUauavjvgS1O HTTP/1.1
+Authorization: Basic RMTJTU:yv3sqcidpqeoxc
 
 ###
 GET {{baseUrl}}/api/mobile/v1/message HTTP/1.1
 Authorization: Bearer KuvE4LBXzvy8QO2ZXDDMP
+
+###
+POST {{localUrl}}/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic sms:6jH2vwEA
+
+{
+    "message": "Test",
+    "ttl": 600,
+    "phoneNumbers": [
+        "+79990001234"
+    ]
+}

@@ -8,7 +8,7 @@ type rootHandler struct {
 }
 
 func (h *rootHandler) Register(app *fiber.App) {
-	app.Static("/", "web/static")
+	app.Static("/", "static")
 }
 
 func newRootHandler() *rootHandler {

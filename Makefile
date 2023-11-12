@@ -35,6 +35,12 @@ build:
 install:
 	go install ./cmd/$(project_name)
 
+docker-build:
+	docker build -f build/package/Dockerfile -t $(image_name) --build-arg APP=$(project_name) .
+
+docker:
+	docker-compose -f deployments/docker-compose/docker-compose.yml up --build
+
 docker-dev:
 	docker-compose -f deployments/docker-compose/docker-compose.dev.yml up --build
 
@@ -45,4 +51,7 @@ api-docs:
 view-docs:
 	php -S 127.0.0.1:8080 -t ./api
 
-.PHONY: init init-dev air run test install api-docs docker-dev view-docs
+clean:
+	docker-compose -f deployments/docker-compose/docker-compose.yml down --volumes
+
+.PHONY: init init-dev air run test install docker docker-build api-docs docker-dev view-docs clean

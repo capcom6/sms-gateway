@@ -1,0 +1,45 @@
+version: '3'
+services:
+  backend:
+    image: capcom6/sms-gateway
+    build:
+      context: ../..
+      dockerfile: ./build/package/Dockerfile
+      args:
+        - APP=sms-gateway
+    environment:
+      - DEBUG=1
+      - CONFIG_PATH=config.yml
+      - GOOSE_DBSTRING=sms:sms@tcp(db:3306)/sms
+      - HTTP_LISTEN=0.0.0.0:3000
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      - DATABASE_USER=sms
+      - DATABASE_PASSWORD=sms
+      - DATABASE_DATABASE=sms
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../configs/config.yml:/app/config.yml:ro
+    restart: 'no'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=sms
+      - MYSQL_USER=sms
+      - MYSQL_PASSWORD=sms
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    restart: 'no'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-proot", "-h", "127.0.0.1"]
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mariadb-data:
