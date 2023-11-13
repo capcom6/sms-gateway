@@ -91,4 +91,8 @@ resource "docker_service" "app" {
     label = "traefik.http.services.${var.app-name}.loadbalancer.server.port"
     value = 3000
   }
+
+  update_config {
+    failure_action = "rollback"
+  }
 }

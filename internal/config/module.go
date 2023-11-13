@@ -32,6 +32,7 @@ var Module = fx.Module(
 			User:     cfg.Database.User,
 			Password: cfg.Database.Password,
 			Database: cfg.Database.Database,
+			Timezone: cfg.Database.Timezone,
 		}
 	}),
 	fx.Provide(func(cfg Config) services.PushServiceConfig {

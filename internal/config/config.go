@@ -16,15 +16,16 @@ type Config struct {
 }
 
 type HTTP struct {
-	Listen string `yaml:"listen" env:"HTTP_LISTEN"`
+	Listen string `yaml:"listen" envconfig:"HTTP__LISTEN"`
 }
 
 type Database struct {
-	Host     string `yaml:"host" env:"DATABASE_HOST"`
-	Port     int    `yaml:"port" env:"DATABASE_PORT"`
-	User     string `yaml:"user" env:"DATABASE_USER"`
-	Password string `yaml:"password" env:"DATABASE_PASSWORD"`
-	Database string `yaml:"database" env:"DATABASE_DATABASE"`
+	Host     string `yaml:"host" envconfig:"DATABASE__HOST"`
+	Port     int    `yaml:"port" envconfig:"DATABASE__PORT"`
+	User     string `yaml:"user" envconfig:"DATABASE__USER"`
+	Password string `yaml:"password" envconfig:"DATABASE__PASSWORD"`
+	Database string `yaml:"database" envconfig:"DATABASE__DATABASE"`
+	Timezone string `yaml:"timezone" envconfig:"DATABASE__TIMEZONE"`
 }
 
 type FCMConfig struct {
@@ -41,6 +42,7 @@ var defaultConfig = Config{
 		User:     "sms",
 		Password: "sms",
 		Database: "sms",
+		Timezone: "UTC",
 	},
 	FCM: FCMConfig{
 		CredentialsJSON: "",
