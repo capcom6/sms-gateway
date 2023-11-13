@@ -8,8 +8,9 @@ import (
 type Params struct {
 	fx.In
 
-	Config      Config
-	Logger      *zap.Logger
-	ApiHandlers []ApiHanlder `group:"api-routes"`
-	LC          fx.Lifecycle
+	Config       Config
+	Logger       *zap.Logger
+	ApiHandlers  []ApiHanlder  `group:"api-routes"`
+	RootHandlers []RootHanlder `group:"root-routes"`
+	LC           fx.Lifecycle
 }
