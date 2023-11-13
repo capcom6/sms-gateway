@@ -11,12 +11,12 @@ services:
       - DEBUG=1
       - CONFIG_PATH=config.yml
       - GOOSE_DBSTRING=sms:sms@tcp(db:3306)/sms
-      - HTTP_LISTEN=0.0.0.0:3000
-      - DATABASE_HOST=db
-      - DATABASE_PORT=3306
-      - DATABASE_USER=sms
-      - DATABASE_PASSWORD=sms
-      - DATABASE_DATABASE=sms
+      - HTTP__LISTEN=0.0.0.0:3000
+      - DATABASE__HOST=db
+      - DATABASE__PORT=3306
+      - DATABASE__USER=sms
+      - DATABASE__PASSWORD=sms
+      - DATABASE__DATABASE=sms
     ports:
       - "3000:3000"
     volumes:
@@ -37,7 +37,15 @@ services:
       - mariadb-data:/var/lib/mysql
     restart: 'no'
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-proot", "-h", "127.0.0.1"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-proot",
+          "-h",
+          "127.0.0.1"
+        ]
       timeout: 5s
       retries: 10
 
