@@ -1,0 +1,21 @@
+@localUrl={{$dotenv LOCAL__URL}}
+@localCredentials={{$dotenv LOCAL__CREDENTIALS}}
+@phone={{$dotenv PHONE}}
+
+###
+POST {{localUrl}}/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic {{localCredentials}}
+
+{
+    "message": "Test",
+    "ttl": 600,
+    "phoneNumbers": [
+        "{{phone}}"
+    ],
+    "simNumber": 1
+}
+
+###
+GET {{localUrl}}/message/hr8HV_KE0kehtBCApEaIn HTTP/1.1
+Authorization: Basic {{localCredentials}}
