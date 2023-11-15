@@ -4,6 +4,10 @@ The Android SMS Gateway can work in two modes: with a local server started on th
 
 ## Local server
 
+<div align="center">
+    <img src="/assets/local-server.png" alt="Local server example settings">
+</div>
+
 This mode is recommended for sending messages from local network.
 
 1. Start the app on the device.
@@ -17,6 +21,10 @@ This mode is recommended for sending messages from local network.
     ```
 
 ## Cloud server
+
+<div align="center">
+    <img src="/assets/cloud-server.png" alt="Cloud server example settings">
+</div>
 
 If you need to send messages with dynamic or shared device IP, you can use the cloud server. The best part? No registration, email, or phone number is required to start using it.
 
