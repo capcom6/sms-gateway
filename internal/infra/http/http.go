@@ -28,7 +28,11 @@ func New(params Params) (*fiber.App, error) {
 
 	app.Use(recover.New())
 	app.Use(fiberzap.New(fiberzap.Config{
+		SkipBody: func(c *fiber.Ctx) bool {
+			return c.Response().StatusCode() < 400
+		},
 		Logger: params.Logger,
+		Fields: []string{"latency", "status", "method", "url", "ip", "ua", "body", "error"},
 	}))
 
 	for _, handler := range params.RootHandlers {
