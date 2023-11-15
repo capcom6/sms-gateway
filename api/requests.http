@@ -1,5 +1,9 @@
-@localUrl=http://localhost:8080
+@localUrl={{$dotenv LOCAL__URL}}
+@localCredentials={{$dotenv LOCAL__CREDENTIALS}}
 @baseUrl=http://localhost:3000
+@cloudUrl=https://sms.capcom.me
+@credentials={{$dotenv CREDENTIALS}}
+@phone={{$dotenv PHONE}}
 
 ###
 POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1
@@ -11,21 +15,21 @@ Content-Type: application/json
 }
 
 ###
-POST {{baseUrl}}/api/3rdparty/v1/message HTTP/1.1
+POST {{cloudUrl}}/api/3rdparty/v1/message HTTP/1.1
 Content-Type: application/json
-Authorization: Basic RMTJTU:yv3sqcidpqeoxc
+Authorization: Basic {{credentials}}
 
 {
-    "message": "Test",
+    "message": "{{$localDatetime iso8601}}",
     "ttl": 600,
     "phoneNumbers": [
-        "79990001234"
+        "{{phone}}"
     ]
 }
 
 ###
-GET {{baseUrl}}/api/3rdparty/v1/message/HE9_eR12bfUauavjvgS1O HTTP/1.1
-Authorization: Basic RMTJTU:yv3sqcidpqeoxc
+GET {{cloudUrl}}/api/3rdparty/v1/message/Wms6dVuYPl-9g2KLtr_vZ HTTP/1.1
+Authorization: Basic {{credentials}}
 
 ###
 GET {{baseUrl}}/api/mobile/v1/message HTTP/1.1
@@ -34,13 +38,13 @@ Authorization: Bearer KuvE4LBXzvy8QO2ZXDDMP
 ###
 POST {{localUrl}}/message HTTP/1.1
 Content-Type: application/json
-Authorization: Basic sms:6jH2vwEA
+Authorization: Basic {{localCredentials}}
 
 {
     "message": "Test",
     "ttl": 600,
     "phoneNumbers": [
-        "+79990001234"
+        "{{phone}}"
     ]
 }
 
