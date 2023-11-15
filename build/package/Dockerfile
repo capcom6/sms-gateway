@@ -24,7 +24,7 @@ FROM squidfunk/mkdocs-material AS mkdocs
 
 WORKDIR /docs
 
-RUN pip install mkdocs-render-swagger-plugin
+RUN pip install --no-cache-dir mkdocs-render-swagger-plugin
 
 COPY web/mkdocs .
 
