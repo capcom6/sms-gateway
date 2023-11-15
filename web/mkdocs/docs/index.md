@@ -1,6 +1,8 @@
 # Android SMS Gateway
 
-![Project logo](logo.png)
+<div align="center">
+    <img src="/assets/logo.png" alt="Logo">
+</div>
 
 Android SMS Gateway turns your Android smartphone into an SMS gateway. It's a lightweight application allowing you to send SMS messages programmatically via API. This makes it ideal for integrating SMS functionality into your own applications or services.
 
