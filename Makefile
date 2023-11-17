@@ -21,7 +21,7 @@ db-upgrade:
 	goose up
 
 db-upgrade-raw:
-	go run ./cmd/$(project_name)/main.go db-upgrade
+	go run ./cmd/$(project_name)/main.go db:migrate
 	
 run:
 	go run cmd/$(project_name)/main.go

@@ -1,6 +1,7 @@
 @baseUrl=http://localhost:3000
 @cloudUrl=https://sms.capcom.me
 @credentials={{$dotenv CLOUD__CREDENTIALS}}
+@mobileToken={{$dotenv MOBILE__TOKEN}}
 @phone={{$dotenv PHONE}}
 
 ###
@@ -13,7 +14,7 @@ Content-Type: application/json
 }
 
 ###
-POST {{cloudUrl}}/api/3rdparty/v1/message HTTP/1.1
+POST {{baseUrl}}/api/3rdparty/v1/message HTTP/1.1
 Content-Type: application/json
 Authorization: Basic {{credentials}}
 
@@ -32,11 +33,11 @@ Authorization: Basic {{credentials}}
 
 ###
 GET {{baseUrl}}/api/mobile/v1/message HTTP/1.1
-Authorization: Bearer KuvE4LBXzvy8QO2ZXDDMP
+Authorization: Bearer {{mobileToken}}
 
 ###
 PATCH {{baseUrl}}/api/mobile/v1/message HTTP/1.1
-Authorization: Bearer KuvE4LBXzvy8QO2ZXDDMP
+Authorization: Bearer {{mobileToken}}
 Content-Type: application/json
 
 [

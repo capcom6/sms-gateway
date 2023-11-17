@@ -6,6 +6,13 @@ You can install app to your device from prebuilt APK or by building from sources
 
 You need an Android device with Android 5.0 (Lollipop) or above for using the application.
 
+### Permissions
+
+To use the application, you need to grant the following permissions:
+
+- **SEND_SMS**: This permission is required to send SMS messages.
+- **READ_PHONE_STATE**: This permission is required to select the SIM card. Optional, if you don't want to select the SIM card.
+
 ## Installation from APK
 
 1. Navigate to the [Releases](https://github.com/capcom6/android-sms-gateway/releases) page.

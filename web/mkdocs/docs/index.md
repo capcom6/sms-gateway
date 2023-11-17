@@ -8,11 +8,13 @@ Android SMS Gateway turns your Android smartphone into an SMS gateway. It's a li
 
 ## Features
 
+- **No registration required:** No registration or email is required to create an account.
 - **Send SMS programmatically:** Use our API to send messages directly from your own applications or services.
 - **Supports Android 5.0 and above:** The application is compatible with Android 5.0 and later versions.
 - **Message status tracking:** Monitor the status of your sent messages in real-time.
 - **Starts at boot:** The application starts running as soon as your device boots up.
 - **Prevents sleep mode:** Your device won't go to sleep while the application is running, ensuring continuous service.
+- **Supports multiple SIM cards:** The application supports multiple SIM cards.
 
 ## Ideal For
 

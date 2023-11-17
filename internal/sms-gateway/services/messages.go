@@ -62,6 +62,7 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 			Message:      v.Message,
 			TTL:          ttl,
 			PhoneNumbers: s.recipientsToDomain(v.Recipients),
+			SimNumber:    v.SimNumber,
 		}
 	}
 
@@ -128,6 +129,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		ExtID:      message.ID,
 		Message:    message.Message,
 		ValidUntil: validUntil,
+		SimNumber:  message.SimNumber,
 		Recipients: s.recipientsToModel(message.PhoneNumbers),
 	}
 	if msg.ExtID == "" {
