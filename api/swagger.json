@@ -358,6 +358,12 @@
                         "79990001234"
                     ]
                 },
+                "simNumber": {
+                    "description": "Номер сим-карты",
+                    "type": "integer",
+                    "maximum": 3,
+                    "example": 1
+                },
                 "ttl": {
                     "description": "Время жизни сообщения в секундах",
                     "type": "integer",

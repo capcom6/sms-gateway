@@ -33,6 +33,11 @@ definitions:
         maxItems: 100
         minItems: 1
         type: array
+      simNumber:
+        description: Номер сим-карты
+        example: 1
+        maximum: 3
+        type: integer
       ttl:
         description: Время жизни сообщения в секундах
         example: 86400
