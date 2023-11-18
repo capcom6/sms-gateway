@@ -32,6 +32,7 @@ nav:
   - FAQ: faq.md
   - Contributing: contributing.md
   - License: license.md
+repo_url: https://github.com/capcom6/android-sms-gateway
 plugins:
   - search
   - render_swagger
