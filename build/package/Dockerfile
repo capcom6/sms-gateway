@@ -4,8 +4,6 @@ FROM golang:1.20-alpine AS build
 ARG APP
 WORKDIR /go/src
 
-RUN go install github.com/pressly/goose/v3/cmd/goose@latest
-
 # Copy go.mod and go.sum
 COPY go.* ./
 
@@ -36,17 +34,11 @@ FROM alpine:3 as prod
 
 WORKDIR /app
 
-ENV GOOSE_DRIVER=mysql
-ENV GOOSE_MIGRATION_DIR=/app/migrations
-
 RUN apk add --no-cache tzdata
-
-COPY --from=build /go/bin/goose /app/goose
 
 COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
 
 COPY --from=mkdocs /docs/site /app/static
-COPY db/migrations /app/migrations
 COPY --from=build /go/src/app /app
 
 # Exposes port 3000 because our program listens on that port

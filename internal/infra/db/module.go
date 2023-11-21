@@ -13,6 +13,8 @@ var Module = fx.Module(
 	}),
 	fx.Provide(
 		New,
+		NewSQL,
 		cli.AsCommand(NewCommandMigrate),
+		cli.AsCommand(NewGooseMigrate),
 	),
 )

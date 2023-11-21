@@ -32,7 +32,7 @@ func NewCommandMigrate(params CommandMigrateParams) *CommandMigrate {
 }
 
 func (c *CommandMigrate) Cmd() string {
-	return "db:migrate"
+	return "db:auto-migrate"
 }
 
 func (c *CommandMigrate) Run(args ...string) error {

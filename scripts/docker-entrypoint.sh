@@ -1,4 +1,4 @@
 #!/bin/sh
 
-/app/goose up \
+/app/app db:migrate up \
     && /app/app $@
