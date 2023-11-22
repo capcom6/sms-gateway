@@ -1,5 +1,6 @@
 site_name: Android SMS Gateway
 site_url: https://sms.capcom.me
+repo_url: https://github.com/capcom6/android-sms-gateway
 theme:
   name: material
   palette:
@@ -32,7 +33,10 @@ nav:
   - FAQ: faq.md
   - Contributing: contributing.md
   - License: license.md
-repo_url: https://github.com/capcom6/android-sms-gateway
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
 plugins:
   - search
   - render_swagger
