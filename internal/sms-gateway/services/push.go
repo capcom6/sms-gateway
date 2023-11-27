@@ -52,7 +52,10 @@ func (s *PushService) Send(ctx context.Context, token string, data map[string]st
 	}
 
 	_, err := s.client.Send(ctx, &messaging.Message{
-		Data:  data,
+		Data: data,
+		Android: &messaging.AndroidConfig{
+			Priority: "high",
+		},
 		Token: token,
 	})
 
