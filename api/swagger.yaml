@@ -135,6 +135,10 @@ definitions:
     - MessageStateFailed
   smsgateway.RecipientState:
     properties:
+      error:
+        description: Ошибка
+        example: timeout
+        type: string
       phoneNumber:
         description: Номер телефона
         example: "79990001234"

@@ -493,6 +493,11 @@
                 "state"
             ],
             "properties": {
+                "error": {
+                    "description": "Ошибка",
+                    "type": "string",
+                    "example": "timeout"
+                },
                 "phoneNumber": {
                     "description": "Номер телефона",
                     "type": "string",
