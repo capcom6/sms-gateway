@@ -1,5 +1,4 @@
-@baseUrl=http://localhost:3000
-@cloudUrl=https://sms.capcom.me
+@baseUrl={{$dotenv CLOUD__URL}}
 @credentials={{$dotenv CLOUD__CREDENTIALS}}
 @mobileToken={{$dotenv MOBILE__TOKEN}}
 @phone={{$dotenv PHONE}}
@@ -24,11 +23,11 @@ Authorization: Basic {{credentials}}
     "phoneNumbers": [
         "{{phone}}"
     ],
-    "simNumber": 2
+    "simNumber": 3
 }
 
 ###
-GET {{cloudUrl}}/api/3rdparty/v1/message/Cao6mzuIRrjBB7TtlWnZ- HTTP/1.1
+GET {{baseUrl}}/api/3rdparty/v1/message/IyJP8Iexf55XFhYFHMjcs HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###
