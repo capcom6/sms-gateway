@@ -57,7 +57,7 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 		}
 
 		for _, v := range message.Recipients {
-			if err := tx.Model(&v).Where("message_id = ? AND phone_number = ?", message.ID, v.PhoneNumber).Update("state", v.State).Error; err != nil {
+			if err := tx.Model(&v).Where("message_id = ?", message.ID).Select("State", "Error").Updates(&v).Error; err != nil {
 				return err
 			}
 		}

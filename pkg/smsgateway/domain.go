@@ -30,4 +30,5 @@ type MessageState struct {
 type RecipientState struct {
 	PhoneNumber string       `json:"phoneNumber" validate:"required,min=10" example:"79990001234"` // Номер телефона
 	State       ProcessState `json:"state" validate:"required" example:"Pending"`                  // Состояние
+	Error       *string      `json:"error,omitempty" example:"timeout"`                            // Ошибка
 }

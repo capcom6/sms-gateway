@@ -60,4 +60,5 @@ type MessageRecipient struct {
 	MessageID   uint64       `gorm:"primaryKey;type:BIGINT UNSIGNED"`
 	PhoneNumber string       `gorm:"primaryKey;type:varchar(16)"`
 	State       MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending"`
+	Error       *string      `gorm:"type:varchar(256)"`
 }

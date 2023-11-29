@@ -16,6 +16,10 @@ import (
 	"github.com/nyaruka/phonenumbers"
 )
 
+const (
+	ErrorTTLExpired = "TTL expired"
+)
+
 var ErrValidation error = errors.New("validation error")
 
 type MessagesService struct {
@@ -166,6 +170,7 @@ func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Me
 			v.State = models.MessageStateFailed
 			for i := range v.Recipients {
 				v.Recipients[i].State = models.MessageStateFailed
+				v.Recipients[i].Error = types.AsPointer(ErrorTTLExpired)
 			}
 			s.Messages.UpdateState(&v)
 		}
@@ -211,6 +216,7 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 		output[i] = models.MessageRecipient{
 			PhoneNumber: phoneNumber,
 			State:       models.MessageState(v.State),
+			Error:       v.Error,
 		}
 	}
 
@@ -229,6 +235,7 @@ func modelToRecipientState(input models.MessageRecipient) smsgateway.RecipientSt
 	return smsgateway.RecipientState{
 		PhoneNumber: input.PhoneNumber,
 		State:       smsgateway.ProcessState(input.State),
+		Error:       input.Error,
 	}
 }
 
