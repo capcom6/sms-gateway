@@ -9,5 +9,6 @@ var Module = fx.Module(
 	"models",
 	fx.Provide(
 		db.AsMigration(NewMigration),
+		GetGooseStorage,
 	),
 )
