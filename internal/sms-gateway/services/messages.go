@@ -62,11 +62,12 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 		}
 
 		result[i] = smsgateway.Message{
-			ID:           v.ExtID,
-			Message:      v.Message,
-			TTL:          ttl,
-			PhoneNumbers: s.recipientsToDomain(v.Recipients),
-			SimNumber:    v.SimNumber,
+			ID:                 v.ExtID,
+			Message:            v.Message,
+			TTL:                ttl,
+			PhoneNumbers:       s.recipientsToDomain(v.Recipients),
+			SimNumber:          v.SimNumber,
+			WithDeliveryReport: types.AsPointer[bool](v.WithDeliveryReport),
 		}
 	}
 
@@ -129,12 +130,13 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	}
 
 	msg := models.Message{
-		DeviceID:   device.ID,
-		ExtID:      message.ID,
-		Message:    message.Message,
-		ValidUntil: validUntil,
-		SimNumber:  message.SimNumber,
-		Recipients: s.recipientsToModel(message.PhoneNumbers),
+		DeviceID:           device.ID,
+		ExtID:              message.ID,
+		Message:            message.Message,
+		ValidUntil:         validUntil,
+		SimNumber:          message.SimNumber,
+		WithDeliveryReport: types.OrDefault[bool](message.WithDeliveryReport, true),
+		Recipients:         s.recipientsToModel(message.PhoneNumbers),
 	}
 	if msg.ExtID == "" {
 		msg.ExtID = s.idgen()
