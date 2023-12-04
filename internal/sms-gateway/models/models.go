@@ -49,7 +49,7 @@ type Message struct {
 	State              MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending;index:idx_messages_device_state"`
 	ValidUntil         *time.Time   `gorm:"type:datetime"`
 	SimNumber          *uint8       `gorm:"type:tinyint(1) unsigned"`
-	WithDeliveryReport bool         `gorm:"not null;type:tinyint(1) unsigned;default:1"`
+	WithDeliveryReport bool         `gorm:"not null;type:tinyint(1) unsigned"`
 
 	Device     Device             `gorm:"foreignKey:DeviceID;constraint:OnDelete:CASCADE"`
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`
