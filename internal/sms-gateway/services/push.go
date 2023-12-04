@@ -13,8 +13,7 @@ type PushService struct {
 	CredentialsJSON string
 
 	client *messaging.Client
-
-	once sync.Once
+	mux    sync.Mutex
 }
 
 type PushServiceConfig struct {
@@ -29,20 +28,25 @@ func NewPushService(config PushServiceConfig) *PushService {
 
 // init
 func (s *PushService) init(ctx context.Context) (err error) {
-	s.once.Do(func() {
-		opt := option.WithCredentialsJSON([]byte(s.CredentialsJSON))
+	s.mux.Lock()
+	defer s.mux.Unlock()
 
-		var app *firebase.App
-		app, err = firebase.NewApp(ctx, nil, opt)
+	if s.client != nil {
+		return
+	}
 
-		if err != nil {
-			return
-		}
+	opt := option.WithCredentialsJSON([]byte(s.CredentialsJSON))
 
-		s.client, err = app.Messaging(ctx)
-	})
+	var app *firebase.App
+	app, err = firebase.NewApp(ctx, nil, opt)
 
-	return err
+	if err != nil {
+		return
+	}
+
+	s.client, err = app.Messaging(ctx)
+
+	return
 }
 
 // send
