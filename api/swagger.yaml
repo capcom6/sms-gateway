@@ -43,6 +43,10 @@ definitions:
         example: 86400
         minimum: 5
         type: integer
+      withDeliveryReport:
+        description: Запрашивать отчет о доставке
+        example: true
+        type: boolean
     required:
     - message
     - phoneNumbers

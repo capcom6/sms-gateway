@@ -23,7 +23,8 @@ Authorization: Basic {{credentials}}
     "phoneNumbers": [
         "{{phone}}"
     ],
-    "simNumber": 3
+    "simNumber": 1,
+    "withDeliveryReport": true
 }
 
 ###
