@@ -2,9 +2,7 @@ package logger
 
 import (
 	"context"
-	"errors"
 	"os"
-	"syscall"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -25,9 +23,7 @@ func New(lc fx.Lifecycle) (*zap.Logger, error) {
 
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
-			if err := l.Sync(); !errors.Is(err, syscall.ENOTTY) {
-				return err
-			}
+			_ = l.Sync()
 			return nil
 		},
 	})

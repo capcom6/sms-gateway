@@ -16,6 +16,10 @@ import (
 	"github.com/nyaruka/phonenumbers"
 )
 
+const (
+	ErrorTTLExpired = "TTL expired"
+)
+
 var ErrValidation error = errors.New("validation error")
 
 type MessagesService struct {
@@ -58,11 +62,12 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 		}
 
 		result[i] = smsgateway.Message{
-			ID:           v.ExtID,
-			Message:      v.Message,
-			TTL:          ttl,
-			PhoneNumbers: s.recipientsToDomain(v.Recipients),
-			SimNumber:    v.SimNumber,
+			ID:                 v.ExtID,
+			Message:            v.Message,
+			TTL:                ttl,
+			PhoneNumbers:       s.recipientsToDomain(v.Recipients),
+			SimNumber:          v.SimNumber,
+			WithDeliveryReport: types.AsPointer[bool](v.WithDeliveryReport),
 		}
 	}
 
@@ -125,12 +130,13 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	}
 
 	msg := models.Message{
-		DeviceID:   device.ID,
-		ExtID:      message.ID,
-		Message:    message.Message,
-		ValidUntil: validUntil,
-		SimNumber:  message.SimNumber,
-		Recipients: s.recipientsToModel(message.PhoneNumbers),
+		DeviceID:           device.ID,
+		ExtID:              message.ID,
+		Message:            message.Message,
+		ValidUntil:         validUntil,
+		SimNumber:          message.SimNumber,
+		WithDeliveryReport: types.OrDefault[bool](message.WithDeliveryReport, true),
+		Recipients:         s.recipientsToModel(message.PhoneNumbers),
 	}
 	if msg.ExtID == "" {
 		msg.ExtID = s.idgen()
@@ -166,6 +172,7 @@ func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Me
 			v.State = models.MessageStateFailed
 			for i := range v.Recipients {
 				v.Recipients[i].State = models.MessageStateFailed
+				v.Recipients[i].Error = types.AsPointer(ErrorTTLExpired)
 			}
 			s.Messages.UpdateState(&v)
 		}
@@ -211,6 +218,7 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 		output[i] = models.MessageRecipient{
 			PhoneNumber: phoneNumber,
 			State:       models.MessageState(v.State),
+			Error:       v.Error,
 		}
 	}
 
@@ -229,6 +237,7 @@ func modelToRecipientState(input models.MessageRecipient) smsgateway.RecipientSt
 	return smsgateway.RecipientState{
 		PhoneNumber: input.PhoneNumber,
 		State:       smsgateway.ProcessState(input.State),
+		Error:       input.Error,
 	}
 }
 

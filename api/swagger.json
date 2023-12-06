@@ -369,6 +369,11 @@
                     "type": "integer",
                     "minimum": 5,
                     "example": 86400
+                },
+                "withDeliveryReport": {
+                    "description": "Запрашивать отчет о доставке",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
@@ -493,6 +498,11 @@
                 "state"
             ],
             "properties": {
+                "error": {
+                    "description": "Ошибка",
+                    "type": "string",
+                    "example": "timeout"
+                },
                 "phoneNumber": {
                     "description": "Номер телефона",
                     "type": "string",

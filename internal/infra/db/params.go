@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -10,6 +12,6 @@ type Params struct {
 
 	Logger *zap.Logger
 	Config Config
-	// Migrations []Migrator `group:"migrations"`
-	LC fx.Lifecycle
+	SQL    *sql.DB
+	LC     fx.Lifecycle
 }

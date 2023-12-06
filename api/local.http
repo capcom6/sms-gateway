@@ -8,12 +8,13 @@ Content-Type: application/json
 Authorization: Basic {{localCredentials}}
 
 {
-    "message": "Test",
+    "message": "{{$localDatetime iso8601}}",
     "ttl": 600,
     "phoneNumbers": [
         "{{phone}}"
     ],
-    "simNumber": 1
+    "simNumber": 1,
+    "withDeliveryReport": true
 }
 
 ###

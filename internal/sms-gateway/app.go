@@ -19,9 +19,9 @@ import (
 
 var Module = fx.Module(
 	"server",
+	logger.Module,
 	cli.Module,
 	appconfig.Module,
-	logger.Module,
 	http.Module,
 	validator.Module,
 	handlers.Module,

@@ -27,6 +27,7 @@ var Module = fx.Module(
 	}),
 	fx.Provide(func(cfg Config) db.Config {
 		return db.Config{
+			Dialect:  cfg.Database.Dialect,
 			Host:     cfg.Database.Host,
 			Port:     cfg.Database.Port,
 			User:     cfg.Database.User,

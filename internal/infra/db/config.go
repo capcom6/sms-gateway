@@ -1,6 +1,7 @@
 package db
 
 var ConfigDefault = Config{
+	Dialect:  "mysql",
 	Host:     "localhost",
 	Port:     3306,
 	User:     "root",
@@ -9,6 +10,7 @@ var ConfigDefault = Config{
 }
 
 type Config struct {
+	Dialect  string
 	Host     string
 	Port     int
 	User     string
@@ -20,6 +22,9 @@ type Config struct {
 // Helper function to set default values
 func configDefault(config Config) Config {
 	// Override default config
+	if config.Dialect == "" {
+		config.Dialect = ConfigDefault.Dialect
+	}
 	if config.Host == "" {
 		config.Host = ConfigDefault.Host
 	}

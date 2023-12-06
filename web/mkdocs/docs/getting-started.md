@@ -1,5 +1,7 @@
 # Getting Started
 
+First of all, you need to install the Android SMS Gateway app on your device as described in the [Installation](installation.md).
+
 The Android SMS Gateway can work in two modes: with a local server started on the device or with a cloud server at [sms.capcom.me](https://sms.capcom.me). The basic API is the same for both modes and is documented on the [Android SMS Gateway API Documentation](https://capcom6.github.io/android-sms-gateway/).
 
 ## Local server

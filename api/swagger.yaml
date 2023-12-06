@@ -43,6 +43,10 @@ definitions:
         example: 86400
         minimum: 5
         type: integer
+      withDeliveryReport:
+        description: Запрашивать отчет о доставке
+        example: true
+        type: boolean
     required:
     - message
     - phoneNumbers
@@ -135,6 +139,10 @@ definitions:
     - MessageStateFailed
   smsgateway.RecipientState:
     properties:
+      error:
+        description: Ошибка
+        example: timeout
+        type: string
       phoneNumber:
         description: Номер телефона
         example: "79990001234"
