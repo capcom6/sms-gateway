@@ -1,16 +1,11 @@
 package cli
 
-import "go.uber.org/fx"
+type Executor any
+type Args []string
 
-type Command interface {
-	Cmd() string
-	Run(args ...string) error
-}
+var commands = map[string]Executor{}
 
-func AsCommand(f any) any {
-	return fx.Annotate(
-		f,
-		fx.As(new(Command)),
-		fx.ResultTags(`group:"commands"`),
-	)
+// Регистрирует консольную команду cmd с испольнителем executor
+func Register(cmd string, executor Executor) {
+	commands[cmd] = executor
 }

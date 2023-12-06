@@ -13,6 +13,9 @@ var Module = fx.Module(
 	}),
 	fx.Provide(
 		New,
-		cli.AsCommand(NewRunServer),
 	),
 )
+
+func init() {
+	cli.Register("http:run", Run)
+}
