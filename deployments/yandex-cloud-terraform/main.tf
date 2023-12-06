@@ -10,7 +10,7 @@ resource "yandex_iam_service_account" "sa" {
   name      = "${var.app-name}-sa"
 }
 
-resource "yandex_resourcemanager_folder_iam_member" "catgpt-roles" {
+resource "yandex_resourcemanager_folder_iam_member" "sa-roles" {
   for_each  = local.sa-roles
   folder_id = var.folder-id
   member    = "serviceAccount:${yandex_iam_service_account.sa.id}"
@@ -48,12 +48,6 @@ resource "yandex_serverless_container" "container" {
     version_id           = yandex_lockbox_secret_version.secret-version.id
     key                  = "database-database"
     environment_variable = "DATABASE__DATABASE"
-  }
-  secrets {
-    id                   = yandex_lockbox_secret.secret.id
-    version_id           = yandex_lockbox_secret_version.secret-version.id
-    key                  = "goose-dsn"
-    environment_variable = "GOOSE_DBSTRING"
   }
 
   image {

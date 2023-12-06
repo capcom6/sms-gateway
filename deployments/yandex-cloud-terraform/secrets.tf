@@ -10,10 +10,6 @@ resource "yandex_lockbox_secret" "secret" {
 resource "yandex_lockbox_secret_version" "secret-version" {
   secret_id = yandex_lockbox_secret.secret.id
   entries {
-    key        = "http-listen"
-    text_value = "0.0.0.0:3000"
-  }
-  entries {
     key        = "database-host"
     text_value = var.env["database-host"]
   }
@@ -28,13 +24,5 @@ resource "yandex_lockbox_secret_version" "secret-version" {
   entries {
     key        = "database-database"
     text_value = var.env["database-database"]
-  }
-  entries {
-    key        = "database-timezone"
-    text_value = var.env["database-timezone"]
-  }
-  entries {
-    key        = "goose-dsn"
-    text_value = "${var.env["database-user"]}:${var.env["database-password"]}@tcp(${var.env["database-host"]}:3306)/${var.env["database-database"]}"
   }
 }
