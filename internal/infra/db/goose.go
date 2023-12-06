@@ -9,15 +9,18 @@ import (
 	"go.uber.org/zap"
 )
 
-type GooseStorage struct {
-	FS fs.FS
+type GooseStorage fs.FS
+
+var gooseStorages = []GooseStorage{}
+
+func RegisterGoose(storage GooseStorage) {
+	gooseStorages = append(gooseStorages, storage)
 }
 
 type GooseMigrateParams struct {
 	fx.In
 
-	Config  Config
-	Storage GooseStorage
+	Config Config
 
 	Logger *zap.Logger
 	DB     *sql.DB
@@ -25,20 +28,18 @@ type GooseMigrateParams struct {
 }
 
 type GooseMigrate struct {
-	Config  Config
-	Storage GooseStorage
-	DB      *sql.DB
-	Logger  *zap.Logger
-	Shut    fx.Shutdowner
+	Config Config
+	DB     *sql.DB
+	Logger *zap.Logger
+	Shut   fx.Shutdowner
 }
 
 func NewGooseMigrate(params GooseMigrateParams) *GooseMigrate {
 	return &GooseMigrate{
-		Config:  params.Config,
-		Logger:  params.Logger,
-		DB:      params.DB,
-		Storage: params.Storage,
-		Shut:    params.Shut,
+		Config: params.Config,
+		Logger: params.Logger,
+		DB:     params.DB,
+		Shut:   params.Shut,
 	}
 }
 
@@ -47,8 +48,6 @@ func (c *GooseMigrate) Cmd() string {
 }
 
 func (c *GooseMigrate) Run(args ...string) error {
-	goose.SetBaseFS(c.Storage.FS)
-
 	cmd := "up"
 	if len(args) > 0 {
 		cmd = args[0]
@@ -60,14 +59,18 @@ func (c *GooseMigrate) Run(args ...string) error {
 
 	migrationsPath := "migrations/" + c.Config.Dialect
 
-	switch cmd {
-	case "up":
-		if err := goose.Up(c.DB, migrationsPath); err != nil {
-			return err
-		}
-	case "down":
-		if err := goose.Down(c.DB, migrationsPath); err != nil {
-			return err
+	for _, fs := range gooseStorages {
+		goose.SetBaseFS(fs)
+
+		switch cmd {
+		case "up":
+			if err := goose.Up(c.DB, migrationsPath); err != nil {
+				return err
+			}
+		case "down":
+			if err := goose.Down(c.DB, migrationsPath); err != nil {
+				return err
+			}
 		}
 	}
 

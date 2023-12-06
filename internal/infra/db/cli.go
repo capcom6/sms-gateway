@@ -9,25 +9,22 @@ import (
 type CommandMigrateParams struct {
 	fx.In
 
-	Logger     *zap.Logger
-	DB         *gorm.DB
-	Migrations []Migrator `group:"migrations"`
-	Shut       fx.Shutdowner
+	Logger *zap.Logger
+	DB     *gorm.DB
+	Shut   fx.Shutdowner
 }
 
 type CommandMigrate struct {
-	Logger     *zap.Logger
-	DB         *gorm.DB
-	Migrations []Migrator `group:"migrations"`
-	Shut       fx.Shutdowner
+	Logger *zap.Logger
+	DB     *gorm.DB
+	Shut   fx.Shutdowner
 }
 
 func NewCommandMigrate(params CommandMigrateParams) *CommandMigrate {
 	return &CommandMigrate{
-		Logger:     params.Logger,
-		DB:         params.DB,
-		Migrations: params.Migrations,
-		Shut:       params.Shut,
+		Logger: params.Logger,
+		DB:     params.DB,
+		Shut:   params.Shut,
 	}
 }
 
@@ -36,11 +33,18 @@ func (c *CommandMigrate) Cmd() string {
 }
 
 func (c *CommandMigrate) Run(args ...string) error {
-	for _, v := range c.Migrations {
-		if err := v.Migrate(c.DB); err != nil {
-			return err
+	err := c.DB.Transaction(func(tx *gorm.DB) error {
+		for _, v := range migrations {
+			if err := v(tx); err != nil {
+				return err
+			}
 		}
+		return nil
+	})
+	if err != nil {
+		return err
 	}
+
 	c.Logger.Info("Migrations completed")
 
 	return c.Shut.Shutdown()
