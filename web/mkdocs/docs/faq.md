@@ -32,3 +32,15 @@ curl -X POST \
 - **Local + Cloud:** For better responsiveness, consider running a local server alongside the cloud server connection.
   
 See also issue [#17](https://github.com/capcom6/android-sms-gateway/issues/17).
+
+## How do I enable or disable delivery reports for messages?
+
+As of version [1.3.0](https://github.com/capcom6/android-sms-gateway/releases/tag/v1.3.0), you have the option to enable or disable delivery reports for each message. By default, the delivery report feature is turned on. If you prefer not to receive delivery reports, you can disable them by setting the `withDeliveryReport` field to `false` in the JSON body of your message request. Here is an example of how to send a message without requesting a delivery report:
+
+```json
+{
+  "message": "Your message text here",
+  "phoneNumbers": ["79990001234", "79995556677"],
+  "withDeliveryReport": false
+}
+```
