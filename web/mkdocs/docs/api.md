@@ -4,4 +4,9 @@ The Android SMS Gateway provides an API that allows you to send SMS messages pro
 
 You can find the OpenAPI specification for our API at the following link: [OpenAPI Specification](https://capcom6.github.io/android-sms-gateway/). This specification includes detailed information about the available endpoints, request/response structure, and more.
 
-Feel free to explore it for better understanding and integration with our service.
+## Clients
+
+We offer client libraries in various programming languages to assist with integration:
+
+- **[PHP](https://github.com/capcom6/android-sms-gateway-php)**: install the package via composer: `composer require capcom6/android-sms-gateway`;
+- **JavaScript / TypeScript**: In progress.
