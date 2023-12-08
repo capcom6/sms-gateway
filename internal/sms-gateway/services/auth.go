@@ -3,9 +3,9 @@ package services
 import (
 	"fmt"
 
-	"github.com/capcom6/sms-gateway/internal/infra/crypto"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
+	"github.com/capcom6/sms-gateway/pkg/crypto"
 	"github.com/jaevor/go-nanoid"
 )
 
