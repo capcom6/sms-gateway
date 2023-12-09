@@ -13,7 +13,7 @@ const (
 // Сообщение
 type Message struct {
 	ID                 string   `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"`                  // Идентификатор
-	Message            string   `json:"message" validate:"required,max=256" example:"Hello World!"`                                // Текст сообщения
+	Message            string   `json:"message" validate:"required,max=65535" example:"Hello World!"`                              // Текст сообщения
 	TTL                *uint64  `json:"ttl,omitempty" validate:"omitempty,min=5" example:"86400"`                                  // Время жизни сообщения в секундах
 	SimNumber          *uint8   `json:"simNumber,omitempty" validate:"omitempty,max=3" example:"1"`                                // Номер сим-карты
 	WithDeliveryReport *bool    `json:"withDeliveryReport,omitempty" example:"true"`                                               // Запрашивать отчет о доставке

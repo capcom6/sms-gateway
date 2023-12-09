@@ -343,7 +343,7 @@
                 "message": {
                     "description": "Текст сообщения",
                     "type": "string",
-                    "maxLength": 256,
+                    "maxLength": 65535,
                     "example": "Hello World!"
                 },
                 "phoneNumbers": {

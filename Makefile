@@ -18,10 +18,10 @@ air:
 	air
 
 db-upgrade:
-	goose up
+	go run ./cmd/$(project_name)/main.go db:migrate
 
 db-upgrade-raw:
-	go run ./cmd/$(project_name)/main.go db:migrate
+	go run ./cmd/$(project_name)/main.go db:auto-migrate
 	
 run:
 	go run cmd/$(project_name)/main.go

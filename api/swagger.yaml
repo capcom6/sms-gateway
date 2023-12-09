@@ -22,7 +22,7 @@ definitions:
       message:
         description: Текст сообщения
         example: Hello World!
-        maxLength: 256
+        maxLength: 65535
         type: string
       phoneNumbers:
         description: Получатели
