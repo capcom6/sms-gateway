@@ -164,6 +164,10 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	return state, nil
 }
 
+func (s *MessagesService) HashProcessed() error {
+	return s.Messages.HashProcessed()
+}
+
 func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Message {
 	result := make([]models.Message, 0, len(messages))
 	for _, v := range messages {

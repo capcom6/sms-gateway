@@ -40,5 +40,16 @@ func Run() {
 			logOption.UseLogLevel(zapcore.DebugLevel)
 			return &logOption
 		}),
+		// fx.Invoke(
+		// 	func(lc fx.Lifecycle, logger *zap.Logger, messagesSvc *services.MessagesService) {
+		// 		lc.Append(
+		// 			fx.Hook{
+		// 				OnStart: func(ctx context.Context) error {
+		// 					return messagesSvc.HashProcessed()
+		// 				},
+		// 			},
+		// 		)
+		// 	},
+		// ),
 	).Run()
 }

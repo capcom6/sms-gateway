@@ -66,6 +66,23 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 	})
 }
 
+func (r *MessagesRepository) HashProcessed() error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		err := tx.Model(&models.MessageRecipient{}).
+			Where("message_id IN (?)", tx.Model(&models.Message{}).Select("id").Where("is_hashed = ? AND state <> ?", false, models.MessageStatePending)).
+			Update("phone_number", gorm.Expr("LEFT(SHA2(phone_number, 256), 16)")).
+			Error
+		if err != nil {
+			return err
+		}
+
+		return tx.Model(&models.Message{}).
+			Where("is_hashed = ? AND state <> ?", false, models.MessageStatePending).
+			Updates(map[string]interface{}{"is_hashed": true, "message": gorm.Expr("SHA2(message, 256)")}).
+			Error
+	})
+}
+
 func NewMessagesRepository(db *gorm.DB) *MessagesRepository {
 	return &MessagesRepository{
 		db: db,
