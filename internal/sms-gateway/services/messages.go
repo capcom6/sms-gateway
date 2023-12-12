@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"log"
@@ -85,7 +86,7 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	}
 
 	existing.State = models.MessageState(message.State)
-	existing.Recipients = s.recipientsStateToModel(message.Recipients)
+	existing.Recipients = s.recipientsStateToModel(message.Recipients, existing.IsHashed)
 
 	return s.Messages.UpdateState(&existing)
 }
@@ -202,17 +203,22 @@ func (s *MessagesService) recipientsToModel(input []string) []models.MessageReci
 	return output
 }
 
-func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientState) []models.MessageRecipient {
+func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientState, hash bool) []models.MessageRecipient {
 	output := make([]models.MessageRecipient, len(input))
 
 	for i, v := range input {
 		phoneNumber := v.PhoneNumber
 		if len(phoneNumber) > 0 && phoneNumber[0] != '+' {
+			// compatibility with Android app before 1.1.1
 			phoneNumber = "+" + phoneNumber
 		}
 
 		if v.State == smsgateway.MessageStatePending {
 			v.State = smsgateway.MessageStateProcessed
+		}
+
+		if hash {
+			phoneNumber = fmt.Sprintf("%x", sha256.Sum256([]byte(phoneNumber)))[:16]
 		}
 
 		output[i] = models.MessageRecipient{

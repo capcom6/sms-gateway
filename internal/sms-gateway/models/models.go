@@ -51,6 +51,8 @@ type Message struct {
 	SimNumber          *uint8       `gorm:"type:tinyint(1) unsigned"`
 	WithDeliveryReport bool         `gorm:"not null;type:tinyint(1) unsigned"`
 
+	IsHashed bool `gorm:"not null;type:tinyint(1) unsigned;default:0"`
+
 	Device     Device             `gorm:"foreignKey:DeviceID;constraint:OnDelete:CASCADE"`
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`
 

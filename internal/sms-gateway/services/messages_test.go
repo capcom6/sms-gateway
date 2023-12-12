@@ -11,6 +11,7 @@ import (
 func TestMessagesService_recipientsStateToModel(t *testing.T) {
 	type args struct {
 		input []smsgateway.RecipientState
+		hash  bool
 	}
 	tests := []struct {
 		name string
@@ -57,6 +58,26 @@ func TestMessagesService_recipientsStateToModel(t *testing.T) {
 			},
 		},
 		{
+			name: "With hashing",
+			s:    &MessagesService{},
+			args: args{
+				input: []smsgateway.RecipientState{
+					{
+						PhoneNumber: "+79990001234",
+						State:       "",
+					},
+				},
+				hash: true,
+			},
+			want: []models.MessageRecipient{
+				{
+					MessageID:   0,
+					PhoneNumber: "62d17792b45c5307",
+					State:       "",
+				},
+			},
+		},
+		{
 			name: "Empty phone",
 			s:    &MessagesService{},
 			args: args{
@@ -78,7 +99,7 @@ func TestMessagesService_recipientsStateToModel(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.s.recipientsStateToModel(tt.args.input); !reflect.DeepEqual(got, tt.want) {
+			if got := tt.s.recipientsStateToModel(tt.args.input, tt.args.hash); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MessagesService.recipientsStateToModel() = %v, want %v", got, tt.want)
 			}
 		})

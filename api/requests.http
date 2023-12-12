@@ -42,12 +42,12 @@ Content-Type: application/json
 
 [
   {
-    "id": "8GHr-tUz6JBRFpTUXDV4w",
-    "state": "Pending",
+    "id": "Z4oS32CY5XktsYTCcMWMn",
+    "state": "Delivered",
     "recipients": [
       {
-        "phoneNumber": "79990001234",
-        "state": "Pending"
+        "phoneNumber": "79504241345",
+        "state": "Delivered"
       }
     ]
   }
