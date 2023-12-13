@@ -11,6 +11,7 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -29,6 +30,7 @@ var Module = fx.Module(
 	repositories.Module,
 	models.Module,
 	db.Module,
+	tasks.Module,
 )
 
 func Run() {
@@ -40,16 +42,5 @@ func Run() {
 			logOption.UseLogLevel(zapcore.DebugLevel)
 			return &logOption
 		}),
-		// fx.Invoke(
-		// 	func(lc fx.Lifecycle, logger *zap.Logger, messagesSvc *services.MessagesService) {
-		// 		lc.Append(
-		// 			fx.Hook{
-		// 				OnStart: func(ctx context.Context) error {
-		// 					return messagesSvc.HashProcessed()
-		// 				},
-		// 			},
-		// 		)
-		// 	},
-		// ),
 	).Run()
 }

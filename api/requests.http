@@ -42,11 +42,11 @@ Content-Type: application/json
 
 [
   {
-    "id": "ZoK8jU8y74cZRnZH1xNIH",
+    "id": "-rnEaUz7KObDdokPrzKpM",
     "state": "Delivered",
     "recipients": [
       {
-        "phoneNumber": "79504241345",
+        "phoneNumber": "{{phone}}",
         "state": "Delivered"
       }
     ]
