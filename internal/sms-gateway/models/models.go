@@ -45,7 +45,7 @@ type Message struct {
 	ID                 uint64       `gorm:"primaryKey;type:BIGINT UNSIGNED;autoIncrement"`
 	DeviceID           string       `gorm:"not null;type:char(21);uniqueIndex:unq_messages_id_device,priority:2;index:idx_messages_device_state"`
 	ExtID              string       `gorm:"not null;type:varchar(36);uniqueIndex:unq_messages_id_device,priority:1"`
-	Message            string       `gorm:"not null;type:tinytext"`
+	Message            string       `gorm:"not null;type:text"`
 	State              MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending;index:idx_messages_device_state"`
 	ValidUntil         *time.Time   `gorm:"type:datetime"`
 	SimNumber          *uint8       `gorm:"type:tinyint(1) unsigned"`
