@@ -9,27 +9,24 @@ import (
 
 var DefaultCommand = ""
 
-var Module = fx.Module(
-	"cli",
-	fx.Decorate(func(log *zap.Logger) *zap.Logger {
-		return log.Named("cli")
-	}),
-	fx.Invoke(func(params Params) error {
-		cmd := DefaultCommand
-		args := []string{}
-		if len(os.Args) > 1 {
-			cmd = os.Args[1]
-			args = os.Args[2:]
-		}
+func GetModule() fx.Option {
+	cmd := DefaultCommand
+	args := []string{}
+	if len(os.Args) > 1 {
+		cmd = os.Args[1]
+	}
 
-		for _, v := range params.Commands {
-			if v.Cmd() != cmd {
-				continue
-			}
+	executor, ok := commands[cmd]
+	if !ok {
+		return fx.Invoke(func(logger *zap.Logger, shut fx.Shutdowner) error {
+			logger.Error("Command is not supported", zap.String("cmd", cmd))
+			return shut.Shutdown()
+		})
+	}
 
-			return v.Run(args...)
-		}
-		params.Logger.Info("Command is not supported", zap.String("command", cmd))
-		return params.Shut.Shutdown()
-	}),
-)
+	return fx.Module(
+		"cli",
+		fx.Supply(Args(args)),
+		fx.Invoke(executor),
+	)
+}

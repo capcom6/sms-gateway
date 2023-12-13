@@ -1,14 +1,14 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"embed"
 
-type Migration struct {
-}
+	"gorm.io/gorm"
+)
 
-func (m Migration) Migrate(db *gorm.DB) error {
+//go:embed migrations
+var migrations embed.FS
+
+func Migrate(db *gorm.DB) error {
 	return db.AutoMigrate(&User{}, &Device{}, &Message{}, &MessageRecipient{})
-}
-
-func NewMigration() *Migration {
-	return &Migration{}
 }

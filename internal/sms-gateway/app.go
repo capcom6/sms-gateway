@@ -20,7 +20,6 @@ import (
 var Module = fx.Module(
 	"server",
 	logger.Module,
-	cli.Module,
 	appconfig.Module,
 	http.Module,
 	validator.Module,
@@ -34,6 +33,7 @@ var Module = fx.Module(
 func Run() {
 	cli.DefaultCommand = "http:run"
 	fx.New(
+		cli.GetModule(),
 		Module,
 		fx.WithLogger(func(logger *zap.Logger) fxevent.Logger {
 			logOption := fxevent.ZapLogger{Logger: logger}

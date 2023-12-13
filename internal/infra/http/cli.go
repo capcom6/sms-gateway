@@ -17,39 +17,19 @@ type RunServerParams struct {
 	LC     fx.Lifecycle
 }
 
-type RunServer struct {
-	Config Config
-	App    *fiber.App
-	Logger *zap.Logger
-	LC     fx.Lifecycle
-}
-
-func NewRunServer(params RunServerParams) *RunServer {
-	return &RunServer{
-		Config: configDefault(params.Config),
-		App:    params.App,
-		Logger: params.Logger,
-		LC:     params.LC,
-	}
-}
-
-func (c *RunServer) Cmd() string {
-	return "http:run"
-}
-
-func (c *RunServer) Run(args ...string) error {
+func Run(params RunServerParams) error {
 	go func() {
-		c.Logger.Info("Starting server...")
+		params.Logger.Info("Starting server...")
 
-		err := c.App.Listen(c.Config.Listen)
+		err := params.App.Listen(params.Config.Listen)
 		if err != nil {
-			c.Logger.Error("Error starting server", zap.Error(err))
+			params.Logger.Error("Error starting server", zap.Error(err))
 		}
 	}()
 
-	c.LC.Append(fx.Hook{
+	params.LC.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
-			return c.App.ShutdownWithContext(ctx)
+			return params.App.ShutdownWithContext(ctx)
 		},
 	})
 

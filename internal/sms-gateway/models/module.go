@@ -7,8 +7,9 @@ import (
 
 var Module = fx.Module(
 	"models",
-	fx.Provide(
-		db.AsMigration(NewMigration),
-		GetGooseStorage,
-	),
 )
+
+func init() {
+	db.RegisterMigration(Migrate)
+	db.RegisterGoose(migrations)
+}

@@ -14,7 +14,10 @@ var Module = fx.Module(
 	fx.Provide(
 		New,
 		NewSQL,
-		cli.AsCommand(NewCommandMigrate),
-		cli.AsCommand(NewGooseMigrate),
 	),
 )
+
+func init() {
+	cli.Register("db:auto-migrate", AutoMigrate)
+	cli.Register("db:migrate", Migrate)
+}

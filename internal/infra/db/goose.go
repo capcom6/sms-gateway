@@ -4,74 +4,60 @@ import (
 	"database/sql"
 	"io/fs"
 
+	"github.com/capcom6/sms-gateway/internal/infra/cli"
 	"github.com/pressly/goose/v3"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-type GooseStorage struct {
-	FS fs.FS
+type GooseStorage fs.FS
+
+var gooseStorages = []GooseStorage{}
+
+func RegisterGoose(storage GooseStorage) {
+	gooseStorages = append(gooseStorages, storage)
 }
 
 type GooseMigrateParams struct {
 	fx.In
 
-	Config  Config
-	Storage GooseStorage
+	Args cli.Args
+
+	Config Config
 
 	Logger *zap.Logger
 	DB     *sql.DB
 	Shut   fx.Shutdowner
 }
 
-type GooseMigrate struct {
-	Config  Config
-	Storage GooseStorage
-	DB      *sql.DB
-	Logger  *zap.Logger
-	Shut    fx.Shutdowner
-}
-
-func NewGooseMigrate(params GooseMigrateParams) *GooseMigrate {
-	return &GooseMigrate{
-		Config:  params.Config,
-		Logger:  params.Logger,
-		DB:      params.DB,
-		Storage: params.Storage,
-		Shut:    params.Shut,
-	}
-}
-
-func (c *GooseMigrate) Cmd() string {
-	return "db:migrate"
-}
-
-func (c *GooseMigrate) Run(args ...string) error {
-	goose.SetBaseFS(c.Storage.FS)
-
+func Migrate(params GooseMigrateParams) error {
 	cmd := "up"
-	if len(args) > 0 {
-		cmd = args[0]
+	if len(params.Args) > 0 {
+		cmd = params.Args[0]
 	}
 
-	if err := goose.SetDialect(c.Config.Dialect); err != nil {
+	if err := goose.SetDialect(params.Config.Dialect); err != nil {
 		return err
 	}
 
-	migrationsPath := "migrations/" + c.Config.Dialect
+	migrationsPath := "migrations/" + params.Config.Dialect
 
-	switch cmd {
-	case "up":
-		if err := goose.Up(c.DB, migrationsPath); err != nil {
-			return err
-		}
-	case "down":
-		if err := goose.Down(c.DB, migrationsPath); err != nil {
-			return err
+	for _, fs := range gooseStorages {
+		goose.SetBaseFS(fs)
+
+		switch cmd {
+		case "up":
+			if err := goose.Up(params.DB, migrationsPath); err != nil {
+				return err
+			}
+		case "down":
+			if err := goose.Down(params.DB, migrationsPath); err != nil {
+				return err
+			}
 		}
 	}
 
-	c.Logger.Info("Migrations completed")
+	params.Logger.Info("Migrations completed")
 
-	return c.Shut.Shutdown()
+	return params.Shut.Shutdown()
 }
