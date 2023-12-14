@@ -72,7 +72,7 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 func (r *MessagesRepository) HashProcessed() error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		hasLock := sql.NullBool{}
-		lockRow := tx.Raw("SELECT GET_LOCK('?', 1)", HashingLockName).Row()
+		lockRow := tx.Raw("SELECT GET_LOCK(?, 1)", HashingLockName).Row()
 		err := lockRow.Scan(&hasLock)
 		if err != nil {
 			return err
@@ -81,7 +81,7 @@ func (r *MessagesRepository) HashProcessed() error {
 		if !hasLock.Valid || !hasLock.Bool {
 			return errors.New("failed to acquire lock")
 		}
-		defer tx.Exec("SELECT RELEASE_LOCK('?')", HashingLockName)
+		defer tx.Exec("SELECT RELEASE_LOCK(?)", HashingLockName)
 
 		err = tx.Model(&models.MessageRecipient{}).
 			Where("message_id IN (?)", tx.Model(&models.Message{}).Select("id").Where("is_hashed = ? AND state <> ?", false, models.MessageStatePending)).
