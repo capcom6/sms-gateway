@@ -47,7 +47,8 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	device := user.Devices[0]
 	state, err := h.messagesSvc.Enqeue(device, req)
 	if err != nil {
-		if errors.Is(err, services.ErrValidation) {
+		var err400 services.ErrValidation
+		if errors.As(err, &err400) {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 
