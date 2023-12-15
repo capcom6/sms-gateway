@@ -9,4 +9,4 @@ You can find the OpenAPI specification for our API at the following link: [OpenA
 We offer client libraries in various programming languages to assist with integration:
 
 - **[PHP](https://github.com/capcom6/android-sms-gateway-php)**: install the package via composer: `composer require capcom6/android-sms-gateway`;
-- **JavaScript / TypeScript**: In progress.
+- **[JavaScript / TypeScript](https://github.com/capcom6/android-sms-gateway-ts)**: install the package via npm: `npm install android-sms-gateway` or bun: `bun add android-sms-gateway`.
