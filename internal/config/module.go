@@ -1,10 +1,13 @@
 package config
 
 import (
+	"time"
+
 	"github.com/capcom6/sms-gateway/internal/infra/config"
 	"github.com/capcom6/sms-gateway/internal/infra/db"
 	"github.com/capcom6/sms-gateway/internal/infra/http"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -39,6 +42,11 @@ var Module = fx.Module(
 	fx.Provide(func(cfg Config) services.PushServiceConfig {
 		return services.PushServiceConfig{
 			CredentialsJSON: cfg.FCM.CredentialsJSON,
+		}
+	}),
+	fx.Provide(func(cfg Config) tasks.HashingTaskConfig {
+		return tasks.HashingTaskConfig{
+			Interval: time.Duration(cfg.Tasks.Hashing.IntervalSeconds) * time.Second,
 		}
 	}),
 )

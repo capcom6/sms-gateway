@@ -11,6 +11,7 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -28,6 +29,7 @@ var Module = fx.Module(
 	repositories.Module,
 	models.Module,
 	db.Module,
+	tasks.Module,
 )
 
 func Run() {

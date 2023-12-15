@@ -4,6 +4,7 @@ type Config struct {
 	HTTP     HTTP      `yaml:"http"`
 	Database Database  `yaml:"database"`
 	FCM      FCMConfig `yaml:"fcm"`
+	Tasks    Tasks     `yaml:"tasks"`
 }
 
 type HTTP struct {
@@ -24,6 +25,14 @@ type FCMConfig struct {
 	CredentialsJSON string `yaml:"credentials_json"`
 }
 
+type Tasks struct {
+	Hashing HashingTask `yaml:"hashing"`
+}
+
+type HashingTask struct {
+	IntervalSeconds uint16 `yaml:"interval_seconds"`
+}
+
 var defaultConfig = Config{
 	HTTP: HTTP{
 		Listen: ":3000",
@@ -39,5 +48,10 @@ var defaultConfig = Config{
 	},
 	FCM: FCMConfig{
 		CredentialsJSON: "",
+	},
+	Tasks: Tasks{
+		Hashing: HashingTask{
+			IntervalSeconds: uint16(15 * 60),
+		},
 	},
 }

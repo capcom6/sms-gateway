@@ -16,3 +16,6 @@ fcm:
     {
     ...
     }
+tasks:
+  hashing:
+    interval_seconds: 15
