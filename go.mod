@@ -11,7 +11,7 @@ require (
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/nyaruka/phonenumbers v1.1.8
+	github.com/nyaruka/phonenumbers v1.3.0
 	github.com/pressly/goose/v3 v3.16.0
 	github.com/valyala/fasthttp v1.50.0
 	go.uber.org/fx v1.20.1
