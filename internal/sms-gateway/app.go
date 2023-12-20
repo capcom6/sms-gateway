@@ -1,6 +1,9 @@
 package smsgateway
 
 import (
+	"context"
+	"sync"
+
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/infra/cli"
 	"github.com/capcom6/sms-gateway/internal/infra/db"
@@ -33,7 +36,7 @@ var Module = fx.Module(
 )
 
 func Run() {
-	cli.DefaultCommand = "http:run"
+	cli.DefaultCommand = "start"
 	fx.New(
 		cli.GetModule(),
 		Module,
@@ -43,4 +46,58 @@ func Run() {
 			return &logOption
 		}),
 	).Run()
+}
+
+type StartParams struct {
+	fx.In
+
+	LC     fx.Lifecycle
+	Logger *zap.Logger
+	Shut   fx.Shutdowner
+
+	Server      *http.Server
+	HashingTask *tasks.HashingTask
+}
+
+func Start(p StartParams) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	wg := &sync.WaitGroup{}
+	p.LC.Append(fx.Hook{
+		OnStart: func(_ context.Context) error {
+			wg.Add(1)
+
+			go func() {
+				defer wg.Done()
+				p.HashingTask.Run(ctx)
+			}()
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				if err := p.Server.Start(); err != nil {
+					p.Logger.Error("Error starting server", zap.Error(err))
+					_ = p.Shut.Shutdown()
+				}
+			}()
+
+			p.Logger.Info("Service started")
+
+			return nil
+		},
+		OnStop: func(_ context.Context) error {
+			cancel()
+			_ = p.Server.Stop(ctx)
+			wg.Wait()
+
+			p.Logger.Info("Service stopped")
+
+			return nil
+		},
+	})
+
+	return nil
+}
+
+func init() {
+	cli.Register("start", Start)
 }

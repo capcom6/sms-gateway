@@ -11,9 +11,8 @@ var Module = fx.Module(
 	fx.Decorate(func(log *zap.Logger) *zap.Logger {
 		return log.Named("http")
 	}),
-	fx.Provide(
-		New,
-	),
+	fx.Provide(New),
+	fx.Provide(NewServer),
 )
 
 func init() {
