@@ -58,6 +58,10 @@ definitions:
         example: PyDmBQZZXYmyxMwED8Fzy
         maxLength: 36
         type: string
+      isHashed:
+        description: Хэшировано
+        example: false
+        type: boolean
       recipients:
         description: Детализация состояния по получателям
         items:
@@ -144,7 +148,7 @@ definitions:
         example: timeout
         type: string
       phoneNumber:
-        description: Номер телефона
+        description: Номер телефона или первые 16 символов SHA256
         example: "79990001234"
         minLength: 10
         type: string
