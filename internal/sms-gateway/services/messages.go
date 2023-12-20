@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"crypto/sha256"
-	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -21,7 +20,11 @@ const (
 	ErrorTTLExpired = "TTL expired"
 )
 
-var ErrValidation error = errors.New("validation error")
+type ErrValidation string
+
+func (e ErrValidation) Error() string {
+	return string(e)
+}
 
 type MessagesService struct {
 	Messages *repositories.MessagesRepository
@@ -254,14 +257,16 @@ func modelToRecipientState(input models.MessageRecipient) smsgateway.RecipientSt
 func cleanPhoneNumber(input string) (string, error) {
 	phone, err := phonenumbers.Parse(input, "RU")
 	if err != nil {
-		return input, fmt.Errorf("can't parse phone number: %w", err)
+		return input, ErrValidation(fmt.Sprintf("can't parse phone number: %s", err.Error()))
 	}
+
 	if !phonenumbers.IsValidNumber(phone) {
-		return input, fmt.Errorf("invalid phone number")
+		return input, ErrValidation("invalid phone number")
 	}
+
 	phoneNumberType := phonenumbers.GetNumberType(phone)
 	if phoneNumberType != phonenumbers.MOBILE && phoneNumberType != phonenumbers.FIXED_LINE_OR_MOBILE {
-		return input, fmt.Errorf("not mobile phone number")
+		return input, ErrValidation("not mobile phone number")
 	}
 
 	return phonenumbers.Format(phone, phonenumbers.E164), nil
