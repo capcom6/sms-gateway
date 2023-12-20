@@ -24,12 +24,13 @@ type Message struct {
 type MessageState struct {
 	ID         string           `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"` // Идентификатор
 	State      ProcessState     `json:"state" validate:"required" example:"Pending"`                              // Состояние
+	IsHashed   bool             `json:"isHashed" validate:"required" example:"false"`                             // Хэшировано
 	Recipients []RecipientState `json:"recipients" validate:"required,min=1,dive"`                                // Детализация состояния по получателям
 }
 
 // Детализация состояния
 type RecipientState struct {
-	PhoneNumber string       `json:"phoneNumber" validate:"required,min=10" example:"79990001234"` // Номер телефона
+	PhoneNumber string       `json:"phoneNumber" validate:"required,min=10" example:"79990001234"` // Номер телефона или первые 16 символов SHA256
 	State       ProcessState `json:"state" validate:"required" example:"Pending"`                  // Состояние
 	Error       *string      `json:"error,omitempty" example:"timeout"`                            // Ошибка
 }

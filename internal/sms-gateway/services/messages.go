@@ -242,6 +242,7 @@ func modelToMessageState(input models.Message) smsgateway.MessageState {
 	return smsgateway.MessageState{
 		ID:         input.ExtID,
 		State:      smsgateway.ProcessState(input.State),
+		IsHashed:   input.IsHashed,
 		Recipients: slices.Map(input.Recipients, modelToRecipientState),
 	}
 }
