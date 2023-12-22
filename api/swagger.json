@@ -390,6 +390,11 @@
                     "maxLength": 36,
                     "example": "PyDmBQZZXYmyxMwED8Fzy"
                 },
+                "isHashed": {
+                    "description": "Хэшировано",
+                    "type": "boolean",
+                    "example": false
+                },
                 "recipients": {
                     "description": "Детализация состояния по получателям",
                     "type": "array",
@@ -504,7 +509,7 @@
                     "example": "timeout"
                 },
                 "phoneNumber": {
-                    "description": "Номер телефона",
+                    "description": "Номер телефона или первые 16 символов SHA256",
                     "type": "string",
                     "minLength": 10,
                     "example": "79990001234"

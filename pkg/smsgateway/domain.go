@@ -24,7 +24,7 @@ type Message struct {
 type MessageState struct {
 	ID         string           `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"` // Идентификатор
 	State      ProcessState     `json:"state" validate:"required" example:"Pending"`                              // Состояние
-	IsHashed   bool             `json:"isHashed" validate:"required" example:"false"`                             // Хэшировано
+	IsHashed   bool             `json:"isHashed" example:"false"`                                                 // Хэшировано
 	Recipients []RecipientState `json:"recipients" validate:"required,min=1,dive"`                                // Детализация состояния по получателям
 }
 
