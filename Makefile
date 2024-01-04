@@ -30,7 +30,7 @@ test:
 	go test -cover ./...
 
 build:
-	go build ./cmd/$(project_name)
+	go build -o tmp/$(project_name) ./cmd/$(project_name)
 	
 install:
 	go install ./cmd/$(project_name)
@@ -54,4 +54,4 @@ view-docs:
 clean:
 	docker-compose -f deployments/docker-compose/docker-compose.yml down --volumes
 
-.PHONY: init init-dev air run test install docker docker-build api-docs docker-dev view-docs clean
+.PHONY: init init-dev air db-upgrade db-upgrade-raw run test build install docker docker-dev api-docs view-docs clean

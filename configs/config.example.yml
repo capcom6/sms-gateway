@@ -8,6 +8,7 @@ database: # database
   password: root # database password
   database: sms # database name
   debug: true
+  timezone: UTC
 fcm:
   credentials_json: >
     {
