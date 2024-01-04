@@ -1,15 +1,12 @@
-http:
-  listen: 127.0.0.1:3000
-  prefork: false
-  proxies:
-    - "127.0.0.1"
-    - "localhost"
-database:
-  host: localhost
-  port: 3306
-  user: root
-  password: root
-  database: notifications
+http: # http server config
+  listen: 127.0.0.1:3000 # listen address
+database: # database
+  dialect: mysql # database dialect
+  host: localhost # database host
+  port: 3306 # database port
+  user: root # database user
+  password: root # database password
+  database: sms # database name
   debug: true
 fcm:
   credentials_json: >

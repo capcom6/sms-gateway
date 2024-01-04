@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/capcom6/sms-gateway/internal/infra/http"
+	"github.com/capcom6/go-infra-fx/http"
 	"go.uber.org/fx"
 )
 

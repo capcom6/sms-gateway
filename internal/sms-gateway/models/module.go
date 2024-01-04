@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/capcom6/sms-gateway/internal/infra/db"
+	"github.com/capcom6/go-infra-fx/db"
 	"go.uber.org/fx"
 )
 

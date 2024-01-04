@@ -3,9 +3,9 @@ package config
 import (
 	"time"
 
-	"github.com/capcom6/sms-gateway/internal/infra/config"
-	"github.com/capcom6/sms-gateway/internal/infra/db"
-	"github.com/capcom6/sms-gateway/internal/infra/http"
+	"github.com/capcom6/go-infra-fx/config"
+	"github.com/capcom6/go-infra-fx/db"
+	"github.com/capcom6/go-infra-fx/http"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
 	"go.uber.org/fx"
