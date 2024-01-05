@@ -1,1 +1,47 @@
+# Binaries and other executable files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Test files
+*_test.go
+
+# Dependency directories (comment out if you're building your dependencies within Docker)
+vendor/
+
+# Git and version control
 .git/
+.gitignore
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Configuration files
+*.env
+*.yml
+*.yaml
+config.json
+
+# Log files
+*.log
+
+# Other files not needed in docker
+README.md
+LICENSE
+.Dockerfile.swp
+.dockerignore
+
+# Ignore the Go build directory
+tmp/
