@@ -3,6 +3,8 @@ site_url: https://sms.capcom.me
 repo_url: https://github.com/capcom6/android-sms-gateway
 theme:
   name: material
+  features:
+    - content.code.copy
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
@@ -30,7 +32,9 @@ nav:
   - Getting Started: getting-started.md
   - API: api.md
   - Pricing: pricing.md
-  - Privacy: privacy.md
+  - Privacy:
+      - Policy: privacy/policy.md
+      - Encryption: privacy/encryption.md
   - FAQ: faq.md
   - Contributing: contributing.md
   - License: license.md
