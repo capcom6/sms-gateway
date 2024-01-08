@@ -28,6 +28,22 @@ Authorization: Basic {{credentials}}
 }
 
 ###
+POST {{baseUrl}}/api/3rdparty/v1/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic {{credentials}}
+
+{
+    "message": "17wc9/ZRf1l84LHkEK3hgA==.aH1XrMHAeMyF4PeiavV3dk8o2fP0nSo92IqseLQfg14=",
+    "ttl": 600,
+    "phoneNumbers": [
+        "xkQeXzSDFj2xP6JBUMK0pA==.PfUHEa9QZv8h7JnUoBlmWw=="
+    ],
+    "simNumber": 1,
+    "withDeliveryReport": true,
+    "isEncrypted": true
+}
+
+###
 GET {{baseUrl}}/api/3rdparty/v1/message/-rnEaUz7KObDdokPrzKpM HTTP/1.1
 Authorization: Basic {{credentials}}
 

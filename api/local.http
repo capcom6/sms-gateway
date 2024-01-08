@@ -18,5 +18,21 @@ Authorization: Basic {{localCredentials}}
 }
 
 ###
-GET {{localUrl}}/message/hr8HV_KE0kehtBCApEaIn HTTP/1.1
+POST {{localUrl}}/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic {{localCredentials}}
+
+{
+    "message": "17wc9/ZRf1l84LHkEK3hgA==.aH1XrMHAeMyF4PeiavV3dk8o2fP0nSo92IqseLQfg14=",
+    "ttl": 600,
+    "phoneNumbers": [
+        "xkQeXzSDFj2xP6JBUMK0pA==.PfUHEa9QZv8h7JnUoBlmWw=="
+    ],
+    "simNumber": 1,
+    "withDeliveryReport": true,
+    "isEncrypted": true
+}
+
+###
+GET {{localUrl}}/message/2a1hOxM1zuZVygvE3uX0j HTTP/1.1
 Authorization: Basic {{localCredentials}}

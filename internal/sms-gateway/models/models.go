@@ -51,7 +51,8 @@ type Message struct {
 	SimNumber          *uint8       `gorm:"type:tinyint(1) unsigned"`
 	WithDeliveryReport bool         `gorm:"not null;type:tinyint(1) unsigned"`
 
-	IsHashed bool `gorm:"not null;type:tinyint(1) unsigned;default:0"`
+	IsHashed    bool `gorm:"not null;type:tinyint(1) unsigned;default:0"`
+	IsEncrypted bool `gorm:"not null;type:tinyint(1) unsigned;default:0"`
 
 	Device     Device             `gorm:"foreignKey:DeviceID;constraint:OnDelete:CASCADE"`
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`
@@ -61,7 +62,7 @@ type Message struct {
 
 type MessageRecipient struct {
 	MessageID   uint64       `gorm:"primaryKey;type:BIGINT UNSIGNED"`
-	PhoneNumber string       `gorm:"primaryKey;type:varchar(16)"`
+	PhoneNumber string       `gorm:"primaryKey;type:varchar(128)"`
 	State       MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending"`
 	Error       *string      `gorm:"type:varchar(256)"`
 }
