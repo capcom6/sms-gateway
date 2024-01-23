@@ -69,9 +69,10 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 			ID:                 v.ExtID,
 			Message:            v.Message,
 			TTL:                ttl,
-			PhoneNumbers:       s.recipientsToDomain(v.Recipients),
 			SimNumber:          v.SimNumber,
 			WithDeliveryReport: types.AsPointer[bool](v.WithDeliveryReport),
+			IsEncrypted:        v.IsEncrypted,
+			PhoneNumbers:       s.recipientsToDomain(v.Recipients),
 		}
 	}
 
@@ -114,10 +115,15 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		Recipients: make([]smsgateway.RecipientState, len(message.PhoneNumbers)),
 	}
 
+	var phone string
+	var err error
 	for i, v := range message.PhoneNumbers {
-		phone, err := cleanPhoneNumber(v)
-		if err != nil {
-			return state, fmt.Errorf("can't use phone in row %d: %w", i+1, err)
+		if message.IsEncrypted {
+			phone = v
+		} else {
+			if phone, err = cleanPhoneNumber(v); err != nil {
+				return state, fmt.Errorf("can't use phone in row %d: %w", i+1, err)
+			}
 		}
 
 		message.PhoneNumbers[i] = phone
@@ -140,7 +146,10 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		ValidUntil:         validUntil,
 		SimNumber:          message.SimNumber,
 		WithDeliveryReport: types.OrDefault[bool](message.WithDeliveryReport, true),
+		IsEncrypted:        message.IsEncrypted,
+		Device:             device,
 		Recipients:         s.recipientsToModel(message.PhoneNumbers),
+		TimedModel:         models.TimedModel{},
 	}
 	if msg.ExtID == "" {
 		msg.ExtID = s.idgen()
@@ -240,10 +249,11 @@ func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientSta
 
 func modelToMessageState(input models.Message) smsgateway.MessageState {
 	return smsgateway.MessageState{
-		ID:         input.ExtID,
-		State:      smsgateway.ProcessState(input.State),
-		IsHashed:   input.IsHashed,
-		Recipients: slices.Map(input.Recipients, modelToRecipientState),
+		ID:          input.ExtID,
+		State:       smsgateway.ProcessState(input.State),
+		IsHashed:    input.IsHashed,
+		IsEncrypted: input.IsEncrypted,
+		Recipients:  slices.Map(input.Recipients, modelToRecipientState),
 	}
 }
 

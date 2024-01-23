@@ -84,7 +84,7 @@ func (r *MessagesRepository) HashProcessed() error {
 		defer tx.Exec("SELECT RELEASE_LOCK(?)", HashingLockName)
 
 		err = tx.Model(&models.MessageRecipient{}).
-			Where("message_id IN (?)", tx.Model(&models.Message{}).Select("id").Where("is_hashed = ? AND state <> ?", false, models.MessageStatePending)).
+			Where("message_id IN (?)", tx.Model(&models.Message{}).Select("id").Where("is_hashed = ? AND is_encrypted = ? AND state <> ?", false, false, models.MessageStatePending)).
 			Update("phone_number", gorm.Expr("LEFT(SHA2(phone_number, 256), 16)")).
 			Error
 		if err != nil {
