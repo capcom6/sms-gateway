@@ -57,6 +57,7 @@ type StartParams struct {
 
 	Server      *http.Server
 	HashingTask *tasks.HashingTask
+	PushService *services.PushService
 }
 
 func Start(p StartParams) error {
@@ -65,10 +66,15 @@ func Start(p StartParams) error {
 	p.LC.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
 			wg.Add(1)
-
 			go func() {
 				defer wg.Done()
 				p.HashingTask.Run(ctx)
+			}()
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				p.PushService.Run(ctx)
 			}()
 
 			wg.Add(1)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
@@ -14,6 +13,8 @@ import (
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/jaevor/go-nanoid"
 	"github.com/nyaruka/phonenumbers"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 const (
@@ -26,19 +27,29 @@ func (e ErrValidation) Error() string {
 	return string(e)
 }
 
+type MessagesServiceParams struct {
+	fx.In
+
+	Messages *repositories.MessagesRepository
+	PushSvc  *PushService
+	Logger   *zap.Logger
+}
+
 type MessagesService struct {
 	Messages *repositories.MessagesRepository
 	PushSvc  *PushService
+	Logger   *zap.Logger
 
 	idgen func() string
 }
 
-func NewMessagesService(pushSvc *PushService, messages *repositories.MessagesRepository) *MessagesService {
+func NewMessagesService(params MessagesServiceParams) *MessagesService {
 	idgen, _ := nanoid.Standard(21)
 
 	return &MessagesService{
-		Messages: messages,
-		PushSvc:  pushSvc,
+		Messages: params.Messages,
+		PushSvc:  params.PushSvc,
+		Logger:   params.Logger,
 		idgen:    idgen,
 	}
 }
@@ -168,8 +179,8 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		if err := s.PushSvc.Send(ctx, token, map[string]string{}); err != nil {
-			log.Printf("failed to send push to %s: %v", *device.PushToken, err)
+		if err := s.PushSvc.Enqueue(ctx, token, map[string]string{}); err != nil {
+			s.Logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
 		}
 	}(*device.PushToken)
 
