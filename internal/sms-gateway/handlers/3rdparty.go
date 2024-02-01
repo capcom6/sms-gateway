@@ -13,6 +13,10 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	route3rdPartyGetMessage = "3rdparty.get.message"
+)
+
 type thirdPartyHandler struct {
 	Handler
 
@@ -27,10 +31,11 @@ type thirdPartyHandler struct {
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body		smsgateway.Message			true	"Сообщение"
-//	@Success		201		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
+//	@Success		202		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
 //	@Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
 //	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Header			202		{string}	Location					"URL для получения состояния сообщения"
 //	@Router			/3rdparty/v1/message [post]
 //
 // Поставить сообщение в очередь
@@ -55,7 +60,16 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 		return err
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(state)
+	location, err := c.GetRouteURL(route3rdPartyGetMessage, fiber.Map{
+		"id": state.ID,
+	})
+	if err != nil {
+		h.Logger.Error("Failed to get route URL", zap.String("route", route3rdPartyGetMessage), zap.Error(err))
+	} else {
+		c.Location(location)
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(state)
 }
 
 //	@Summary		Получить состояние сообщения
@@ -111,7 +125,7 @@ func (h *thirdPartyHandler) Register(router fiber.Router) {
 	}))
 
 	router.Post("/message", h.authorize(h.postMessage))
-	router.Get("/message/:id", h.authorize(h.getMessage))
+	router.Get("/message/:id", h.authorize(h.getMessage)).Name(route3rdPartyGetMessage)
 }
 
 func newThirdPartyHandler(logger *zap.Logger, validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *thirdPartyHandler {
