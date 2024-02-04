@@ -23,6 +23,8 @@ type Database struct {
 
 type FCMConfig struct {
 	CredentialsJSON string `yaml:"credentials_json"`
+	DebounceSeconds uint16 `yaml:"debounce_seconds"`
+	TimeoutSeconds  uint16 `yaml:"timeout_seconds"`
 }
 
 type Tasks struct {

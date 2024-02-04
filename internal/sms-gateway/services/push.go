@@ -33,9 +33,11 @@ type PushService struct {
 
 type PushServiceConfig struct {
 	CredentialsJSON string
+	Debounce        time.Duration
 	Timeout         time.Duration
 }
 
+// NewPushService creates a new PushService.
 func NewPushService(params PushServiceParams) *PushService {
 	if params.Config.Timeout == 0 {
 		params.Config.Timeout = time.Second
@@ -48,7 +50,7 @@ func NewPushService(params PushServiceParams) *PushService {
 	}
 }
 
-// init
+// init initializes the FCM client.
 func (s *PushService) init(ctx context.Context) (err error) {
 	s.mux.Lock()
 	defer s.mux.Unlock()
@@ -71,6 +73,7 @@ func (s *PushService) init(ctx context.Context) (err error) {
 	return
 }
 
+// sendAll sends messages to all targets from the cache after initializing the service.
 func (s *PushService) sendAll(ctx context.Context) {
 	if err := s.init(ctx); err != nil {
 		s.Logger.Error("Can't init push service", zap.Error(err))
@@ -92,6 +95,7 @@ func (s *PushService) sendAll(ctx context.Context) {
 	}
 }
 
+// sendSingle sends a single message to the specified token
 func (s *PushService) sendSingle(ctx context.Context, token string, data map[string]string) error {
 	_, err := s.client.Send(ctx, &messaging.Message{
 		Data: data,
@@ -104,8 +108,13 @@ func (s *PushService) sendSingle(ctx context.Context, token string, data map[str
 	return err
 }
 
+// Run runs the service with the provided context if a debounce is set.
 func (s *PushService) Run(ctx context.Context) {
-	ticker := time.NewTicker(time.Second)
+	if s.Config.Debounce == 0 {
+		return
+	}
+
+	ticker := time.NewTicker(s.Config.Debounce)
 	defer ticker.Stop()
 
 	for {
@@ -118,8 +127,13 @@ func (s *PushService) Run(ctx context.Context) {
 	}
 }
 
+// Enqueue adds the data to the cache and immediately sends all messages if the debounce is 0.
 func (s *PushService) Enqueue(ctx context.Context, token string, data map[string]string) error {
 	s.cache.Set(token, data)
+
+	if s.Config.Debounce == 0 {
+		s.sendAll(ctx)
+	}
 
 	return nil
 }
