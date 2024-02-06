@@ -14,6 +14,8 @@ fcm:
     {
     ...
     }
+  timeout_seconds: 1
+  debounce_seconds: 1
 tasks:
   hashing:
     interval_seconds: 15

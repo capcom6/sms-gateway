@@ -42,6 +42,8 @@ var Module = fx.Module(
 	fx.Provide(func(cfg Config) services.PushServiceConfig {
 		return services.PushServiceConfig{
 			CredentialsJSON: cfg.FCM.CredentialsJSON,
+			Debounce:        time.Duration(cfg.FCM.DebounceSeconds) * time.Second,
+			Timeout:         time.Duration(cfg.FCM.TimeoutSeconds) * time.Second,
 		}
 	}),
 	fx.Provide(func(cfg Config) tasks.HashingTaskConfig {

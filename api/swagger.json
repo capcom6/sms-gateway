@@ -97,10 +97,16 @@
                     }
                 ],
                 "responses": {
-                    "201": {
+                    "202": {
                         "description": "Сообщение поставлено в очередь",
                         "schema": {
                             "$ref": "#/definitions/smsgateway.MessageState"
+                        },
+                        "headers": {
+                            "Location": {
+                                "type": "string",
+                                "description": "URL для получения состояния сообщения"
+                            }
                         }
                     },
                     "400": {
@@ -340,6 +346,11 @@
                     "maxLength": 36,
                     "example": "PyDmBQZZXYmyxMwED8Fzy"
                 },
+                "isEncrypted": {
+                    "description": "Зашифровано",
+                    "type": "boolean",
+                    "example": true
+                },
                 "message": {
                     "description": "Текст сообщения",
                     "type": "string",
@@ -389,6 +400,11 @@
                     "type": "string",
                     "maxLength": 36,
                     "example": "PyDmBQZZXYmyxMwED8Fzy"
+                },
+                "isEncrypted": {
+                    "description": "Зашифровано",
+                    "type": "boolean",
+                    "example": false
                 },
                 "isHashed": {
                     "description": "Хэшировано",
@@ -511,6 +527,7 @@
                 "phoneNumber": {
                     "description": "Номер телефона или первые 16 символов SHA256",
                     "type": "string",
+                    "maxLength": 128,
                     "minLength": 10,
                     "example": "79990001234"
                 },

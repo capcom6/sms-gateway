@@ -33,10 +33,10 @@ Content-Type: application/json
 Authorization: Basic {{credentials}}
 
 {
-    "message": "17wc9/ZRf1l84LHkEK3hgA==.aH1XrMHAeMyF4PeiavV3dk8o2fP0nSo92IqseLQfg14=",
+    "message": "$aes-256-cbc/pbkdf2-sha1$i=75000$pb+tpPcF0nabV46wDeDMig==$ucdVkMrRYLQ0LAeoXQsWhrD36I9nnop8rRIh3dNmBhvg7Wc4Cwu3h9Petvp1dN3x",
     "ttl": 600,
     "phoneNumbers": [
-        "xkQeXzSDFj2xP6JBUMK0pA==.PfUHEa9QZv8h7JnUoBlmWw=="
+        "$aes-256-cbc/pbkdf2-sha1$i=75000$ZWdiSMvGWJo/jixYGk+s+w==$tfP6sEeC4r/ux/JAglincQ=="
     ],
     "simNumber": 1,
     "withDeliveryReport": true,
