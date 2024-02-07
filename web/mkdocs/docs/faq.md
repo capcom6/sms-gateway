@@ -44,3 +44,7 @@ As of version [1.3.0](https://github.com/capcom6/android-sms-gateway/releases/ta
   "withDeliveryReport": false
 }
 ```
+
+## How can I set up delays between sending messages?
+
+To avoid mobile operator restrictions, we introduced a delay feature in version [1.6.0](https://github.com/capcom6/android-sms-gateway/releases/tag/v1.6.0) of our application. You can set a random delay between messages by specifying a maximum delay time. The application will then randomly select a delay within this range for each message sent. This helps to reduce the likelihood of messages being flagged as spam by simulating a more human-like sending pattern.
