@@ -44,6 +44,9 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	if err := h.BodyParserValidator(c, &req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
+	if err := req.Validate(); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
 
 	if len(user.Devices) < 1 {
 		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройства в учетной записи")

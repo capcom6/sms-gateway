@@ -381,6 +381,11 @@
                     "minimum": 5,
                     "example": 86400
                 },
+                "validUntil": {
+                    "description": "Время окончания жизни сообщения",
+                    "type": "string",
+                    "example": "2020-01-01T00:00:00Z"
+                },
                 "withDeliveryReport": {
                     "description": "Запрашивать отчет о доставке",
                     "type": "boolean",

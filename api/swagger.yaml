@@ -47,6 +47,10 @@ definitions:
         example: 86400
         minimum: 5
         type: integer
+      validUntil:
+        description: Время окончания жизни сообщения
+        example: "2020-01-01T00:00:00Z"
+        type: string
       withDeliveryReport:
         description: Запрашивать отчет о доставке
         example: true

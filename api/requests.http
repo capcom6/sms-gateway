@@ -19,11 +19,11 @@ Authorization: Basic {{credentials}}
 
 {
     "message": "{{$localDatetime iso8601}}",
-    "ttl": 600,
+    "validUntil": "2024-02-10T12:00:00+07:00",
     "phoneNumbers": [
         "{{phone}}"
     ],
-    "simNumber": 1,
+    "simNumber": {{$randomInt 1 2}},
     "withDeliveryReport": true
 }
 
