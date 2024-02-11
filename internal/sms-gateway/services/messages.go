@@ -27,6 +27,10 @@ func (e ErrValidation) Error() string {
 	return string(e)
 }
 
+type MessagesEnqueueOptions struct {
+	SkipPhoneValidation bool
+}
+
 type MessagesServiceParams struct {
 	fx.In
 
@@ -119,7 +123,7 @@ func (s *MessagesService) GetState(user models.User, ID string) (smsgateway.Mess
 	return modelToMessageState(message), nil
 }
 
-func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message) (smsgateway.MessageState, error) {
+func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message, opts MessagesEnqueueOptions) (smsgateway.MessageState, error) {
 	state := smsgateway.MessageState{
 		ID:         "",
 		State:      smsgateway.MessageStatePending,
@@ -129,7 +133,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	var phone string
 	var err error
 	for i, v := range message.PhoneNumbers {
-		if message.IsEncrypted {
+		if message.IsEncrypted || opts.SkipPhoneValidation {
 			phone = v
 		} else {
 			if phone, err = cleanPhoneNumber(v); err != nil {

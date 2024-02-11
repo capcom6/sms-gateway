@@ -30,12 +30,13 @@ type thirdPartyHandler struct {
 //	@Tags			Пользователь, Сообщения
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		smsgateway.Message			true	"Сообщение"
-//	@Success		202		{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
-//	@Failure		401		{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
-//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
-//	@Header			202		{string}	Location					"URL для получения состояния сообщения"
+//	@Param			skipPhoneValidation	query		bool						false	"Пропустить проверку номеров телефона"
+//	@Param			request				body		smsgateway.Message			true	"Сообщение"
+//	@Success		202					{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
+//	@Failure		401					{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
+//	@Failure		400					{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		500					{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Header			202					{string}	Location					"URL для получения состояния сообщения"
 //	@Router			/3rdparty/v1/message [post]
 //
 // Поставить сообщение в очередь
@@ -45,12 +46,14 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
+	skipPhoneValidation := c.QueryBool("skipPhoneValidation", false)
+
 	if len(user.Devices) < 1 {
 		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройства в учетной записи")
 	}
 
 	device := user.Devices[0]
-	state, err := h.messagesSvc.Enqeue(device, req)
+	state, err := h.messagesSvc.Enqeue(device, req, services.MessagesEnqueueOptions{SkipPhoneValidation: skipPhoneValidation})
 	if err != nil {
 		var err400 services.ErrValidation
 		if errors.As(err, &err400) {

@@ -219,6 +219,10 @@ paths:
       description: Ставит сообщение в очередь на отправку. Если идентификатор не указан,
         то он будет сгенерирован автоматически
       parameters:
+      - description: Пропустить проверку номеров телефона
+        in: query
+        name: skipPhoneValidation
+        type: boolean
       - description: Сообщение
         in: body
         name: request

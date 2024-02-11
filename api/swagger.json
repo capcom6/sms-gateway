@@ -87,6 +87,12 @@
                 "summary": "Поставить сообщение в очередь",
                 "parameters": [
                     {
+                        "type": "boolean",
+                        "description": "Пропустить проверку номеров телефона",
+                        "name": "skipPhoneValidation",
+                        "in": "query"
+                    },
+                    {
                         "description": "Сообщение",
                         "name": "request",
                         "in": "body",
