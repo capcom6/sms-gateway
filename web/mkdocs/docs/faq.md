@@ -48,3 +48,7 @@ As of version [1.3.0](https://github.com/capcom6/android-sms-gateway/releases/ta
 ## How can I set up delays between sending messages?
 
 To avoid mobile operator restrictions, we introduced a delay feature in version [1.6.0](https://github.com/capcom6/android-sms-gateway/releases/tag/v1.6.0) of our application. You can set a random delay between messages by specifying a maximum delay time. The application will then randomly select a delay within this range for each message sent. This helps to reduce the likelihood of messages being flagged as spam by simulating a more human-like sending pattern.
+
+## Can I use long or non-standard phone numbers?
+
+Yes, starting from [1.6.1](https://github.com/capcom6/android-sms-gateway/releases/tag/v1.6.1) of the app, our system allows the use of long or non-standard phone numbers, which may be common with M2M (machine-to-machine) SIM cards or other special cases. To bypass the standard phone number validation, simply add the query parameter `skipPhoneValidation=true` to your API request. Please note that with validation disabled, you are responsible for ensuring the correctness of the phone numbers. They should still follow the E.164 format, beginning with a '+' and containing only digits.
