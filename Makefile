@@ -26,8 +26,11 @@ db-upgrade-raw:
 run:
 	go run cmd/$(project_name)/main.go
 
+lint:
+	golangci-lint run ./...
+
 test:
-	go test -cover ./...
+	go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
 build:
 	go build -o tmp/$(project_name) ./cmd/$(project_name)
