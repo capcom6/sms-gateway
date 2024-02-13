@@ -50,7 +50,7 @@ func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options
 }
 
 func (r *MessagesRepository) Insert(message *models.Message) error {
-	return r.db.Create(message).Error
+	return r.db.Omit("Device").Create(message).Error
 }
 
 func (r *MessagesRepository) UpdateState(message *models.Message) error {

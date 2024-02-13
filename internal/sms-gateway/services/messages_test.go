@@ -105,3 +105,55 @@ func TestMessagesService_recipientsStateToModel(t *testing.T) {
 		})
 	}
 }
+
+func TestCleanPhoneNumber(t *testing.T) {
+	tests := []struct {
+		name        string
+		input       string
+		expected    string
+		expectError bool
+	}{
+		{
+			name:        "Valid number with validation",
+			input:       "+79161234567",
+			expected:    "+79161234567",
+			expectError: false,
+		},
+		{
+			name:        "Invalid number with validation",
+			input:       "+123!@#",
+			expected:    "",
+			expectError: true,
+		},
+		{
+			name:        "Empty input with validation",
+			input:       "",
+			expected:    "",
+			expectError: true,
+		},
+		{
+			name:        "Long number with validation",
+			input:       "+345906566798696",
+			expected:    "",
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := cleanPhoneNumber(tt.input)
+			if tt.expectError {
+				if err == nil {
+					t.Errorf("Expected error, got nil")
+				}
+			} else {
+				if err != nil {
+					t.Errorf("Unexpected error: %v", err)
+				}
+				if result != tt.expected {
+					t.Errorf("Expected %s, got %s", tt.expected, result)
+				}
+			}
+		})
+	}
+}
