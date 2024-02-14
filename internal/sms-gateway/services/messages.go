@@ -206,7 +206,9 @@ func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Me
 				v.Recipients[i].State = models.MessageStateFailed
 				v.Recipients[i].Error = types.AsPointer(ErrorTTLExpired)
 			}
-			s.Messages.UpdateState(&v)
+			if err := s.Messages.UpdateState(&v); err != nil {
+				s.Logger.Error("Can't update message state", zap.Error(err))
+			}
 		}
 	}
 	return result
