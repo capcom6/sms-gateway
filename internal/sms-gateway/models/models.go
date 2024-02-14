@@ -36,6 +36,8 @@ type Device struct {
 	AuthToken string  `gorm:"not null;uniqueIndex;type:char(21)"`
 	PushToken *string `gorm:"type:varchar(256)"`
 
+	LastSeen time.Time `gorm:"type:datetime;autoCreateTime"`
+
 	UserID string `gorm:"not null;type:varchar(32)"`
 
 	TimedModel

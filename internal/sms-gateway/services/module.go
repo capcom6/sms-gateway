@@ -14,5 +14,6 @@ var Module = fx.Module(
 		NewAuthService,
 		NewMessagesService,
 		NewPushService,
+		NewDevicesService,
 	),
 )

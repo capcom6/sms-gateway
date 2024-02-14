@@ -15,6 +15,53 @@
     "host": "localhost:3000",
     "basePath": "/api",
     "paths": {
+        "/3rdparty/v1/device": {
+            "get": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Возвращает все устройства пользователя",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Пользователь",
+                    "Устройства"
+                ],
+                "summary": "Получить устройства",
+                "responses": {
+                    "200": {
+                        "description": "Состояние сообщения",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smsgateway.Device"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Ошибка авторизации",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/3rdparty/v1/message": {
             "get": {
                 "security": [
@@ -322,6 +369,41 @@
         }
     },
     "definitions": {
+        "smsgateway.Device": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "description": "Дата создания",
+                    "type": "string",
+                    "example": "2020-01-01T00:00:00Z"
+                },
+                "deletedAt": {
+                    "description": "Дата удаления",
+                    "type": "string",
+                    "example": "2020-01-01T00:00:00Z"
+                },
+                "id": {
+                    "description": "Идентификатор",
+                    "type": "string",
+                    "example": "PyDmBQZZXYmyxMwED8Fzy"
+                },
+                "lastSeen": {
+                    "description": "Последняя активность",
+                    "type": "string",
+                    "example": "2020-01-01T00:00:00Z"
+                },
+                "name": {
+                    "description": "Название устройства",
+                    "type": "string",
+                    "example": "My Device"
+                },
+                "updatedAt": {
+                    "description": "Дата обновления",
+                    "type": "string",
+                    "example": "2020-01-01T00:00:00Z"
+                }
+            }
+        },
         "smsgateway.ErrorResponse": {
             "type": "object",
             "properties": {
