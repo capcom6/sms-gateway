@@ -1,7 +1,6 @@
 name: docker-publish
 
 on:
-  push:
   pull_request:
 
 jobs:
