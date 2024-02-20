@@ -83,11 +83,12 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 		result[i] = smsgateway.Message{
 			ID:                 v.ExtID,
 			Message:            v.Message,
-			TTL:                ttl,
 			SimNumber:          v.SimNumber,
 			WithDeliveryReport: types.AsPointer[bool](v.WithDeliveryReport),
 			IsEncrypted:        v.IsEncrypted,
 			PhoneNumbers:       s.recipientsToDomain(v.Recipients),
+			TTL:                ttl,
+			ValidUntil:         v.ValidUntil,
 		}
 	}
 
@@ -149,7 +150,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 		}
 	}
 
-	var validUntil *time.Time = nil
+	var validUntil *time.Time = message.ValidUntil
 	if message.TTL != nil && *message.TTL > 0 {
 		validUntil = types.AsPointer(time.Now().Add(time.Duration(*message.TTL) * time.Second))
 	}
