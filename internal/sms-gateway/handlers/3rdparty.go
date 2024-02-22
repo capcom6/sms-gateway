@@ -65,7 +65,7 @@ func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
 			Name:      types.OrDefault[string](device.Name, ""),
 			CreatedAt: device.CreatedAt,
 			UpdatedAt: device.UpdatedAt,
-			DeletedAt: device.DeletedAt.Time,
+			DeletedAt: device.DeletedAt,
 			LastSeen:  device.LastSeen,
 		})
 	}
@@ -97,12 +97,16 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 
 	skipPhoneValidation := c.QueryBool("skipPhoneValidation", false)
 
-	// TODO: use DevicesService and don't preload devices on User
-	if len(user.Devices) < 1 {
+	devices, err := h.devicesSvc.Select(user)
+	if err != nil {
+		return fmt.Errorf("can't select devices: %w", err)
+	}
+
+	if len(devices) < 1 {
 		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройства в учетной записи")
 	}
 
-	device := user.Devices[0]
+	device := devices[0]
 	state, err := h.messagesSvc.Enqeue(device, req, services.MessagesEnqueueOptions{SkipPhoneValidation: skipPhoneValidation})
 	if err != nil {
 		var err400 services.ErrValidation

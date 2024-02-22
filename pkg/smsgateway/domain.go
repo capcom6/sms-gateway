@@ -14,11 +14,11 @@ const (
 
 // Устройство
 type Device struct {
-	ID        string    `json:"id" example:"PyDmBQZZXYmyxMwED8Fzy"`                 // Идентификатор
-	Name      string    `json:"name" example:"My Device"`                           // Название устройства
-	CreatedAt time.Time `json:"createdAt" example:"2020-01-01T00:00:00Z"`           // Дата создания
-	UpdatedAt time.Time `json:"updatedAt" example:"2020-01-01T00:00:00Z"`           // Дата обновления
-	DeletedAt time.Time `json:"deletedAt,omitempty" example:"2020-01-01T00:00:00Z"` // Дата удаления
+	ID        string     `json:"id" example:"PyDmBQZZXYmyxMwED8Fzy"`                 // Идентификатор
+	Name      string     `json:"name" example:"My Device"`                           // Название устройства
+	CreatedAt time.Time  `json:"createdAt" example:"2020-01-01T00:00:00Z"`           // Дата создания
+	UpdatedAt time.Time  `json:"updatedAt" example:"2020-01-01T00:00:00Z"`           // Дата обновления
+	DeletedAt *time.Time `json:"deletedAt,omitempty" example:"2020-01-01T00:00:00Z"` // Дата удаления
 
 	LastSeen time.Time `json:"lastSeen" example:"2020-01-01T00:00:00Z"` // Последняя активность
 }
