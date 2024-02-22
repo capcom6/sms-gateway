@@ -7,6 +7,7 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/crypto"
 	"github.com/jaevor/go-nanoid"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -74,13 +75,22 @@ func (s *AuthService) AuthorizeUser(username, password string) (models.User, err
 	return user, crypto.CompareBCryptHash(user.PasswordHash, password)
 }
 
-func NewAuthService(users *repositories.UsersRepository, devices *repositories.DevicesRepository, logger *zap.Logger) *AuthService {
+type AuthServiceParams struct {
+	fx.In
+
+	Users   *repositories.UsersRepository
+	Devices *repositories.DevicesRepository
+
+	Logger *zap.Logger
+}
+
+func NewAuthService(params AuthServiceParams) *AuthService {
 	idgen, _ := nanoid.Standard(21)
 
 	return &AuthService{
-		users:   users,
-		devices: devices,
-		logger:  logger.Named("AuthService"),
+		users:   params.Users,
+		devices: params.Devices,
+		logger:  params.Logger.Named("AuthService"),
 		idgen:   idgen,
 	}
 }
