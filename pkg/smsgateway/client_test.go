@@ -26,12 +26,12 @@ func TestClient_Send(t *testing.T) {
 
 		if string(req) != `{"message":"","phoneNumbers":null}` {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write(req)
+			_, _ = w.Write(req)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	}))
 	defer server.Close()
 

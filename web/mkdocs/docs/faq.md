@@ -52,3 +52,7 @@ To avoid mobile operator restrictions, we introduced a delay feature in version 
 ## Can I use long or non-standard phone numbers?
 
 Yes, starting from [1.6.1](https://github.com/capcom6/android-sms-gateway/releases/tag/v1.6.1) of the app, our system allows the use of long or non-standard phone numbers, which may be common with M2M (machine-to-machine) SIM cards or other special cases. To bypass the standard phone number validation, simply add the query parameter `skipPhoneValidation=true` to your API request. Please note that with validation disabled, you are responsible for ensuring the correctness of the phone numbers. They should still follow the E.164 format, beginning with a '+' and containing only digits.
+
+## What does the `RESULT_ERROR_LIMIT_EXCEEDED` error mean SMS?
+
+The `RESULT_ERROR_LIMIT_EXCEEDED` error occurs when you've hit the sending limit imposed by your carrier or the Android operating system. This is a safeguard against spamming and typically happens if you try to send too many messages in a short period. To avoid this, try spacing out your messages or contact your carrier to inquire about their message sending limits. See also [How can I set up delays between sending messages?](#how-can-i-set-up-delays-between-sending-messages)

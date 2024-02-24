@@ -1,8 +1,9 @@
 package smsgateway
 
-import "time"
-
-type ProcessState string
+import (
+	"fmt"
+	"time"
+)
 
 const (
 	MessageStatePending   ProcessState = "Pending"   // В ожидании
@@ -27,11 +28,21 @@ type Device struct {
 type Message struct {
 	ID                 string   `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"`                          // Идентификатор
 	Message            string   `json:"message" validate:"required,max=65535" example:"Hello World!"`                                      // Текст сообщения
-	TTL                *uint64  `json:"ttl,omitempty" validate:"omitempty,min=5" example:"86400"`                                          // Время жизни сообщения в секундах
 	SimNumber          *uint8   `json:"simNumber,omitempty" validate:"omitempty,max=3" example:"1"`                                        // Номер сим-карты
 	WithDeliveryReport *bool    `json:"withDeliveryReport,omitempty" example:"true"`                                                       // Запрашивать отчет о доставке
 	IsEncrypted        bool     `json:"isEncrypted,omitempty" example:"true"`                                                              // Зашифровано
 	PhoneNumbers       []string `json:"phoneNumbers" validate:"required,min=1,max=100,dive,required,min=10,max=128" example:"79990001234"` // Получатели
+
+	TTL        *uint64    `json:"ttl,omitempty" validate:"omitempty,min=5" example:"86400"` // Время жизни сообщения в секундах
+	ValidUntil *time.Time `json:"validUntil,omitempty" example:"2020-01-01T00:00:00Z"`      // Время окончания жизни сообщения
+}
+
+func (m Message) Validate() error {
+	if m.TTL != nil && m.ValidUntil != nil {
+		return fmt.Errorf("%w: ttl and validUntil", ErrConflictFields)
+	}
+
+	return nil
 }
 
 // Состояние сообщения

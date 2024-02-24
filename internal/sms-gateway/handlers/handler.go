@@ -8,6 +8,10 @@ import (
 	"go.uber.org/zap"
 )
 
+type Validatable interface {
+	Validate() error
+}
+
 type Handler struct {
 	Logger    *zap.Logger
 	Validator *validator.Validate
@@ -18,11 +22,7 @@ func (h *Handler) BodyParserValidator(c *fiber.Ctx, out any) error {
 		return fmt.Errorf("can't parse body: %w", err)
 	}
 
-	if h.Validator == nil {
-		return nil
-	}
-
-	return h.Validator.Struct(out)
+	return h.validateStruct(out)
 }
 
 func (h *Handler) QueryParserValidator(c *fiber.Ctx, out any) error {
@@ -30,11 +30,7 @@ func (h *Handler) QueryParserValidator(c *fiber.Ctx, out any) error {
 		return fmt.Errorf("can't parse query: %w", err)
 	}
 
-	if h.Validator == nil {
-		return nil
-	}
-
-	return h.Validator.Struct(out)
+	return h.validateStruct(out)
 }
 
 func (h *Handler) ParamsParserValidator(c *fiber.Ctx, out any) error {
@@ -42,9 +38,21 @@ func (h *Handler) ParamsParserValidator(c *fiber.Ctx, out any) error {
 		return fmt.Errorf("can't parse params: %w", err)
 	}
 
-	if h.Validator == nil {
-		return nil
+	return h.validateStruct(out)
+}
+
+func (h *Handler) validateStruct(out any) error {
+	if h.Validator != nil {
+		if err := h.Validator.Struct(out); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
 	}
 
-	return h.Validator.Struct(out)
+	if req, ok := out.(Validatable); ok {
+		if err := req.Validate(); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+	}
+
+	return nil
 }

@@ -75,7 +75,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, headers map
 		return err
 	}
 	defer func() {
-		io.Copy(io.Discard, resp.Body)
+		_, _ = io.Copy(io.Discard, resp.Body)
 		resp.Body.Close()
 	}()
 
