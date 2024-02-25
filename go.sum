@@ -35,6 +35,8 @@ github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/capcom6/go-infra-fx v0.0.0-20240104165405-d2c3993a9516 h1:ZR0Tff1lMBXUFQQTLgsd49slSPj7NAa6MhJwwuxVEaY=
 github.com/capcom6/go-infra-fx v0.0.0-20240104165405-d2c3993a9516/go.mod h1:3wSBR0bVZ/fwWYo05PSoMLO4nS6mhmK0kz5MFFl1PP4=
+github.com/capcom6/go-infra-fx v0.0.0-20240223033736-3e30c096fa0a h1:bKiAawPSgf8JZALCfoSCJi8e+9Hh17BzLetsOvSs+1Q=
+github.com/capcom6/go-infra-fx v0.0.0-20240223033736-3e30c096fa0a/go.mod h1:pyBfAGDvscBWaHqjbVQaXieSC4U3xmH6ceATB2ywH08=
 github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
 github.com/cenkalti/backoff/v4 v4.2.1/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
