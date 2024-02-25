@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/capcom6/sms-gateway/internal/shared"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/slices"
@@ -82,7 +83,7 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 
 		result[i] = smsgateway.Message{
 			ID:                 v.ExtID,
-			Message:            v.Message,
+			Message:            v.Message.Text,
 			SimNumber:          v.SimNumber,
 			WithDeliveryReport: types.AsPointer[bool](v.WithDeliveryReport),
 			IsEncrypted:        v.IsEncrypted,
@@ -156,16 +157,18 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	}
 
 	msg := models.Message{
-		DeviceID:           device.ID,
-		ExtID:              message.ID,
-		Message:            message.Message,
-		ValidUntil:         validUntil,
-		SimNumber:          message.SimNumber,
-		WithDeliveryReport: types.OrDefault[bool](message.WithDeliveryReport, true),
-		IsEncrypted:        message.IsEncrypted,
-		Device:             device,
-		Recipients:         s.recipientsToModel(message.PhoneNumbers),
-		TimedModel:         models.TimedModel{},
+		Message: shared.Message{
+			ExtID:              message.ID,
+			Text:               message.Message,
+			ValidUntil:         validUntil,
+			SimNumber:          message.SimNumber,
+			WithDeliveryReport: types.OrDefault[bool](message.WithDeliveryReport, true),
+			IsEncrypted:        message.IsEncrypted,
+			Recipients:         s.recipientsToModel(message.PhoneNumbers),
+		},
+
+		DeviceID: device.ID,
+		Device:   device,
 	}
 	if msg.ExtID == "" {
 		msg.ExtID = s.idgen()
