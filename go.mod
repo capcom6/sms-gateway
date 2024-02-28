@@ -6,7 +6,7 @@ toolchain go1.21.5
 
 require (
 	firebase.google.com/go/v4 v4.12.1
-	github.com/capcom6/go-infra-fx v0.0.0-20240104165405-d2c3993a9516
+	github.com/capcom6/go-infra-fx v0.0.0-20240223033736-3e30c096fa0a
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/gofiber/fiber/v2 v2.52.1
 	github.com/jaevor/go-nanoid v1.3.0
