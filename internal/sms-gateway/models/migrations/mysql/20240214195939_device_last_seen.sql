@@ -1,7 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 ALTER TABLE `devices`
-ADD `last_seen` datetime NOT NULL;
+ADD `last_seen` datetime(3) NOT NULL;
 -- +goose StatementEnd
 -- +goose StatementBegin
 UPDATE `devices`

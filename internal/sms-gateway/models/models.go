@@ -34,7 +34,7 @@ type Device struct {
 	AuthToken string  `gorm:"not null;uniqueIndex;type:char(21)"`
 	PushToken *string `gorm:"type:varchar(256)"`
 
-	LastSeen time.Time `gorm:"type:datetime;autoCreateTime"`
+	LastSeen time.Time `gorm:"not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
 
 	UserID string `gorm:"not null;type:varchar(32)"`
 
