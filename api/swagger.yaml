@@ -1,5 +1,32 @@
 basePath: /api
 definitions:
+  smsgateway.Device:
+    properties:
+      createdAt:
+        description: Дата создания
+        example: "2020-01-01T00:00:00Z"
+        type: string
+      deletedAt:
+        description: Дата удаления
+        example: "2020-01-01T00:00:00Z"
+        type: string
+      id:
+        description: Идентификатор
+        example: PyDmBQZZXYmyxMwED8Fzy
+        type: string
+      lastSeen:
+        description: Последняя активность
+        example: "2020-01-01T00:00:00Z"
+        type: string
+      name:
+        description: Название устройства
+        example: My Device
+        type: string
+      updatedAt:
+        description: Дата обновления
+        example: "2020-01-01T00:00:00Z"
+        type: string
+    type: object
   smsgateway.ErrorResponse:
     properties:
       code:
@@ -183,6 +210,36 @@ info:
   title: SMS-шлюз - API сервера
   version: 1.0.0
 paths:
+  /3rdparty/v1/device:
+    get:
+      description: Возвращает все устройства пользователя
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Состояние сообщения
+          schema:
+            items:
+              $ref: '#/definitions/smsgateway.Device'
+            type: array
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "401":
+          description: Ошибка авторизации
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: Получить устройства
+      tags:
+      - Пользователь
+      - Устройства
   /3rdparty/v1/message:
     get:
       description: Возвращает состояние сообщения по его ID

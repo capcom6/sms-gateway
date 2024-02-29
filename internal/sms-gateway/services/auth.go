@@ -7,11 +7,15 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/crypto"
 	"github.com/jaevor/go-nanoid"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type AuthService struct {
 	users   *repositories.UsersRepository
 	devices *repositories.DevicesRepository
+
+	logger *zap.Logger
 
 	idgen func() string
 }
@@ -50,7 +54,16 @@ func (s *AuthService) UpdateDevice(id, pushToken string) error {
 }
 
 func (s *AuthService) AuthorizeDevice(token string) (models.Device, error) {
-	return s.devices.GetByToken(token)
+	device, err := s.devices.GetByToken(token)
+	if err != nil {
+		return device, err
+	}
+
+	if err := s.devices.UpdateLastSeen(device.ID); err != nil {
+		s.logger.Error("can't update last seen", zap.Error(err))
+	}
+
+	return device, nil
 }
 
 func (s *AuthService) AuthorizeUser(username, password string) (models.User, error) {
@@ -62,12 +75,22 @@ func (s *AuthService) AuthorizeUser(username, password string) (models.User, err
 	return user, crypto.CompareBCryptHash(user.PasswordHash, password)
 }
 
-func NewAuthService(users *repositories.UsersRepository, devices *repositories.DevicesRepository) *AuthService {
+type AuthServiceParams struct {
+	fx.In
+
+	Users   *repositories.UsersRepository
+	Devices *repositories.DevicesRepository
+
+	Logger *zap.Logger
+}
+
+func NewAuthService(params AuthServiceParams) *AuthService {
 	idgen, _ := nanoid.Standard(21)
 
 	return &AuthService{
-		users:   users,
-		devices: devices,
+		users:   params.Users,
+		devices: params.Devices,
+		logger:  params.Logger.Named("AuthService"),
 		idgen:   idgen,
 	}
 }

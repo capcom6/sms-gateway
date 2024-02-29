@@ -13,6 +13,17 @@ const (
 	MessageStateFailed    ProcessState = "Failed"    // Ошибка
 )
 
+// Устройство
+type Device struct {
+	ID        string     `json:"id" example:"PyDmBQZZXYmyxMwED8Fzy"`                 // Идентификатор
+	Name      string     `json:"name" example:"My Device"`                           // Название устройства
+	CreatedAt time.Time  `json:"createdAt" example:"2020-01-01T00:00:00Z"`           // Дата создания
+	UpdatedAt time.Time  `json:"updatedAt" example:"2020-01-01T00:00:00Z"`           // Дата обновления
+	DeletedAt *time.Time `json:"deletedAt,omitempty" example:"2020-01-01T00:00:00Z"` // Дата удаления
+
+	LastSeen time.Time `json:"lastSeen" example:"2020-01-01T00:00:00Z"` // Последняя активность
+}
+
 // Сообщение
 type Message struct {
 	ID                 string   `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"`                          // Идентификатор

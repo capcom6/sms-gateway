@@ -2,14 +2,17 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
+	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -17,11 +20,57 @@ const (
 	route3rdPartyGetMessage = "3rdparty.get.message"
 )
 
+type ThirdPartyHandlerParams struct {
+	fx.In
+
+	AuthSvc     *services.AuthService
+	MessagesSvc *services.MessagesService
+	DevicesSvc  *services.DevicesService
+
+	Logger    *zap.Logger
+	Validator *validator.Validate
+}
+
 type thirdPartyHandler struct {
 	Handler
 
 	authSvc     *services.AuthService
 	messagesSvc *services.MessagesService
+	devicesSvc  *services.DevicesService
+}
+
+//	@Summary		Получить устройства
+//	@Description	Возвращает все устройства пользователя
+//	@Security		ApiAuth
+//	@Tags			Пользователь, Устройства
+//	@Produce		json
+//	@Success		200	{object}	[]smsgateway.Device			"Состояние сообщения"
+//	@Failure		401	{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
+//	@Failure		400	{object}	smsgateway.ErrorResponse	"Некорректный запрос"
+//	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Router			/3rdparty/v1/device [get]
+//
+// Получить устройства
+func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
+	devices, err := h.devicesSvc.Select(user)
+	if err != nil {
+		return fmt.Errorf("can't select devices: %w", err)
+	}
+
+	response := make([]smsgateway.Device, 0, len(devices))
+
+	for _, device := range devices {
+		response = append(response, smsgateway.Device{
+			ID:        device.ID,
+			Name:      types.OrDefault[string](device.Name, ""),
+			CreatedAt: device.CreatedAt,
+			UpdatedAt: device.UpdatedAt,
+			DeletedAt: device.DeletedAt,
+			LastSeen:  device.LastSeen,
+		})
+	}
+
+	return c.JSON(response)
 }
 
 //	@Summary		Поставить сообщение в очередь
@@ -51,11 +100,16 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 
 	skipPhoneValidation := c.QueryBool("skipPhoneValidation", false)
 
-	if len(user.Devices) < 1 {
+	devices, err := h.devicesSvc.Select(user)
+	if err != nil {
+		return fmt.Errorf("can't select devices: %w", err)
+	}
+
+	if len(devices) < 1 {
 		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройства в учетной записи")
 	}
 
-	device := user.Devices[0]
+	device := devices[0]
 	state, err := h.messagesSvc.Enqeue(device, req, services.MessagesEnqueueOptions{SkipPhoneValidation: skipPhoneValidation})
 	if err != nil {
 		var err400 services.ErrValidation
@@ -130,17 +184,17 @@ func (h *thirdPartyHandler) Register(router fiber.Router) {
 		},
 	}))
 
+	router.Get("/device", h.authorize(h.getDevice))
+
 	router.Post("/message", h.authorize(h.postMessage))
 	router.Get("/message/:id", h.authorize(h.getMessage)).Name(route3rdPartyGetMessage)
 }
 
-func newThirdPartyHandler(logger *zap.Logger, validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *thirdPartyHandler {
+func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
 	return &thirdPartyHandler{
-		Handler: Handler{
-			Logger:    logger,
-			Validator: validator,
-		},
-		authSvc:     authSvc,
-		messagesSvc: messagesSvc,
+		Handler:     Handler{Logger: params.Logger.Named("ThirdPartyHandler"), Validator: params.Validator},
+		authSvc:     params.AuthSvc,
+		messagesSvc: params.MessagesSvc,
+		devicesSvc:  params.DevicesSvc,
 	}
 }

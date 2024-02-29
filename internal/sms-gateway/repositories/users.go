@@ -16,7 +16,7 @@ type UsersRepository struct {
 func (r *UsersRepository) GetByLogin(login string) (models.User, error) {
 	user := models.User{}
 
-	return user, r.db.Where("id = ?", login).Preload("Devices").Take(&user).Error
+	return user, r.db.Where("id = ?", login).Take(&user).Error
 }
 
 func (r *UsersRepository) Insert(user *models.User) error {

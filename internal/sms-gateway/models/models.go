@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type MessageState string
@@ -19,13 +17,13 @@ const (
 type TimedModel struct {
 	CreatedAt time.Time `gorm:"not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
 	UpdatedAt time.Time `gorm:"not null;autoupdatetime:false;default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
-	DeletedAt gorm.DeletedAt
+	DeletedAt *time.Time
 }
 
 type User struct {
 	ID           string   `gorm:"primaryKey;type:varchar(32)"`
 	PasswordHash string   `gorm:"not null;type:varchar(72)"`
-	Devices      []Device `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Devices      []Device `gorm:"-,foreignKey:UserID;constraint:OnDelete:CASCADE"`
 
 	TimedModel
 }
@@ -35,6 +33,8 @@ type Device struct {
 	Name      *string `gorm:"type:varchar(128)"`
 	AuthToken string  `gorm:"not null;uniqueIndex;type:char(21)"`
 	PushToken *string `gorm:"type:varchar(256)"`
+
+	LastSeen time.Time `gorm:"not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
 
 	UserID string `gorm:"not null;type:varchar(32)"`
 

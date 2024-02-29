@@ -14,6 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/jaevor/go-nanoid"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -182,16 +183,23 @@ func (h *mobileHandler) Register(router fiber.Router) {
 	router.Patch("/message", h.authorize(h.patchMessage))
 }
 
-func newMobileHandler(logger *zap.Logger, validator *validator.Validate, authSvc *services.AuthService, messagesSvc *services.MessagesService) *mobileHandler {
+type MobileHandlerParams struct {
+	fx.In
+
+	Logger    *zap.Logger
+	Validator *validator.Validate
+
+	AuthSvc     *services.AuthService
+	MessagesSvc *services.MessagesService
+}
+
+func newMobileHandler(params MobileHandlerParams) *mobileHandler {
 	idGen, _ := nanoid.Standard(21)
 
 	return &mobileHandler{
-		Handler: Handler{
-			Logger:    logger,
-			Validator: validator,
-		},
-		authSvc:     authSvc,
-		messagesSvc: messagesSvc,
+		Handler:     Handler{Logger: params.Logger, Validator: params.Validator},
+		authSvc:     params.AuthSvc,
+		messagesSvc: params.MessagesSvc,
 		idGen:       idGen,
 	}
 }

@@ -53,7 +53,7 @@ func NewMessagesService(params MessagesServiceParams) *MessagesService {
 	return &MessagesService{
 		Messages: params.Messages,
 		PushSvc:  params.PushSvc,
-		Logger:   params.Logger,
+		Logger:   params.Logger.Named("MessagesService"),
 		idgen:    idgen,
 	}
 }

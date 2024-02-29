@@ -48,6 +48,10 @@ GET {{baseUrl}}/api/3rdparty/v1/message/-rnEaUz7KObDdokPrzKpM HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###
+GET {{baseUrl}}/api/3rdparty/v1/device HTTP/1.1
+Authorization: Basic {{credentials}}
+
+###
 GET {{baseUrl}}/api/mobile/v1/message HTTP/1.1
 Authorization: Bearer {{mobileToken}}
 

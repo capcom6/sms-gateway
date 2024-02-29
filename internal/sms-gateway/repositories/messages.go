@@ -40,7 +40,7 @@ func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options
 			query = query.Preload("Recipients")
 		}
 		if options[0].WithDevice {
-			query = query.Preload("Device")
+			query = query.Joins("Device")
 		}
 	}
 
