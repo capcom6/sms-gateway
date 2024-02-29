@@ -17,6 +17,9 @@ init-dev: init
 air:
 	air
 
+air-private:
+	air -c .air.private.toml
+
 db-upgrade:
 	go run ./cmd/$(project_name)/main.go db:migrate
 
