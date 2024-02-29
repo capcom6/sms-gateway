@@ -1,10 +1,23 @@
 package config
 
+type GatewayMode string
+
+const (
+	GatewayModePublic  GatewayMode = "public"
+	GatewayModePrivate GatewayMode = "private"
+)
+
 type Config struct {
+	Gateway  Gateway   `yaml:"gateway"`
 	HTTP     HTTP      `yaml:"http"`
 	Database Database  `yaml:"database"`
 	FCM      FCMConfig `yaml:"fcm"`
 	Tasks    Tasks     `yaml:"tasks"`
+}
+
+type Gateway struct {
+	Mode         GatewayMode `yaml:"mode"          envconfig:"GATEWAY__MODE"`          // gateway mode: public or private
+	PrivateToken string      `yaml:"private_token" envconfig:"GATEWAY__PRIVATE_TOKEN"` // device registration token in private mode
 }
 
 type HTTP struct {
@@ -12,10 +25,10 @@ type HTTP struct {
 }
 
 type Database struct {
-	Dialect  string `yaml:"dialect" envconfig:"DATABASE__DIALECT"`
-	Host     string `yaml:"host" envconfig:"DATABASE__HOST"`
-	Port     int    `yaml:"port" envconfig:"DATABASE__PORT"`
-	User     string `yaml:"user" envconfig:"DATABASE__USER"`
+	Dialect  string `yaml:"dialect"  envconfig:"DATABASE__DIALECT"`
+	Host     string `yaml:"host"     envconfig:"DATABASE__HOST"`
+	Port     int    `yaml:"port"     envconfig:"DATABASE__PORT"`
+	User     string `yaml:"user"     envconfig:"DATABASE__USER"`
 	Password string `yaml:"password" envconfig:"DATABASE__PASSWORD"`
 	Database string `yaml:"database" envconfig:"DATABASE__DATABASE"`
 	Timezone string `yaml:"timezone" envconfig:"DATABASE__TIMEZONE"`
@@ -36,6 +49,7 @@ type HashingTask struct {
 }
 
 var defaultConfig = Config{
+	Gateway: Gateway{Mode: GatewayModePublic},
 	HTTP: HTTP{
 		Listen: ":3000",
 	},
