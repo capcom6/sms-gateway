@@ -1,24 +1,14 @@
 package config
 
+import (
+	shared "github.com/capcom6/sms-gateway/internal/shared/config"
+)
+
 type Config struct {
-	HTTP     HTTP      `yaml:"http"`
-	Database Database  `yaml:"database"`
-	FCM      FCMConfig `yaml:"fcm"`
-	Tasks    Tasks     `yaml:"tasks"`
-}
-
-type HTTP struct {
-	Listen string `yaml:"listen" envconfig:"HTTP__LISTEN"`
-}
-
-type Database struct {
-	Dialect  string `yaml:"dialect" envconfig:"DATABASE__DIALECT"`
-	Host     string `yaml:"host" envconfig:"DATABASE__HOST"`
-	Port     int    `yaml:"port" envconfig:"DATABASE__PORT"`
-	User     string `yaml:"user" envconfig:"DATABASE__USER"`
-	Password string `yaml:"password" envconfig:"DATABASE__PASSWORD"`
-	Database string `yaml:"database" envconfig:"DATABASE__DATABASE"`
-	Timezone string `yaml:"timezone" envconfig:"DATABASE__TIMEZONE"`
+	HTTP     shared.HTTP     `yaml:"http"`
+	Database shared.Database `yaml:"database"`
+	FCM      FCMConfig       `yaml:"fcm"`
+	Tasks    Tasks           `yaml:"tasks"`
 }
 
 type FCMConfig struct {
@@ -36,10 +26,10 @@ type HashingTask struct {
 }
 
 var defaultConfig = Config{
-	HTTP: HTTP{
+	HTTP: shared.HTTP{
 		Listen: ":3000",
 	},
-	Database: Database{
+	Database: shared.Database{
 		Dialect:  "mysql",
 		Host:     "localhost",
 		Port:     3306,
