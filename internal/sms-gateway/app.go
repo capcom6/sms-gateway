@@ -9,7 +9,7 @@ import (
 	"github.com/capcom6/go-infra-fx/http"
 	"github.com/capcom6/go-infra-fx/logger"
 	"github.com/capcom6/go-infra-fx/validator"
-	appconfig "github.com/capcom6/sms-gateway/internal/config"
+	appconfig "github.com/capcom6/sms-gateway/internal/sms-gateway/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
