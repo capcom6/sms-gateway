@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/capcom6/sms-gateway/internal/shared"
+	shared "github.com/capcom6/sms-gateway/internal/shared/models"
 )
 
 type MessageState = shared.MessageState
@@ -21,7 +21,7 @@ type User struct {
 	PasswordHash string   `gorm:"not null;type:varchar(72)"`
 	Devices      []Device `gorm:"-,foreignKey:UserID;constraint:OnDelete:CASCADE"`
 
-	shared.TimedModel
+	shared.TimedMixin
 }
 
 type Device struct {
@@ -34,7 +34,7 @@ type Device struct {
 
 	UserID string `gorm:"not null;type:varchar(32)"`
 
-	shared.TimedModel
+	shared.TimedMixin
 }
 
 type Message struct {

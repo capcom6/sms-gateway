@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/capcom6/sms-gateway/internal/shared"
+	shared "github.com/capcom6/sms-gateway/internal/shared/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/slices"

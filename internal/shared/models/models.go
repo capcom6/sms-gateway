@@ -14,7 +14,7 @@ const (
 	MessageStateFailed    MessageState = "Failed"
 )
 
-type TimedModel struct {
+type TimedMixin struct {
 	CreatedAt time.Time `gorm:"not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
 	UpdatedAt time.Time `gorm:"not null;autoupdatetime:false;default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 	DeletedAt *time.Time
@@ -34,7 +34,7 @@ type Message struct {
 
 	Recipients []MessageRecipient `gorm:"foreignKey:MessageID;constraint:OnDelete:CASCADE"`
 
-	TimedModel
+	TimedMixin
 }
 
 type MessageRecipient struct {
