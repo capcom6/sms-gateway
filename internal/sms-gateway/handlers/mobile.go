@@ -7,6 +7,7 @@ import (
 
 	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
@@ -21,7 +22,7 @@ import (
 type mobileHandler struct {
 	Handler
 
-	authSvc     *services.AuthService
+	authSvc     *auth.Service
 	messagesSvc *services.MessagesService
 
 	idGen func() string
@@ -169,7 +170,14 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
-	router.Post("/device", limiter.New(), h.postDevice)
+	router.Post("/device", limiter.New(), func(c *fiber.Ctx) error {
+		token := c.Get(fiber.HeaderAuthorization)
+		if h.authSvc.AuthorizeRegistration(token) != nil {
+			return fiber.ErrUnauthorized
+		}
+
+		return c.Next()
+	}, h.postDevice)
 
 	router.Use(apikey.New(apikey.Config{
 		Authorizer: func(token string) bool {
@@ -189,7 +197,7 @@ type MobileHandlerParams struct {
 	Logger    *zap.Logger
 	Validator *validator.Validate
 
-	AuthSvc     *services.AuthService
+	AuthSvc     *auth.Service
 	MessagesSvc *services.MessagesService
 }
 

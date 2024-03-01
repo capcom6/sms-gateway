@@ -5,6 +5,7 @@
 
 ###
 POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1
+Authorization: 123456789
 Content-Type: application/json
 
 {

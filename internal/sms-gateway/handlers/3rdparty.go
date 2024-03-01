@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
@@ -23,7 +24,7 @@ const (
 type ThirdPartyHandlerParams struct {
 	fx.In
 
-	AuthSvc     *services.AuthService
+	AuthSvc     *auth.Service
 	MessagesSvc *services.MessagesService
 	DevicesSvc  *services.DevicesService
 
@@ -34,7 +35,7 @@ type ThirdPartyHandlerParams struct {
 type thirdPartyHandler struct {
 	Handler
 
-	authSvc     *services.AuthService
+	authSvc     *auth.Service
 	messagesSvc *services.MessagesService
 	devicesSvc  *services.DevicesService
 }

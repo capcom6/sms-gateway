@@ -11,6 +11,7 @@ import (
 	"github.com/capcom6/go-infra-fx/validator"
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
@@ -28,6 +29,7 @@ var Module = fx.Module(
 	validator.Module,
 	handlers.Module,
 	services.Module,
+	auth.Module,
 	repositories.Module,
 	db.Module,
 	tasks.Module,
