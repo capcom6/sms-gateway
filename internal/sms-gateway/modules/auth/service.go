@@ -11,6 +11,11 @@ import (
 	"go.uber.org/zap"
 )
 
+type Config struct {
+	Mode         Mode
+	PrivateToken string
+}
+
 type Service struct {
 	config Config
 
@@ -87,11 +92,6 @@ func (s *Service) AuthorizeUser(username, password string) (models.User, error) 
 	}
 
 	return user, crypto.CompareBCryptHash(user.PasswordHash, password)
-}
-
-type Config struct {
-	Mode         Mode
-	PrivateToken string
 }
 
 type Params struct {

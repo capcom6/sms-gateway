@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/slices"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
@@ -35,13 +36,13 @@ type MessagesServiceParams struct {
 	fx.In
 
 	Messages *repositories.MessagesRepository
-	PushSvc  *PushService
+	PushSvc  *push.Service
 	Logger   *zap.Logger
 }
 
 type MessagesService struct {
 	Messages *repositories.MessagesRepository
-	PushSvc  *PushService
+	PushSvc  *push.Service
 	Logger   *zap.Logger
 
 	idgen func() string

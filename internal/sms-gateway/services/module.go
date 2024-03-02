@@ -12,7 +12,6 @@ var Module = fx.Module(
 	}),
 	fx.Provide(
 		NewMessagesService,
-		NewPushService,
 		NewDevicesService,
 	),
 )

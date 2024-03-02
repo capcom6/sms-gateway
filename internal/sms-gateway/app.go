@@ -12,6 +12,7 @@ import (
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
@@ -30,6 +31,7 @@ var Module = fx.Module(
 	handlers.Module,
 	services.Module,
 	auth.Module,
+	push.Module,
 	repositories.Module,
 	db.Module,
 	tasks.Module,
@@ -57,7 +59,7 @@ type StartParams struct {
 
 	Server      *http.Server
 	HashingTask *tasks.HashingTask
-	PushService *services.PushService
+	PushService *push.Service
 }
 
 func Start(p StartParams) error {
