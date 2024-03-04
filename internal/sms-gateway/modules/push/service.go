@@ -84,16 +84,9 @@ func (s *Service) sendAll(ctx context.Context) {
 	}
 
 	s.logger.Info("Sending messages", zap.Int("count", len(targets)))
-	for token, data := range targets {
-		singleCtx, cancel := context.WithTimeout(ctx, s.config.Timeout)
-		if err := s.sendSingle(singleCtx, token, data); err != nil {
-			s.logger.Error("Can't send message", zap.String("token", token), zap.Error(err))
-		}
-		cancel()
+	ctx, cancel := context.WithTimeout(ctx, s.config.Timeout)
+	if err := s.client.Send(ctx, targets); err != nil {
+		s.logger.Error("Can't send messages", zap.Error(err))
 	}
-}
-
-// sendSingle sends a single message to the specified token
-func (s *Service) sendSingle(ctx context.Context, token string, data map[string]string) error {
-	return s.client.Send(ctx, token, data)
+	cancel()
 }

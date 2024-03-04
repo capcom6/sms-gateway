@@ -60,3 +60,7 @@ type RecipientState struct {
 	State       ProcessState `json:"state" validate:"required" example:"Pending"`                          // Состояние
 	Error       *string      `json:"error,omitempty" example:"timeout"`                                    // Ошибка
 }
+
+type PushNotification struct {
+	Token string `json:"token" validate:"required" example:"PyDmBQZZXYmyxMwED8Fzy"`
+}

@@ -15,5 +15,6 @@ var Module = fx.Module(
 		http.AsRootHandler(newRootHandler),
 		http.AsApiHandler(newThirdPartyHandler),
 		http.AsApiHandler(newMobileHandler),
+		http.AsApiHandler(newUpstreamHandler),
 	),
 )

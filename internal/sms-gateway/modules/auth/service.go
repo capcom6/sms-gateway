@@ -16,6 +16,17 @@ type Config struct {
 	PrivateToken string
 }
 
+type Params struct {
+	fx.In
+
+	Config Config
+
+	Users   *repositories.UsersRepository
+	Devices *repositories.DevicesRepository
+
+	Logger *zap.Logger
+}
+
 type Service struct {
 	config Config
 
@@ -25,6 +36,18 @@ type Service struct {
 	logger *zap.Logger
 
 	idgen func() string
+}
+
+func New(params Params) *Service {
+	idgen, _ := nanoid.Standard(21)
+
+	return &Service{
+		config:  params.Config,
+		users:   params.Users,
+		devices: params.Devices,
+		logger:  params.Logger.Named("Service"),
+		idgen:   idgen,
+	}
 }
 
 func (s *Service) RegisterUser(login, password string) (models.User, error) {
@@ -92,27 +115,4 @@ func (s *Service) AuthorizeUser(username, password string) (models.User, error) 
 	}
 
 	return user, crypto.CompareBCryptHash(user.PasswordHash, password)
-}
-
-type Params struct {
-	fx.In
-
-	Config Config
-
-	Users   *repositories.UsersRepository
-	Devices *repositories.DevicesRepository
-
-	Logger *zap.Logger
-}
-
-func New(params Params) *Service {
-	idgen, _ := nanoid.Standard(21)
-
-	return &Service{
-		config:  params.Config,
-		users:   params.Users,
-		devices: params.Devices,
-		logger:  params.Logger.Named("Service"),
-		idgen:   idgen,
-	}
 }

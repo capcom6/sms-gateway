@@ -11,3 +11,5 @@ type MobileUpdateRequest struct {
 	Id        string `json:"id" example:"QslD_GefqiYV6RQXdkM6V"`                                     // Идентификатор, если есть
 	PushToken string `json:"pushToken" validate:"omitempty,max=256" example:"gHz-T6NezDlOfllr7F-Be"` // Токен для отправки PUSH-уведомлений
 }
+
+type UpstreamPushRequest = []PushNotification

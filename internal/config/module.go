@@ -6,6 +6,7 @@ import (
 	"github.com/capcom6/go-infra-fx/config"
 	"github.com/capcom6/go-infra-fx/db"
 	"github.com/capcom6/go-infra-fx/http"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
@@ -54,11 +55,6 @@ var Module = fx.Module(
 			Debounce: time.Duration(cfg.FCM.DebounceSeconds) * time.Second,
 			Timeout:  time.Duration(cfg.FCM.TimeoutSeconds) * time.Second,
 		}
-		// return services.PushServiceConfig{
-		// 	CredentialsJSON: cfg.FCM.CredentialsJSON,
-		// 	Debounce:        time.Duration(cfg.FCM.DebounceSeconds) * time.Second,
-		// 	Timeout:         time.Duration(cfg.FCM.TimeoutSeconds) * time.Second,
-		// }
 	}),
 	fx.Provide(func(cfg Config) tasks.HashingTaskConfig {
 		return tasks.HashingTaskConfig{
@@ -69,6 +65,11 @@ var Module = fx.Module(
 		return auth.Config{
 			Mode:         auth.Mode(cfg.Gateway.Mode),
 			PrivateToken: cfg.Gateway.PrivateToken,
+		}
+	}),
+	fx.Provide(func(cfg Config) handlers.Config {
+		return handlers.Config{
+			GatewayMode: handlers.GatewayMode(cfg.Gateway.Mode),
 		}
 	}),
 )
