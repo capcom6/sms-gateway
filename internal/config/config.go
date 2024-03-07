@@ -8,11 +8,11 @@ const (
 )
 
 type Config struct {
-	Gateway  Gateway   `yaml:"gateway"`
-	HTTP     HTTP      `yaml:"http"`
-	Database Database  `yaml:"database"`
-	FCM      FCMConfig `yaml:"fcm"`
-	Tasks    Tasks     `yaml:"tasks"`
+	Gateway  Gateway   `yaml:"gateway"`  // gateway config
+	HTTP     HTTP      `yaml:"http"`     // http server config
+	Database Database  `yaml:"database"` // database config
+	FCM      FCMConfig `yaml:"fcm"`      // firebase cloud messaging config
+	Tasks    Tasks     `yaml:"tasks"`    // tasks config
 }
 
 type Gateway struct {
@@ -21,23 +21,23 @@ type Gateway struct {
 }
 
 type HTTP struct {
-	Listen string `yaml:"listen" envconfig:"HTTP__LISTEN"`
+	Listen string `yaml:"listen" envconfig:"HTTP__LISTEN"` // listen address
 }
 
 type Database struct {
-	Dialect  string `yaml:"dialect"  envconfig:"DATABASE__DIALECT"`
-	Host     string `yaml:"host"     envconfig:"DATABASE__HOST"`
-	Port     int    `yaml:"port"     envconfig:"DATABASE__PORT"`
-	User     string `yaml:"user"     envconfig:"DATABASE__USER"`
-	Password string `yaml:"password" envconfig:"DATABASE__PASSWORD"`
-	Database string `yaml:"database" envconfig:"DATABASE__DATABASE"`
-	Timezone string `yaml:"timezone" envconfig:"DATABASE__TIMEZONE"`
+	Dialect  string `yaml:"dialect"  envconfig:"DATABASE__DIALECT"`  // database dialect
+	Host     string `yaml:"host"     envconfig:"DATABASE__HOST"`     // database host
+	Port     int    `yaml:"port"     envconfig:"DATABASE__PORT"`     // database port
+	User     string `yaml:"user"     envconfig:"DATABASE__USER"`     // database user
+	Password string `yaml:"password" envconfig:"DATABASE__PASSWORD"` // database password
+	Database string `yaml:"database" envconfig:"DATABASE__DATABASE"` // database name
+	Timezone string `yaml:"timezone" envconfig:"DATABASE__TIMEZONE"` // database timezone
 }
 
 type FCMConfig struct {
-	CredentialsJSON string `yaml:"credentials_json"`
-	DebounceSeconds uint16 `yaml:"debounce_seconds"`
-	TimeoutSeconds  uint16 `yaml:"timeout_seconds"`
+	CredentialsJSON string `yaml:"credentials_json" envconfig:"FCM__CREDENTIALS_JSON"` // firebase credentials json (public mode only)
+	DebounceSeconds uint16 `yaml:"debounce_seconds" envconfig:"FCM__DEBOUNCE_SECONDS"` // push notification debounce (>= 5s)
+	TimeoutSeconds  uint16 `yaml:"timeout_seconds"  envconfig:"FCM__TIMEOUT_SECONDS"`  // push notification send timeout
 }
 
 type Tasks struct {
@@ -45,7 +45,7 @@ type Tasks struct {
 }
 
 type HashingTask struct {
-	IntervalSeconds uint16 `yaml:"interval_seconds"`
+	IntervalSeconds uint16 `yaml:"interval_seconds" envconfig:"TASKS__HASHING__INTERVAL_SECONDS"` // hashing interval in seconds
 }
 
 var defaultConfig = Config{
