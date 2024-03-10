@@ -60,6 +60,7 @@ func (c *Client) Send(ctx context.Context, messages map[string]map[string]string
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "android-sms-gateway/1.x (server; golang)")
 
 	resp, err := c.client.Do(req)
 	if err != nil {
