@@ -170,14 +170,11 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
-	router.Post("/device", limiter.New(), func(c *fiber.Ctx) error {
-		token := c.Get(fiber.HeaderAuthorization)
-		if h.authSvc.AuthorizeRegistration(token) != nil {
-			return fiber.ErrUnauthorized
-		}
-
-		return c.Next()
-	}, h.postDevice)
+	router.Post("/device", limiter.New(), apikey.New(apikey.Config{
+		Authorizer: func(token string) bool {
+			return h.authSvc.AuthorizeRegistration(token) == nil
+		},
+	}), h.postDevice)
 
 	router.Use(apikey.New(apikey.Config{
 		Authorizer: func(token string) bool {
