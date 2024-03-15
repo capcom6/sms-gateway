@@ -1,6 +1,6 @@
-gateway: # gateway config [GATEWAY__MODE]
-  mode: private # gateway mode (public - allow anonymous device registration, private - protected registration) [GATEWAY__PRIVATE_TOKEN]
-  private_token: 123456789 # access token for device registration in private mode
+gateway: # gateway config
+  mode: private # gateway mode (public - allow anonymous device registration, private - protected registration) [GATEWAY__MODE]
+  private_token: 123456789 # access token for device registration in private mode [GATEWAY__PRIVATE_TOKEN]
 http: # http server config
   listen: 127.0.0.1:3000 # listen address [HTTP__LISTEN]
 database: # database
