@@ -3,7 +3,7 @@
 ## Cloud Server
 
 <div align="center">
-    <img src="/assets/cloud-server.png" alt="Example settings for Cloud Server mode">
+    <img src="/assets/cloud-server-arch.png" alt="Architecture of the Cloud Server mode">
 </div>
 
 Use the cloud server mode when dealing with dynamic or shared device IP addresses. The best part? No registration, email, or phone number is required to start using it.
@@ -18,3 +18,6 @@ Use the cloud server mode when dealing with dynamic or shared device IP addresse
     curl -X POST -u <username>:<password> -H "Content-Type: application/json" -d '{ "message": "Hello, world!", "phoneNumbers": ["79990001234", "79995556677"] }' https://sms.capcom.me/api/3rdparty/v1/message
     ```
     
+<div align="center">
+    <img src="/assets/cloud-server.png" alt="Example settings for Cloud Server mode">
+</div>

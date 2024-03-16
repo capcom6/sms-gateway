@@ -3,7 +3,7 @@
 ## Local Server
 
 <div align="center">
-    <img src="/assets/local-server.png" alt="Example settings for Local Server mode">
+    <img src="/assets/local-server-arch.png" alt="Architecture of the Local Server mode">
 </div>
 
 This mode is ideal for sending messages from a local network.
@@ -17,3 +17,7 @@ This mode is ideal for sending messages from a local network.
     ```sh
     curl -X POST -u <username>:<password> -H "Content-Type: application/json" -d '{ "message": "Hello, world!", "phoneNumbers": ["79990001234", "79995556677"] }' http://<device_local_ip>:8080/message
     ```
+
+<div align="center">
+    <img src="/assets/local-server.png" alt="Example settings for Local Server mode">
+</div>
