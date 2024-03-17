@@ -1,15 +1,16 @@
 package smsgateway
 
-// Запрос на регистрацию устройства
+// Device registration request
 type MobileRegisterRequest struct {
-	Name      *string `json:"name,omitempty" validate:"omitempty,max=128" example:"Android Phone"`    // Имя устройства
-	PushToken *string `json:"pushToken" validate:"omitempty,max=256" example:"gHz-T6NezDlOfllr7F-Be"` // Токен для отправки PUSH-уведомлений
+	Name      *string `json:"name,omitempty" validate:"omitempty,max=128" example:"Android Phone"`    // Device name
+	PushToken *string `json:"pushToken" validate:"omitempty,max=256" example:"gHz-T6NezDlOfllr7F-Be"` // FCM token
 }
 
-// Запрос на обновление данных об устройстве
+// Device update request
 type MobileUpdateRequest struct {
-	Id        string `json:"id" example:"QslD_GefqiYV6RQXdkM6V"`                                     // Идентификатор, если есть
-	PushToken string `json:"pushToken" validate:"omitempty,max=256" example:"gHz-T6NezDlOfllr7F-Be"` // Токен для отправки PUSH-уведомлений
+	Id        string `json:"id" example:"QslD_GefqiYV6RQXdkM6V"`                                     // ID
+	PushToken string `json:"pushToken" validate:"omitempty,max=256" example:"gHz-T6NezDlOfllr7F-Be"` // FCM token
 }
 
+// Push request
 type UpstreamPushRequest = []PushNotification

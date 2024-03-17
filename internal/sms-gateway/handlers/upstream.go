@@ -37,6 +37,19 @@ func newUpstreamHandler(params upstreamHandlerParams) *upstreamHandler {
 	}
 }
 
+//	@Summary		Send push notifications
+//	@Description	Enqueues notifications for sending to devices
+//	@Tags			Device, Upstream
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body	smsgateway.UpstreamPushRequest	true	"Push request"
+//	@Success		202		"Notification enqueued"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Invalid request"
+//	@Failure		429		{object}	smsgateway.ErrorResponse	"Too many requests"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Internal server error"
+//	@Router			/upstream/v1/push [post]
+//
+// Send push notifications
 func (h *upstreamHandler) postPush(c *fiber.Ctx) error {
 	req := smsgateway.UpstreamPushRequest{}
 

@@ -3,60 +3,60 @@ definitions:
   smsgateway.Device:
     properties:
       createdAt:
-        description: Дата создания
+        description: Created at (read only)
         example: "2020-01-01T00:00:00Z"
         type: string
       deletedAt:
-        description: Дата удаления
+        description: Deleted at (read only)
         example: "2020-01-01T00:00:00Z"
         type: string
       id:
-        description: Идентификатор
+        description: ID
         example: PyDmBQZZXYmyxMwED8Fzy
         type: string
       lastSeen:
-        description: Последняя активность
+        description: Last seen at (read only)
         example: "2020-01-01T00:00:00Z"
         type: string
       name:
-        description: Название устройства
+        description: Name
         example: My Device
         type: string
       updatedAt:
-        description: Дата обновления
+        description: Updated at (read only)
         example: "2020-01-01T00:00:00Z"
         type: string
     type: object
   smsgateway.ErrorResponse:
     properties:
       code:
-        description: код ошибки
+        description: Error code
         type: integer
       data:
-        description: контекст
+        description: Error context
       message:
-        description: текст ошибки
-        example: Произошла ошибка
+        description: Error message
+        example: An error occurred
         type: string
     type: object
   smsgateway.Message:
     properties:
       id:
-        description: Идентификатор
+        description: ID (if not set - will be generated)
         example: PyDmBQZZXYmyxMwED8Fzy
         maxLength: 36
         type: string
       isEncrypted:
-        description: Зашифровано
+        description: Is encrypted
         example: true
         type: boolean
       message:
-        description: Текст сообщения
+        description: Content
         example: Hello World!
         maxLength: 65535
         type: string
       phoneNumbers:
-        description: Получатели
+        description: Recipients (phone numbers)
         example:
         - "79990001234"
         items:
@@ -65,21 +65,21 @@ definitions:
         minItems: 1
         type: array
       simNumber:
-        description: Номер сим-карты
+        description: SIM card number (1-3)
         example: 1
         maximum: 3
         type: integer
       ttl:
-        description: Время жизни сообщения в секундах
+        description: Time to live in seconds (conflicts with `validUntil`)
         example: 86400
         minimum: 5
         type: integer
       validUntil:
-        description: Время окончания жизни сообщения
+        description: Valid until (conflicts with `ttl`)
         example: "2020-01-01T00:00:00Z"
         type: string
       withDeliveryReport:
-        description: Запрашивать отчет о доставке
+        description: With delivery report
         example: true
         type: boolean
     required:
@@ -89,20 +89,20 @@ definitions:
   smsgateway.MessageState:
     properties:
       id:
-        description: Идентификатор
+        description: Message ID
         example: PyDmBQZZXYmyxMwED8Fzy
         maxLength: 36
         type: string
       isEncrypted:
-        description: Зашифровано
+        description: Encrypted
         example: false
         type: boolean
       isHashed:
-        description: Хэшировано
+        description: Hashed
         example: false
         type: boolean
       recipients:
-        description: Детализация состояния по получателям
+        description: Recipients states
         items:
           $ref: '#/definitions/smsgateway.RecipientState'
         minItems: 1
@@ -110,7 +110,7 @@ definitions:
       state:
         allOf:
         - $ref: '#/definitions/smsgateway.ProcessState'
-        description: Состояние
+        description: State
         example: Pending
     required:
     - recipients
@@ -119,12 +119,12 @@ definitions:
   smsgateway.MobileRegisterRequest:
     properties:
       name:
-        description: Имя устройства
+        description: Device name
         example: Android Phone
         maxLength: 128
         type: string
       pushToken:
-        description: Токен для отправки PUSH-уведомлений
+        description: FCM token
         example: gHz-T6NezDlOfllr7F-Be
         maxLength: 256
         type: string
@@ -132,30 +132,30 @@ definitions:
   smsgateway.MobileRegisterResponse:
     properties:
       id:
-        description: Идентификатор
+        description: New device ID
         example: QslD_GefqiYV6RQXdkM6V
         type: string
       login:
-        description: Логин пользователя
+        description: User login
         example: VQ4GII
         type: string
       password:
-        description: Пароль пользователя
+        description: User password
         example: cp2pydvxd2zwpx
         type: string
       token:
-        description: Ключ доступа
+        description: Device access token
         example: bP0ZdK6rC6hCYZSjzmqhQ
         type: string
     type: object
   smsgateway.MobileUpdateRequest:
     properties:
       id:
-        description: Идентификатор, если есть
+        description: ID
         example: QslD_GefqiYV6RQXdkM6V
         type: string
       pushToken:
-        description: Токен для отправки PUSH-уведомлений
+        description: FCM token
         example: gHz-T6NezDlOfllr7F-Be
         maxLength: 256
         type: string
@@ -169,25 +169,34 @@ definitions:
     - Failed
     type: string
     x-enum-comments:
-      MessageStateDelivered: Доставлено
-      MessageStateFailed: Ошибка
-      MessageStatePending: В ожидании
-      MessageStateProcessed: Обработано
-      MessageStateSent: Отправлено
+      MessageStateDelivered: Delivered
+      MessageStateFailed: Failed
+      MessageStatePending: Pending
+      MessageStateProcessed: Processed (received by device)
+      MessageStateSent: Sent
     x-enum-varnames:
     - MessageStatePending
     - MessageStateProcessed
     - MessageStateSent
     - MessageStateDelivered
     - MessageStateFailed
+  smsgateway.PushNotification:
+    properties:
+      token:
+        description: Device FCM token
+        example: PyDmBQZZXYmyxMwED8Fzy
+        type: string
+    required:
+    - token
+    type: object
   smsgateway.RecipientState:
     properties:
       error:
-        description: Ошибка
+        description: Error (for `Failed` state)
         example: timeout
         type: string
       phoneNumber:
-        description: Номер телефона или первые 16 символов SHA256
+        description: Phone number or first 16 symbols of SHA256 hash
         example: "79990001234"
         maxLength: 128
         minLength: 10
@@ -195,56 +204,55 @@ definitions:
       state:
         allOf:
         - $ref: '#/definitions/smsgateway.ProcessState'
-        description: Состояние
+        description: State
         example: Pending
     required:
     - phoneNumber
     - state
     type: object
-host: localhost:3000
+host: sms.capcom.me
 info:
   contact:
-    email: capcom@soft-c.ru
+    email: i@capcom.me
     name: Aleksandr Soloshenko
-  description: Авторизацию пользователя по логин-паролю
-  title: SMS-шлюз - API сервера
+  description: End-user authentication key
+  title: SMS Gateway - API
   version: 1.0.0
 paths:
   /3rdparty/v1/device:
     get:
-      description: Возвращает все устройства пользователя
+      description: Returns list of registered devices
       produces:
       - application/json
       responses:
         "200":
-          description: Состояние сообщения
+          description: Device list
           schema:
             items:
               $ref: '#/definitions/smsgateway.Device'
             type: array
         "400":
-          description: Некорректный запрос
+          description: Invalid request
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "401":
-          description: Ошибка авторизации
+          description: Unauthorized
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       security:
       - ApiAuth: []
-      summary: Получить устройства
+      summary: List devices
       tags:
-      - Пользователь
-      - Устройства
+      - User
   /3rdparty/v1/message:
     get:
-      description: Возвращает состояние сообщения по его ID
+      description: Returns message state by ID
       parameters:
-      - description: ИД сообщения
+      - description: Message ID
         in: path
         name: id
         required: true
@@ -253,38 +261,38 @@ paths:
       - application/json
       responses:
         "200":
-          description: Состояние сообщения
+          description: Message state
           schema:
             $ref: '#/definitions/smsgateway.MessageState'
         "400":
-          description: Некорректный запрос
+          description: Invalid request
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "401":
-          description: Ошибка авторизации
+          description: Unauthorized
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       security:
       - ApiAuth: []
-      summary: Получить состояние сообщения
+      summary: Get message state
       tags:
-      - Пользователь
-      - Сообщения
+      - User
+      - Messages
     post:
       consumes:
       - application/json
-      description: Ставит сообщение в очередь на отправку. Если идентификатор не указан,
-        то он будет сгенерирован автоматически
+      description: Enqueues message for sending. If ID is not specified, it will be
+        generated
       parameters:
-      - description: Пропустить проверку номеров телефона
+      - description: Skip phone validation
         in: query
         name: skipPhoneValidation
         type: boolean
-      - description: Сообщение
+      - description: Send message request
         in: body
         name: request
         required: true
@@ -294,38 +302,38 @@ paths:
       - application/json
       responses:
         "202":
-          description: Сообщение поставлено в очередь
+          description: Message enqueued
           headers:
             Location:
-              description: URL для получения состояния сообщения
+              description: Get message state URL
               type: string
           schema:
             $ref: '#/definitions/smsgateway.MessageState'
         "400":
-          description: Некорректный запрос
+          description: Invalid request
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "401":
-          description: Ошибка авторизации
+          description: Unauthorized
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       security:
       - ApiAuth: []
-      summary: Поставить сообщение в очередь
+      summary: Enqueue message
       tags:
-      - Пользователь
-      - Сообщения
+      - User
+      - Messages
   /mobile/v1/device:
     patch:
       consumes:
       - application/json
-      description: Обновляет push-токен устройства
+      description: Updates push token for device
       parameters:
-      - description: Запрос на обновление
+      - description: Device update request
         in: body
         name: request
         required: true
@@ -333,30 +341,30 @@ paths:
           $ref: '#/definitions/smsgateway.MobileUpdateRequest'
       responses:
         "204":
-          description: Успешное обновление
+          description: Successfully updated
         "400":
-          description: Некорректный запрос
+          description: Invalid request
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "403":
-          description: Операция запрещена
+          description: Forbidden (wrong device ID)
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       security:
       - MobileToken: []
-      summary: Обновление устройства
+      summary: Update device
       tags:
-      - Устройство
+      - Device
     post:
       consumes:
       - application/json
-      description: Регистрирует устройство на сервере, генерируя авторизационные данные
+      description: Registers new device and returns credentials
       parameters:
-      - description: Запрос на регистрацию
+      - description: Device registration request
         in: body
         name: request
         required: true
@@ -366,52 +374,58 @@ paths:
       - application/json
       responses:
         "201":
-          description: Успешная регистрация
+          description: Device registered
           schema:
             $ref: '#/definitions/smsgateway.MobileRegisterResponse'
         "400":
-          description: Некорректный запрос
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "401":
+          description: Unauthorized (private mode only)
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "429":
+          description: Too many requests
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
-      summary: Регистрация устройства
+      summary: Register device
       tags:
-      - Устройство
-      - Регистрация
+      - Device
   /mobile/v1/message:
     get:
       consumes:
       - application/json
-      description: Возвращает список сообщений, требующих отправки
+      description: Returns list of pending messages
       produces:
       - application/json
       responses:
         "200":
-          description: Список сообщений
+          description: List of pending messages
           schema:
             items:
               $ref: '#/definitions/smsgateway.Message'
             type: array
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       security:
       - MobileToken: []
-      summary: Получить сообщения для отправки
+      summary: Get messages for sending
       tags:
-      - Устройство
-      - Сообщения
+      - Device
+      - Messages
     patch:
       consumes:
       - application/json
-      description: Обновляет состояние сообщений. Состояние обновляется индивидуально
-        для каждого сообщения, игнорируя ошибки
+      description: Updates message state
       parameters:
-      - description: Состояние сообщений
+      - description: New message state
         in: body
         name: request
         required: true
@@ -423,28 +437,63 @@ paths:
       - application/json
       responses:
         "204":
-          description: Обновление выполнено
+          description: Successfully updated
         "400":
-          description: Некорректный запрос
+          description: Invalid request
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
         "500":
-          description: Внутренняя ошибка сервера
+          description: Internal server error
           schema:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       security:
       - MobileToken: []
-      summary: Обновить состояние сообщений
+      summary: Update message state
       tags:
-      - Устройство
-      - Сообщения
+      - Device
+      - Messages
+  /upstream/v1/push:
+    post:
+      consumes:
+      - application/json
+      description: Enqueues notifications for sending to devices
+      parameters:
+      - description: Push request
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/smsgateway.PushNotification'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Notification enqueued
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "429":
+          description: Too many requests
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Send push notifications
+      tags:
+      - Device
+      - Upstream
 schemes:
-- http
+- https
 securityDefinitions:
   ApiAuth:
     type: basic
   MobileToken:
-    description: Авторизацию устройства по токену
+    description: Mobile device token
     in: header
     name: Authorization
     type: apiKey

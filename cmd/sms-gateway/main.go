@@ -4,26 +4,28 @@ import (
 	smsgateway "github.com/capcom6/sms-gateway/internal/sms-gateway"
 )
 
-//	@title			SMS-шлюз - API сервера
+//	@title			SMS Gateway - API
 //	@version		1.0.0
-//	@description	Предоставляет методы для взаимодействия с SMS-шлюзом
+//	@description	Provides API for (Android) SMS Gateway
 
 //	@contact.name	Aleksandr Soloshenko
-//	@contact.email	capcom@soft-c.ru
+//	@contact.email	i@capcom.me
 
 //	@securitydefinitions.apikey	MobileToken
 //	@in							header
 //	@name						Authorization
-//	@description				Авторизацию устройства по токену
+//	@description				Mobile device token
 
 //	@securitydefinitions.basic	ApiAuth
-//	@description				Авторизацию пользователя по логин-паролю
+//	@in							header
+//	@description				End-user authentication key
 
 //	@host		localhost:3000
-//	@schemes	http
+//	@host		sms.capcom.me
+//	@schemes	https
 //	@BasePath	/api
 //
-// SMS-шлюз
+// SMS Gateway
 func main() {
 	smsgateway.Run()
 }
