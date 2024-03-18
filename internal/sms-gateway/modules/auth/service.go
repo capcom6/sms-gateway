@@ -83,8 +83,12 @@ func (s *Service) UpdateDevice(id, pushToken string) error {
 	return s.devices.UpdateToken(id, pushToken)
 }
 
+func (s *Service) IsPublic() bool {
+	return s.config.Mode == ModePublic
+}
+
 func (s *Service) AuthorizeRegistration(token string) error {
-	if s.config.Mode == ModePublic {
+	if s.IsPublic() {
 		return nil
 	}
 

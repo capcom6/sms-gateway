@@ -173,6 +173,7 @@ func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
 	router.Post("/device", limiter.New(), apikey.New(apikey.Config{
+		Next: func(c *fiber.Ctx) bool { return h.authSvc.IsPublic() },
 		Authorizer: func(token string) bool {
 			return h.authSvc.AuthorizeRegistration(token) == nil
 		},
