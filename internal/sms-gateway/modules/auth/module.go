@@ -1,4 +1,4 @@
-package services
+package auth
 
 import (
 	"go.uber.org/fx"
@@ -6,12 +6,9 @@ import (
 )
 
 var Module = fx.Module(
-	"services",
+	"auth",
 	fx.Decorate(func(log *zap.Logger) *zap.Logger {
-		return log.Named("services")
+		return log.Named("auth")
 	}),
-	fx.Provide(
-		NewMessagesService,
-		NewDevicesService,
-	),
+	fx.Provide(New),
 )

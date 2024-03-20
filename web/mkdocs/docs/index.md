@@ -17,6 +17,9 @@ Android SMS Gateway turns your Android smartphone into an SMS gateway. It's a li
 - **Starts at boot:** The application starts running as soon as your device boots up.
 - **Multiple SIM cards:** The application supports multiple SIM cards.
 - **Multipart messages:** The application supports sending long messages with auto-partitioning.
+- **End-to-end encryption:** The application supports end-to-end encryption by encrypting message text and recipients' phone numbers before sending them to the API and decrypting them on the device.
+- **Messages expiration:** The application supports setting messages' expiration time. The messages will not be sent if they are expired.
+- **Random delay between sending messages:** To avoid mobile operator restrictions.
 
 ## Ideal For
 
@@ -34,7 +37,7 @@ The project is currently in the MVP stage. We're actively working on adding more
 
 Getting started with Android SMS Gateway is easy and straightforward. No registration, email, or phone number is required to create an account and start using the app. 
 
-Check out our [Getting Started Guide](getting-started.md) to learn how to install and use Android SMS Gateway.
+Check out our [Getting Started Guide](getting-started/index.md) to learn how to install and use Android SMS Gateway.
 
 ## Contributing
 

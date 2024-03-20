@@ -1,21 +1,20 @@
+gateway: # gateway config
+  mode: private # gateway mode (public - allow anonymous device registration, private - protected registration) [GATEWAY__MODE]
+  private_token: 123456789 # access token for device registration in private mode [GATEWAY__PRIVATE_TOKEN]
 http: # http server config
-  listen: 127.0.0.1:3000 # listen address
+  listen: 127.0.0.1:3000 # listen address [HTTP__LISTEN]
 database: # database
-  dialect: mysql # database dialect
-  host: localhost # database host
-  port: 3306 # database port
-  user: root # database user
-  password: root # database password
-  database: sms # database name
-  debug: true
-  timezone: UTC
-fcm:
-  credentials_json: >
-    {
-    ...
-    }
-  timeout_seconds: 1
-  debounce_seconds: 1
-tasks:
-  hashing:
-    interval_seconds: 15
+  dialect: mysql # database dialect (only mysql supported at the moment) [DATABASE__DIALECT]
+  host: localhost # database host [DATABASE__HOST]
+  port: 3306 # database port [DATABASE__PORT]
+  user: root # database user [DATABASE__USER]
+  password: root # database password [DATABASE__PASSWORD]
+  database: sms # database name [DATABASE__DATABASE]
+  timezone: UTC # database timezone (important for message TTL calculation) [DATABASE__TIMEZONE]
+fcm: # firebase cloud messaging config
+  credentials_json: "{}" # firebase credentials json (for public mode only) [FCM__CREDENTIALS_JSON]
+  timeout_seconds: 1 # push notification send timeout [FCM__DEBOUNCE_SECONDS]
+  debounce_seconds: 5 # push notification debounce (>= 5s) [FCM__TIMEOUT_SECONDS]
+tasks: # tasks config
+  hashing: # hashing task (hashes processed messages for privacy purposes)
+    interval_seconds: 15 # hashing interval in seconds [TASKS__HASHING__INTERVAL_SECONDS]

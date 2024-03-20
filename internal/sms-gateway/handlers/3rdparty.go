@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
@@ -23,7 +24,7 @@ const (
 type ThirdPartyHandlerParams struct {
 	fx.In
 
-	AuthSvc     *services.AuthService
+	AuthSvc     *auth.Service
 	MessagesSvc *services.MessagesService
 	DevicesSvc  *services.DevicesService
 
@@ -34,23 +35,23 @@ type ThirdPartyHandlerParams struct {
 type thirdPartyHandler struct {
 	Handler
 
-	authSvc     *services.AuthService
+	authSvc     *auth.Service
 	messagesSvc *services.MessagesService
 	devicesSvc  *services.DevicesService
 }
 
-//	@Summary		Получить устройства
-//	@Description	Возвращает все устройства пользователя
+//	@Summary		List devices
+//	@Description	Returns list of registered devices
 //	@Security		ApiAuth
-//	@Tags			Пользователь, Устройства
+//	@Tags			User
 //	@Produce		json
-//	@Success		200	{object}	[]smsgateway.Device			"Состояние сообщения"
-//	@Failure		401	{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
-//	@Failure		400	{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Success		200	{object}	[]smsgateway.Device			"Device list"
+//	@Failure		400	{object}	smsgateway.ErrorResponse	"Invalid request"
+//	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
+//	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/3rdparty/v1/device [get]
 //
-// Получить устройства
+// List devices
 func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
 	devices, err := h.devicesSvc.Select(user)
 	if err != nil {
@@ -73,22 +74,22 @@ func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
 	return c.JSON(response)
 }
 
-//	@Summary		Поставить сообщение в очередь
-//	@Description	Ставит сообщение в очередь на отправку. Если идентификатор не указан, то он будет сгенерирован автоматически
+//	@Summary		Enqueue message
+//	@Description	Enqueues message for sending. If ID is not specified, it will be generated
 //	@Security		ApiAuth
-//	@Tags			Пользователь, Сообщения
+//	@Tags			User, Messages
 //	@Accept			json
 //	@Produce		json
-//	@Param			skipPhoneValidation	query		bool						false	"Пропустить проверку номеров телефона"
-//	@Param			request				body		smsgateway.Message			true	"Сообщение"
-//	@Success		202					{object}	smsgateway.MessageState		"Сообщение поставлено в очередь"
-//	@Failure		401					{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
-//	@Failure		400					{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		500					{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
-//	@Header			202					{string}	Location					"URL для получения состояния сообщения"
+//	@Param			skipPhoneValidation	query		bool						false	"Skip phone validation"
+//	@Param			request				body		smsgateway.Message			true	"Send message request"
+//	@Success		202					{object}	smsgateway.MessageState		"Message enqueued"
+//	@Failure		400					{object}	smsgateway.ErrorResponse	"Invalid request"
+//	@Failure		401					{object}	smsgateway.ErrorResponse	"Unauthorized"
+//	@Failure		500					{object}	smsgateway.ErrorResponse	"Internal server error"
+//	@Header			202					{string}	Location					"Get message state URL"
 //	@Router			/3rdparty/v1/message [post]
 //
-// Поставить сообщение в очередь
+// Enqueue message
 func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	req := smsgateway.Message{}
 	if err := h.BodyParserValidator(c, &req); err != nil {
@@ -132,19 +133,19 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	return c.Status(fiber.StatusAccepted).JSON(state)
 }
 
-//	@Summary		Получить состояние сообщения
-//	@Description	Возвращает состояние сообщения по его ID
+//	@Summary		Get message state
+//	@Description	Returns message state by ID
 //	@Security		ApiAuth
-//	@Tags			Пользователь, Сообщения
+//	@Tags			User, Messages
 //	@Produce		json
-//	@Param			id	path		string						true	"ИД сообщения"
-//	@Success		200	{object}	smsgateway.MessageState		"Состояние сообщения"
-//	@Failure		401	{object}	smsgateway.ErrorResponse	"Ошибка авторизации"
-//	@Failure		400	{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Param			id	path		string						true	"Message ID"
+//	@Success		200	{object}	smsgateway.MessageState		"Message state"
+//	@Failure		400	{object}	smsgateway.ErrorResponse	"Invalid request"
+//	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
+//	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/3rdparty/v1/message [get]
 //
-// Получить состояние сообщения
+// Get message state
 func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
 	id := c.Params("id")
 

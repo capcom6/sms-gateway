@@ -29,7 +29,11 @@ theme:
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Getting Started: getting-started.md
+  - Getting Started:
+      - Overview: getting-started/index.md
+      - Local Server: getting-started/local-server.md
+      - Public Cloud Server: getting-started/public-cloud-server.md
+      - Private Server: getting-started/private-server.md
   - API: api.md
   - Pricing: pricing.md
   - Privacy:

@@ -1,6 +1,12 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![Apache 2.0 License][license-shield]][license-url]
+
 # Android SMS Gateway Server
 
-This server acts as the backend component of the Android SMS Gateway, facilitating the sending of SMS messages through connected Android devices. It includes a RESTful API for message management, integration with Firebase Cloud Messaging (FCM), and a database for persistent storage.
+This server acts as the backend component of the [Android SMS Gateway](https://github.com/capcom6/android-sms-gateway), facilitating the sending of SMS messages through connected Android devices. It includes a RESTful API for message management, integration with Firebase Cloud Messaging (FCM), and a database for persistent storage.
 
 ## Table of Contents
 
@@ -8,18 +14,17 @@ This server acts as the backend component of the Android SMS Gateway, facilitati
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
-  - [Running the Server](#running-the-server)
-    - [Running with Docker](#running-with-docker)
+  - [Quickstart](#quickstart)
+  - [Work modes](#work-modes)
   - [Contributing](#contributing)
   - [License](#license)
 
 ## Features
 
 - Send SMS messages via a RESTful API.
-- Schedule and perform periodic tasks.
-- Integrate with Firebase Cloud Messaging for notifications.
+- Get message status.
+- Get the list of connected devices.
+- Public and private modes.
 
 ## Prerequisites
 
@@ -27,63 +32,30 @@ This server acts as the backend component of the Android SMS Gateway, facilitati
 - Docker and Docker Compose (for Docker-based setup)
 - A configured MySQL/MariaDB database
 
-## Installation
+## Quickstart
 
-To set up the server on your local machine for development and testing purposes, follow these steps:
+The easiest way to get started with the server is to use the Docker-based setup in Private Mode. In this mode device registration endpoint is protected, so no one can register a new device without knowing the token.
 
-1. Clone the repository to your local machine.
-2. Install Go (version 1.21 or newer) if not already installed.
-3. Navigate to the cloned directory and install dependencies:
+1. Set up MySQL or MariaDB database.
+2. Create config.yml, based on [config.example.yml](configs/config.example.yml). The most important sections are `database`, `http` and `gateway`. Environment variables can be used to override values in the config file.
+   1. In `gateway.mode` section set `private`.
+   2. In `gateway.private_token` section set the access token for device registration in private mode. This token must be set on devices with private mode active.
+3. Start the server in Docker: `docker run -p 3000:3000 -v ./config.yml:/app/config.yml capcom6/sms-gateway:latest`.
+4. Set up private mode on devices.
+5. Use started private server with the same API as the public server at [sms.capcom.me](https://sms.capcom.me).
 
-```bash
-make init
-```
+See also [docker-composee.yml](deployments/docker-compose/docker-compose.yml) for Docker-based setup.
 
-4. Build the server binary:
+## Work modes
 
-```bash
-make build
-```
+The server has two work modes: public and private. The public mode allows anonymous device registration and used at [sms.capcom.me](https://sms.capcom.me). Private mode can be used to send sensitive messages and running server in local infrastructure.
 
-## Configuration
+In most operations public and private modes are the same. But there are some differences:
 
-The server uses `yaml` for configuration with ability to override some values from environment variables. By default configuration is loaded from the `config.yml` file in the root directory. But path can be overridden with the `CONFIG_PATH` environment variable.
+- `POST /api/mobile/v1/device` endpoint is protected by API key in private mode. So it is not possible to register a new device on private server without knowing the token.
+- FCM notifications from private server are sent through `sms.capcom.me`. Notifications don't contain any sensitive data like phone numbers or message text.
 
-Below is a template for the `config.yml` file with environment variables in comments:
-
-```yaml
-http:
-  listen: ":3000"   # HTTP__LISTEN
-database:
-  dialect: "mysql"  # DATABASE__DIALECT
-  host: "localhost" # DATABASE__HOST
-  port: 3306        # DATABASE__PORT
-  user: "sms"       # DATABASE__USER
-  password: "sms"   # DATABASE__PASSWORD
-  database: "sms"   # DATABASE__DATABASE
-  timezone: "UTC"   # DATABASE__TIMEZONE
-fcm:
-  credentials_json:  >
-    {
-    ...
-    }
-tasks:
-  hashing:
-    interval_seconds: 900
-```
-
-Replace the placeholder values with your actual configuration.
-
-## Running the Server
-
-### Running with Docker
-
-For convenience, a Docker-based setup is provided. Please refer to the Docker prerequisites above before proceeding.
-
-1. Prepare configuration file `config.yml`
-2. Pull the Docker image: `docker pull capcom6/sms-gateway`
-3. Apply database migrations: `docker run --rm -it -v ./config.yml:/app/config.yml capcom6/sms-gateway db:migrate`
-4. Start the server: `docker run -p 3000:3000 -v ./config.yml:/app/config.yml capcom6/sms-gateway`
+See also [private mode discussion](https://github.com/capcom6/android-sms-gateway/issues/20).
 
 ## Contributing
 
@@ -101,3 +73,14 @@ Don't forget to give the project a star! Thanks again!
 ## License
 
 Distributed under the Apache-2.0 license. See [LICENSE](LICENSE) for more information.
+
+[contributors-shield]: https://img.shields.io/github/contributors/capcom6/sms-gateway.svg?style=for-the-badge
+[contributors-url]: https://github.com/capcom6/sms-gateway/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/capcom6/sms-gateway.svg?style=for-the-badge
+[forks-url]: https://github.com/capcom6/sms-gateway/network/members
+[stars-shield]: https://img.shields.io/github/stars/capcom6/sms-gateway.svg?style=for-the-badge
+[stars-url]: https://github.com/capcom6/sms-gateway/stargazers
+[issues-shield]: https://img.shields.io/github/issues/capcom6/sms-gateway.svg?style=for-the-badge
+[issues-url]: https://github.com/capcom6/sms-gateway/issues
+[license-shield]: https://img.shields.io/github/license/capcom6/sms-gateway.svg?style=for-the-badge
+[license-url]: https://github.com/capcom6/sms-gateway/blob/master/LICENSE

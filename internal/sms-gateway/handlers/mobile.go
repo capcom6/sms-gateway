@@ -7,6 +7,7 @@ import (
 
 	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
@@ -21,24 +22,26 @@ import (
 type mobileHandler struct {
 	Handler
 
-	authSvc     *services.AuthService
+	authSvc     *auth.Service
 	messagesSvc *services.MessagesService
 
 	idGen func() string
 }
 
-//	@Summary		Регистрация устройства
-//	@Description	Регистрирует устройство на сервере, генерируя авторизационные данные
-//	@Tags			Устройство, Регистрация
+//	@Summary		Register device
+//	@Description	Registers new device and returns credentials
+//	@Tags			Device
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		smsgateway.MobileRegisterRequest	true	"Запрос на регистрацию"
-//	@Success		201		{object}	smsgateway.MobileRegisterResponse	"Успешная регистрация"
-//	@Failure		400		{object}	smsgateway.ErrorResponse			"Некорректный запрос"
-//	@Failure		500		{object}	smsgateway.ErrorResponse			"Внутренняя ошибка сервера"
+//	@Param			request	body		smsgateway.MobileRegisterRequest	true	"Device registration request"
+//	@Success		201		{object}	smsgateway.MobileRegisterResponse	"Device registered"
+//	@Failure		400		{object}	smsgateway.ErrorResponse			"Invalid request"
+//	@Failure		401		{object}	smsgateway.ErrorResponse			"Unauthorized (private mode only)"
+//	@Failure		429		{object}	smsgateway.ErrorResponse			"Too many requests"
+//	@Failure		500		{object}	smsgateway.ErrorResponse			"Internal server error"
 //	@Router			/mobile/v1/device [post]
 //
-// Регистрация устройства
+// Register device
 func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 	req := smsgateway.MobileRegisterRequest{}
 
@@ -68,19 +71,19 @@ func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 	})
 }
 
-//	@Summary		Обновление устройства
-//	@Description	Обновляет push-токен устройства
+//	@Summary		Update device
+//	@Description	Updates push token for device
 //	@Security		MobileToken
-//	@Tags			Устройство
+//	@Tags			Device
 //	@Accept			json
-//	@Param			request	body	smsgateway.MobileUpdateRequest	true	"Запрос на обновление"
-//	@Success		204		"Успешное обновление"
-//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		403		{object}	smsgateway.ErrorResponse	"Операция запрещена"
-//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Param			request	body	smsgateway.MobileUpdateRequest	true	"Device update request"
+//	@Success		204		"Successfully updated"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Invalid request"
+//	@Failure		403		{object}	smsgateway.ErrorResponse	"Forbidden (wrong device ID)"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/mobile/v1/device [patch]
 //
-// Обновление устройства
+// Update device
 func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
 	req := smsgateway.MobileUpdateRequest{}
 
@@ -99,17 +102,17 @@ func (h *mobileHandler) patchDevice(device models.Device, c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-//	@Summary		Получить сообщения для отправки
-//	@Description	Возвращает список сообщений, требующих отправки
+//	@Summary		Get messages for sending
+//	@Description	Returns list of pending messages
 //	@Security		MobileToken
-//	@Tags			Устройство, Сообщения
+//	@Tags			Device, Messages
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}		smsgateway.Message			"Список сообщений"
-//	@Failure		500	{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Success		200	{array}		smsgateway.Message			"List of pending messages"
+//	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/mobile/v1/message [get]
 //
-// Получить сообщения для отправки
+// Get messages for sending
 func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 	messages, err := h.messagesSvc.SelectPending(device.ID)
 	if err != nil {
@@ -119,19 +122,19 @@ func (h *mobileHandler) getMessage(device models.Device, c *fiber.Ctx) error {
 	return c.JSON(messages)
 }
 
-//	@Summary		Обновить состояние сообщений
-//	@Description	Обновляет состояние сообщений. Состояние обновляется индивидуально для каждого сообщения, игнорируя ошибки
+//	@Summary		Update message state
+//	@Description	Updates message state
 //	@Security		MobileToken
-//	@Tags			Устройство, Сообщения
+//	@Tags			Device, Messages
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		[]smsgateway.MessageState	true	"Состояние сообщений"
-//	@Success		204		{object}	nil							"Обновление выполнено"
-//	@Failure		400		{object}	smsgateway.ErrorResponse	"Некорректный запрос"
-//	@Failure		500		{object}	smsgateway.ErrorResponse	"Внутренняя ошибка сервера"
+//	@Param			request	body		[]smsgateway.MessageState	true	"New message state"
+//	@Success		204		{object}	nil							"Successfully updated"
+//	@Failure		400		{object}	smsgateway.ErrorResponse	"Invalid request"
+//	@Failure		500		{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/mobile/v1/message [patch]
 //
-// Обновить состояние сообщений
+// Update message state
 func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 	req := []smsgateway.MessageState{}
 	if err := c.BodyParser(&req); err != nil {
@@ -169,7 +172,12 @@ func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error)
 func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
-	router.Post("/device", limiter.New(), h.postDevice)
+	router.Post("/device", limiter.New(), apikey.New(apikey.Config{
+		Next: func(c *fiber.Ctx) bool { return h.authSvc.IsPublic() },
+		Authorizer: func(token string) bool {
+			return h.authSvc.AuthorizeRegistration(token) == nil
+		},
+	}), h.postDevice)
 
 	router.Use(apikey.New(apikey.Config{
 		Authorizer: func(token string) bool {
@@ -189,7 +197,7 @@ type MobileHandlerParams struct {
 	Logger    *zap.Logger
 	Validator *validator.Validate
 
-	AuthSvc     *services.AuthService
+	AuthSvc     *auth.Service
 	MessagesSvc *services.MessagesService
 }
 
