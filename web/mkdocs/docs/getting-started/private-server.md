@@ -27,6 +27,11 @@ To enhance privacy, you can host a private server within your own infrastructure
 
 Refer to the server's [README.md](https://github.com/capcom6/sms-gateway/blob/master/README.md) for more information.
 
+See also:
+
+- [Installation Example with Ubuntu, Docker, and Nginx Proxy Manager](https://github.com/capcom6/android-sms-gateway/discussions/50)
+- [Docker Compose Quickstart for Single File Deployment](https://github.com/capcom6/sms-gateway/tree/master/deployments/docker-compose-proxy)
+
 ### Configure the Android App
 
 <div align="center">

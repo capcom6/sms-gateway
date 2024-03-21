@@ -1,0 +1,104 @@
+# Docker Compose Quickstart for Single File Deployment
+# Prerequisites:
+# - Docker Compose version 2.23.1 or later is required.
+# - If using Portainer, ensure you have version 2.20.0 or later.
+# - A public IP address is required for your server.
+# - A domain name must be pointed to the public IP of your server.
+
+# Quickstart Instructions:
+# 1. Create a `.env` file with the following content, replacing placeholder values:
+#    MYSQL_ROOT_PASSWORD=[your_root_password]
+#    MYSQL_PASSWORD=[your_mysql_password]
+#    DOMAIN=sms.example.com
+#    ACME_EMAIL=email@example.com
+#    GATEWAY_PRIVATE_TOKEN=[your_private_token]
+#    Ensure your domain is correctly configured to resolve to your server's public IP.
+# 2. Execute the command: `docker-compose up -d` to start the services.
+# 3. Access the application via https://sms.example.com in your web browser.
+
+name: sms-gateway-proxy
+services:
+  reproxy:
+    image: umputun/reproxy:v1.1.1
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - reproxy-ssl:/srv/var/ssl
+    environment:
+      - LOGGER_STDOUT=true
+      - SSL_TYPE=auto
+      - SSL_ACME_EMAIL=${ACME_EMAIL}
+      - SSL_ACME_FQDN=${DOMAIN}
+      - SSL_ACME_LOCATION=/srv/var/ssl
+      - STATIC_ENABLED=true
+      - STATIC_RULES=${DOMAIN},^/(.*),http://backend:3000/$$1
+      - HEADER=
+          X-Frame-Options:SAMEORIGIN,
+          X-XSS-Protection:1; mode=block;,
+          X-Content-Type-Options:nosniff,
+          Strict-Transport-Security:max-age=31536000,
+          Referrer-Policy:no-referrer,
+          Content-Security-Policy:default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com/; font-src self https://fonts.gstatic.com/;
+
+  backend:
+    image: capcom6/sms-gateway:latest
+    environment:
+      - CONFIG_PATH=config.yml
+      - DATABASE__PASSWORD=${MYSQL_PASSWORD}
+      - GATEWAY__PRIVATE_TOKEN=${GATEWAY_PRIVATE_TOKEN}
+    configs:
+      - source: config-yml
+        target: /app/config.yml
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.11
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=sms
+      - MYSQL_USER=sms
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-proot",
+          "-h",
+          "127.0.0.1"
+        ]
+      timeout: 5s
+      retries: 10
+
+configs:
+  config-yml:
+    content: |
+      gateway:
+        mode: private
+      http:
+        listen: 0.0.0.0:3000
+      database:
+        host: db
+        port: 3306
+        user: sms
+        password: smsgateway
+        database: sms
+      fcm:
+        credentials_json: "{}"
+        timeout_seconds: 1
+        debounce_seconds: 5
+      tasks:
+        hashing:
+          interval_seconds: 900
+
+volumes:
+  mariadb-data:
+  reproxy-ssl:
