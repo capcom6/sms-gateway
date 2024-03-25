@@ -65,8 +65,6 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 		return nil, err
 	}
 
-	messages = s.filterTimeouted(messages)
-
 	result := make([]smsgateway.Message, len(messages))
 	for i, v := range messages {
 		var ttl *uint64 = nil
@@ -195,25 +193,6 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 
 func (s *MessagesService) HashProcessed() error {
 	return s.Messages.HashProcessed()
-}
-
-func (s *MessagesService) filterTimeouted(messages []models.Message) []models.Message {
-	result := make([]models.Message, 0, len(messages))
-	for _, v := range messages {
-		if v.ValidUntil == nil || time.Now().Before(*v.ValidUntil) {
-			result = append(result, v)
-		} else if v.State == models.MessageStatePending {
-			v.State = models.MessageStateFailed
-			for i := range v.Recipients {
-				v.Recipients[i].State = models.MessageStateFailed
-				v.Recipients[i].Error = types.AsPointer(ErrorTTLExpired)
-			}
-			if err := s.Messages.UpdateState(&v); err != nil {
-				s.Logger.Error("Can't update message state", zap.Error(err))
-			}
-		}
-	}
-	return result
 }
 
 func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {
