@@ -8,8 +8,8 @@ import (
 	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -23,7 +23,7 @@ type mobileHandler struct {
 	Handler
 
 	authSvc     *auth.Service
-	messagesSvc *services.MessagesService
+	messagesSvc *messages.Service
 
 	idGen func() string
 }
@@ -198,7 +198,7 @@ type MobileHandlerParams struct {
 	Validator *validator.Validate
 
 	AuthSvc     *auth.Service
-	MessagesSvc *services.MessagesService
+	MessagesSvc *messages.Service
 }
 
 func newMobileHandler(params MobileHandlerParams) *mobileHandler {

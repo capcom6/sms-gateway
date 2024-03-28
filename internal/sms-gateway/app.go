@@ -12,10 +12,10 @@ import (
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -34,7 +34,7 @@ var Module = fx.Module(
 	push.Module,
 	repositories.Module,
 	db.Module,
-	tasks.Module,
+	messages.Module,
 )
 
 func Run() {
@@ -57,9 +57,9 @@ type StartParams struct {
 	Logger *zap.Logger
 	Shut   fx.Shutdowner
 
-	Server      *http.Server
-	HashingTask *tasks.HashingTask
-	PushService *push.Service
+	Server          *http.Server
+	MessagesService *messages.Service
+	PushService     *push.Service
 }
 
 func Start(p StartParams) error {
@@ -67,11 +67,7 @@ func Start(p StartParams) error {
 	wg := &sync.WaitGroup{}
 	p.LC.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				p.HashingTask.Run(ctx)
-			}()
+			p.MessagesService.RunBackgroundTasks(ctx, wg)
 
 			wg.Add(1)
 			go func() {
