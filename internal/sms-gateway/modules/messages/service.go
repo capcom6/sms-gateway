@@ -1,9 +1,10 @@
-package services
+package messages
 
 import (
 	"context"
 	"crypto/sha256"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
@@ -28,38 +29,53 @@ func (e ErrValidation) Error() string {
 	return string(e)
 }
 
-type MessagesEnqueueOptions struct {
+type EnqueueOptions struct {
 	SkipPhoneValidation bool
 }
 
-type MessagesServiceParams struct {
+type ServiceParams struct {
 	fx.In
 
-	Messages *repositories.MessagesRepository
-	PushSvc  *push.Service
-	Logger   *zap.Logger
+	Messages    *repositories.MessagesRepository
+	HashingTask *HashingTask
+
+	PushSvc *push.Service
+	Logger  *zap.Logger
 }
 
-type MessagesService struct {
-	Messages *repositories.MessagesRepository
-	PushSvc  *push.Service
-	Logger   *zap.Logger
+type Service struct {
+	Messages    *repositories.MessagesRepository
+	HashingTask *HashingTask
+
+	PushSvc *push.Service
+	Logger  *zap.Logger
 
 	idgen func() string
 }
 
-func NewMessagesService(params MessagesServiceParams) *MessagesService {
+func NewService(params ServiceParams) *Service {
 	idgen, _ := nanoid.Standard(21)
 
-	return &MessagesService{
-		Messages: params.Messages,
-		PushSvc:  params.PushSvc,
-		Logger:   params.Logger.Named("MessagesService"),
-		idgen:    idgen,
+	return &Service{
+		Messages:    params.Messages,
+		HashingTask: params.HashingTask,
+
+		PushSvc: params.PushSvc,
+		Logger:  params.Logger.Named("Service"),
+
+		idgen: idgen,
 	}
 }
 
-func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, error) {
+func (s *Service) RunBackgroundTasks(ctx context.Context, wg *sync.WaitGroup) {
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		s.HashingTask.Run(ctx)
+	}()
+}
+
+func (s *Service) SelectPending(deviceID string) ([]smsgateway.Message, error) {
 	messages, err := s.Messages.SelectPending(deviceID)
 	if err != nil {
 		return nil, err
@@ -94,7 +110,7 @@ func (s *MessagesService) SelectPending(deviceID string) ([]smsgateway.Message, 
 	return result, nil
 }
 
-func (s *MessagesService) UpdateState(deviceID string, message smsgateway.MessageState) error {
+func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) error {
 	existing, err := s.Messages.Get(message.ID, repositories.MessagesSelectFilter{DeviceID: deviceID})
 	if err != nil {
 		return err
@@ -107,10 +123,16 @@ func (s *MessagesService) UpdateState(deviceID string, message smsgateway.Messag
 	existing.State = models.MessageState(message.State)
 	existing.Recipients = s.recipientsStateToModel(message.Recipients, existing.IsHashed)
 
-	return s.Messages.UpdateState(&existing)
+	if err := s.Messages.UpdateState(&existing); err != nil {
+		return err
+	}
+
+	s.HashingTask.Enqeue(existing.ID)
+
+	return nil
 }
 
-func (s *MessagesService) GetState(user models.User, ID string) (smsgateway.MessageState, error) {
+func (s *Service) GetState(user models.User, ID string) (smsgateway.MessageState, error) {
 	message, err := s.Messages.Get(ID, repositories.MessagesSelectFilter{}, repositories.MessagesSelectOptions{WithRecipients: true, WithDevice: true})
 	if err != nil {
 		return smsgateway.MessageState{}, repositories.ErrMessageNotFound
@@ -123,7 +145,7 @@ func (s *MessagesService) GetState(user models.User, ID string) (smsgateway.Mess
 	return modelToMessageState(message), nil
 }
 
-func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Message, opts MessagesEnqueueOptions) (smsgateway.MessageState, error) {
+func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts EnqueueOptions) (smsgateway.MessageState, error) {
 	state := smsgateway.MessageState{
 		ID:         "",
 		State:      smsgateway.MessageStatePending,
@@ -191,11 +213,7 @@ func (s *MessagesService) Enqeue(device models.Device, message smsgateway.Messag
 	return state, nil
 }
 
-func (s *MessagesService) HashProcessed() error {
-	return s.Messages.HashProcessed()
-}
-
-func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []string {
+func (s *Service) recipientsToDomain(input []models.MessageRecipient) []string {
 	output := make([]string, len(input))
 
 	for i, v := range input {
@@ -205,7 +223,7 @@ func (s *MessagesService) recipientsToDomain(input []models.MessageRecipient) []
 	return output
 }
 
-func (s *MessagesService) recipientsToModel(input []string) []models.MessageRecipient {
+func (s *Service) recipientsToModel(input []string) []models.MessageRecipient {
 	output := make([]models.MessageRecipient, len(input))
 
 	for i, v := range input {
@@ -217,7 +235,7 @@ func (s *MessagesService) recipientsToModel(input []string) []models.MessageReci
 	return output
 }
 
-func (s *MessagesService) recipientsStateToModel(input []smsgateway.RecipientState, hash bool) []models.MessageRecipient {
+func (s *Service) recipientsStateToModel(input []smsgateway.RecipientState, hash bool) []models.MessageRecipient {
 	output := make([]models.MessageRecipient, len(input))
 
 	for i, v := range input {

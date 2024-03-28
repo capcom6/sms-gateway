@@ -8,8 +8,8 @@ import (
 	"github.com/capcom6/go-infra-fx/http"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/tasks"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -40,6 +40,7 @@ var Module = fx.Module(
 			Password: cfg.Database.Password,
 			Database: cfg.Database.Database,
 			Timezone: cfg.Database.Timezone,
+			Debug:    cfg.Database.Debug,
 		}
 	}),
 	fx.Provide(func(cfg Config) push.Config {
@@ -57,8 +58,8 @@ var Module = fx.Module(
 			Timeout:  time.Duration(cfg.FCM.TimeoutSeconds) * time.Second,
 		}
 	}),
-	fx.Provide(func(cfg Config) tasks.HashingTaskConfig {
-		return tasks.HashingTaskConfig{
+	fx.Provide(func(cfg Config) messages.HashingTaskConfig {
+		return messages.HashingTaskConfig{
 			Interval: time.Duration(cfg.Tasks.Hashing.IntervalSeconds) * time.Second,
 		}
 	}),

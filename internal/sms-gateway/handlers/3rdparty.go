@@ -6,6 +6,7 @@ import (
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
@@ -25,7 +26,7 @@ type ThirdPartyHandlerParams struct {
 	fx.In
 
 	AuthSvc     *auth.Service
-	MessagesSvc *services.MessagesService
+	MessagesSvc *messages.Service
 	DevicesSvc  *services.DevicesService
 
 	Logger    *zap.Logger
@@ -36,7 +37,7 @@ type thirdPartyHandler struct {
 	Handler
 
 	authSvc     *auth.Service
-	messagesSvc *services.MessagesService
+	messagesSvc *messages.Service
 	devicesSvc  *services.DevicesService
 }
 
@@ -111,9 +112,9 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	}
 
 	device := devices[0]
-	state, err := h.messagesSvc.Enqeue(device, req, services.MessagesEnqueueOptions{SkipPhoneValidation: skipPhoneValidation})
+	state, err := h.messagesSvc.Enqeue(device, req, messages.EnqueueOptions{SkipPhoneValidation: skipPhoneValidation})
 	if err != nil {
-		var err400 services.ErrValidation
+		var err400 messages.ErrValidation
 		if errors.As(err, &err400) {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}

@@ -1,4 +1,4 @@
-package services
+package messages
 
 import (
 	"reflect"
@@ -8,20 +8,20 @@ import (
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 )
 
-func TestMessagesService_recipientsStateToModel(t *testing.T) {
+func TestService_recipientsStateToModel(t *testing.T) {
 	type args struct {
 		input []smsgateway.RecipientState
 		hash  bool
 	}
 	tests := []struct {
 		name string
-		s    *MessagesService
+		s    *Service
 		args args
 		want []models.MessageRecipient
 	}{
 		{
 			name: "Without +",
-			s:    &MessagesService{},
+			s:    &Service{},
 			args: args{
 				input: []smsgateway.RecipientState{
 					{
@@ -40,7 +40,7 @@ func TestMessagesService_recipientsStateToModel(t *testing.T) {
 		},
 		{
 			name: "With +",
-			s:    &MessagesService{},
+			s:    &Service{},
 			args: args{
 				input: []smsgateway.RecipientState{
 					{
@@ -59,7 +59,7 @@ func TestMessagesService_recipientsStateToModel(t *testing.T) {
 		},
 		{
 			name: "With hashing",
-			s:    &MessagesService{},
+			s:    &Service{},
 			args: args{
 				input: []smsgateway.RecipientState{
 					{
@@ -79,7 +79,7 @@ func TestMessagesService_recipientsStateToModel(t *testing.T) {
 		},
 		{
 			name: "Empty phone",
-			s:    &MessagesService{},
+			s:    &Service{},
 			args: args{
 				input: []smsgateway.RecipientState{
 					{

@@ -63,12 +63,12 @@ Content-Type: application/json
 
 [
   {
-    "id": "-rnEaUz7KObDdokPrzKpM",
-    "state": "Delivered",
+    "id": "GKBw_tkVnN8NJz3hse9ue",
+    "state": "Failed",
     "recipients": [
       {
         "phoneNumber": "{{phone}}",
-        "state": "Delivered"
+        "state": "Failed"
       }
     ]
   }

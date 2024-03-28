@@ -33,6 +33,7 @@ type Database struct {
 	Password string `yaml:"password" envconfig:"DATABASE__PASSWORD"` // database password
 	Database string `yaml:"database" envconfig:"DATABASE__DATABASE"` // database name
 	Timezone string `yaml:"timezone" envconfig:"DATABASE__TIMEZONE"` // database timezone
+	Debug    bool   `yaml:"debug"    envconfig:"DATABASE__DEBUG"`    // debug mode
 }
 
 type FCMConfig struct {

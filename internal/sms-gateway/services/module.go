@@ -11,7 +11,6 @@ var Module = fx.Module(
 		return log.Named("services")
 	}),
 	fx.Provide(
-		NewMessagesService,
 		NewDevicesService,
 	),
 )
