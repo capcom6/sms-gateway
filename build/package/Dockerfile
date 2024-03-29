@@ -18,12 +18,13 @@ COPY . .
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app ./cmd/${APP}/main.go
 
 # Build MkDocs
-FROM squidfunk/mkdocs-material AS mkdocs
+FROM squidfunk/mkdocs-material:9 AS mkdocs
 
 WORKDIR /docs
 
 RUN pip install --no-cache-dir mkdocs-render-swagger-plugin
 
+COPY web/mkdocs/fonts ./.cache/plugin/social/fonts/Roboto
 COPY web/mkdocs .
 
 RUN mkdocs build
