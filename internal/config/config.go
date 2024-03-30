@@ -21,7 +21,8 @@ type Gateway struct {
 }
 
 type HTTP struct {
-	Listen string `yaml:"listen" envconfig:"HTTP__LISTEN"` // listen address
+	Listen  string   `yaml:"listen" envconfig:"HTTP__LISTEN"`   // listen address
+	Proxies []string `yaml:"proxies" envconfig:"HTTP__PROXIES"` // proxies
 }
 
 type Database struct {
