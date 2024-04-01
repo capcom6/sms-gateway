@@ -18,7 +18,7 @@ COPY . .
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app ./cmd/${APP}/main.go
 
 # Build MkDocs
-FROM squidfunk/mkdocs-material:9 AS mkdocs
+FROM squidfunk/mkdocs-material:9.5.15 AS mkdocs
 
 WORKDIR /docs
 
