@@ -61,8 +61,9 @@ type Message struct {
 }
 
 type MessageRecipient struct {
-	MessageID   uint64       `gorm:"primaryKey;type:BIGINT UNSIGNED"`
-	PhoneNumber string       `gorm:"primaryKey;type:varchar(128)"`
+	ID          uint64       `gorm:"primaryKey;type:BIGINT UNSIGNED;autoIncrement"`
+	MessageID   uint64       `gorm:"uniqueIndex:unq_message_recipients_message_id_phone_number,priority:1;type:BIGINT UNSIGNED"`
+	PhoneNumber string       `gorm:"uniqueIndex:unq_message_recipients_message_id_phone_number,priority:2;type:varchar(128)"`
 	State       MessageState `gorm:"not null;type:enum('Pending','Sent','Processed','Delivered','Failed');default:Pending"`
 	Error       *string      `gorm:"type:varchar(256)"`
 }
