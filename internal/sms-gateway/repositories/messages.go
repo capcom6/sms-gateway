@@ -70,14 +70,13 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 }
 
 func (r *MessagesRepository) HashProcessed(ids []uint64) error {
-	makeConditions := func(tx *gorm.DB, ids []uint64) *gorm.DB {
-		messagesQuery := tx.Model(&models.Message{}).
-			Where("is_hashed = ? AND is_encrypted = ? AND state <> ?", false, false, models.MessageStatePending)
-		if len(ids) > 0 {
-			messagesQuery = messagesQuery.Where("id IN (?)", ids)
-		}
-
-		return messagesQuery
+	rawSQL := "UPDATE `messages` `m`, `message_recipients` `r`\n" +
+		"SET `m`.`message` = SHA2(m.message, 256), `r`.`phone_number` = LEFT(SHA2(phone_number, 256), 16)\n" +
+		"WHERE `m`.`id` = `r`.`message_id` AND `m`.`is_hashed` = false AND `m`.`is_encrypted` = false AND `m`.`state` <> 'Pending'"
+	params := []interface{}{}
+	if len(ids) > 0 {
+		rawSQL += " AND `m`.`id` IN (?)"
+		params = append(params, ids)
 	}
 
 	return r.db.Transaction(func(tx *gorm.DB) error {
@@ -93,17 +92,7 @@ func (r *MessagesRepository) HashProcessed(ids []uint64) error {
 		}
 		defer tx.Exec("SELECT RELEASE_LOCK(?)", HashingLockName)
 
-		err = tx.Model(&models.MessageRecipient{}).
-			Where("message_id IN (?)", makeConditions(tx, ids).Select("id")).
-			Update("phone_number", gorm.Expr("LEFT(SHA2(phone_number, 256), 16)")).
-			Error
-		if err != nil {
-			return err
-		}
-
-		return makeConditions(tx, ids).
-			Updates(map[string]interface{}{"is_hashed": true, "message": gorm.Expr("SHA2(message, 256)")}).
-			Error
+		return tx.Exec(rawSQL, params...).Error
 	})
 }
 
