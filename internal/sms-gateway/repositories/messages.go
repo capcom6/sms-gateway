@@ -71,7 +71,7 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 
 func (r *MessagesRepository) HashProcessed(ids []uint64) error {
 	rawSQL := "UPDATE `messages` `m`, `message_recipients` `r`\n" +
-		"SET `m`.`message` = SHA2(m.message, 256), `r`.`phone_number` = LEFT(SHA2(phone_number, 256), 16)\n" +
+		"SET `m`.`is_hashed` = true, `m`.`message` = SHA2(m.message, 256), `r`.`phone_number` = LEFT(SHA2(phone_number, 256), 16)\n" +
 		"WHERE `m`.`id` = `r`.`message_id` AND `m`.`is_hashed` = false AND `m`.`is_encrypted` = false AND `m`.`state` <> 'Pending'"
 	params := []interface{}{}
 	if len(ids) > 0 {
