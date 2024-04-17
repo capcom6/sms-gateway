@@ -39,7 +39,9 @@ nav:
   - Privacy:
       - Policy: privacy/policy.md
       - Encryption: privacy/encryption.md
-  - FAQ: faq.md
+  - FAQ:
+      - General: faq/general.md
+      - Errors: faq/errors.md
   - Contributing: contributing.md
   - License: license.md
 validation:
