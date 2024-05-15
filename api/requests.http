@@ -63,14 +63,18 @@ Content-Type: application/json
 
 [
   {
-    "id": "GKBw_tkVnN8NJz3hse9ue",
+    "id": "RqqnKoakAc82f6e4SwoMe",
     "state": "Failed",
     "recipients": [
       {
         "phoneNumber": "{{phone}}",
         "state": "Failed"
       }
-    ]
+    ],
+    "states": {
+      "Processed": "2024-05-13T16:49:17.357Z",
+      "Failed": "2024-05-13T16:49:17.357+04:00"
+    }
   }
 ]
 

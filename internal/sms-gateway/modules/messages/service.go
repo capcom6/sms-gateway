@@ -17,6 +17,7 @@ import (
 	"github.com/nyaruka/phonenumbers"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"golang.org/x/exp/maps"
 )
 
 const (
@@ -116,11 +117,18 @@ func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) 
 		return err
 	}
 
-	if message.State == smsgateway.MessageStatePending {
-		message.State = smsgateway.MessageStateProcessed
+	if message.State == smsgateway.ProcessingStatePending {
+		message.State = smsgateway.ProcessingStateProcessed
 	}
 
 	existing.State = models.ProcessingState(message.State)
+	existing.States = slices.Map(maps.Keys(message.States), func(key string) models.MessageState {
+		return models.MessageState{
+			MessageID: existing.ID,
+			State:     models.ProcessingState(key),
+			UpdatedAt: message.States[key],
+		}
+	})
 	existing.Recipients = s.recipientsStateToModel(message.Recipients, existing.IsHashed)
 
 	if err := s.Messages.UpdateState(&existing); err != nil {
@@ -148,7 +156,7 @@ func (s *Service) GetState(user models.User, ID string) (smsgateway.MessageState
 func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts EnqueueOptions) (smsgateway.MessageState, error) {
 	state := smsgateway.MessageState{
 		ID:         "",
-		State:      smsgateway.MessageStatePending,
+		State:      smsgateway.ProcessingStatePending,
 		Recipients: make([]smsgateway.RecipientState, len(message.PhoneNumbers)),
 	}
 
@@ -167,7 +175,7 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 
 		state.Recipients[i] = smsgateway.RecipientState{
 			PhoneNumber: phone,
-			State:       smsgateway.MessageStatePending,
+			State:       smsgateway.ProcessingStatePending,
 		}
 	}
 
@@ -245,8 +253,8 @@ func (s *Service) recipientsStateToModel(input []smsgateway.RecipientState, hash
 			phoneNumber = "+" + phoneNumber
 		}
 
-		if v.State == smsgateway.MessageStatePending {
-			v.State = smsgateway.MessageStateProcessed
+		if v.State == smsgateway.ProcessingStatePending {
+			v.State = smsgateway.ProcessingStateProcessed
 		}
 
 		if hash {
@@ -266,7 +274,7 @@ func (s *Service) recipientsStateToModel(input []smsgateway.RecipientState, hash
 func modelToMessageState(input models.Message) smsgateway.MessageState {
 	return smsgateway.MessageState{
 		ID:          input.ExtID,
-		State:       smsgateway.ProcessState(input.State),
+		State:       smsgateway.ProcessingState(input.State),
 		IsHashed:    input.IsHashed,
 		IsEncrypted: input.IsEncrypted,
 		Recipients:  slices.Map(input.Recipients, modelToRecipientState),
@@ -276,7 +284,7 @@ func modelToMessageState(input models.Message) smsgateway.MessageState {
 func modelToRecipientState(input models.MessageRecipient) smsgateway.RecipientState {
 	return smsgateway.RecipientState{
 		PhoneNumber: input.PhoneNumber,
-		State:       smsgateway.ProcessState(input.State),
+		State:       smsgateway.ProcessingState(input.State),
 		Error:       input.Error,
 	}
 }

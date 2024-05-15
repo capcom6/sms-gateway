@@ -141,11 +141,11 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	if err := h.Validator.Var(req, "required,dive"); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
 	for _, v := range req {
+		if err := h.validateStruct(v); err != nil {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+
 		err := h.messagesSvc.UpdateState(device.ID, v)
 		if err != nil && !errors.Is(err, repositories.ErrMessageNotFound) {
 			h.Logger.Error("Can't update message status", zap.Error(err))

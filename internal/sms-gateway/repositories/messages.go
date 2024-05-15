@@ -6,6 +6,7 @@ import (
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const HashingLockName = "36444143-1ace-4dbf-891c-cc505911497e"
@@ -57,6 +58,15 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(message).Select("State").Updates(message).Error; err != nil {
 			return err
+		}
+
+		for _, v := range message.States {
+			v.MessageID = message.ID
+			if err := tx.Model(&v).Clauses(clause.OnConflict{
+				DoNothing: true,
+			}).Create(&v).Error; err != nil {
+				return err
+			}
 		}
 
 		for _, v := range message.Recipients {
