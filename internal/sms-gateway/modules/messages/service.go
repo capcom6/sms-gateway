@@ -120,7 +120,7 @@ func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) 
 		message.State = smsgateway.MessageStateProcessed
 	}
 
-	existing.State = models.MessageState(message.State)
+	existing.State = models.ProcessingState(message.State)
 	existing.Recipients = s.recipientsStateToModel(message.Recipients, existing.IsHashed)
 
 	if err := s.Messages.UpdateState(&existing); err != nil {
@@ -255,7 +255,7 @@ func (s *Service) recipientsStateToModel(input []smsgateway.RecipientState, hash
 
 		output[i] = models.MessageRecipient{
 			PhoneNumber: phoneNumber,
-			State:       models.MessageState(v.State),
+			State:       models.ProcessingState(v.State),
 			Error:       v.Error,
 		}
 	}
