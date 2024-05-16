@@ -43,6 +43,9 @@ func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options
 		if options[0].WithDevice {
 			query = query.Joins("Device")
 		}
+		if options[0].WithStates {
+			query = query.Preload("States")
+		}
 	}
 
 	err = query.Take(&message).Error
@@ -120,4 +123,5 @@ type MessagesSelectFilter struct {
 type MessagesSelectOptions struct {
 	WithRecipients bool
 	WithDevice     bool
+	WithStates     bool
 }

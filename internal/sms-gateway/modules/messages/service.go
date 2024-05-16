@@ -141,7 +141,11 @@ func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) 
 }
 
 func (s *Service) GetState(user models.User, ID string) (smsgateway.MessageState, error) {
-	message, err := s.Messages.Get(ID, repositories.MessagesSelectFilter{}, repositories.MessagesSelectOptions{WithRecipients: true, WithDevice: true})
+	message, err := s.Messages.Get(
+		ID,
+		repositories.MessagesSelectFilter{},
+		repositories.MessagesSelectOptions{WithRecipients: true, WithDevice: true, WithStates: true},
+	)
 	if err != nil {
 		return smsgateway.MessageState{}, repositories.ErrMessageNotFound
 	}
@@ -278,6 +282,11 @@ func modelToMessageState(input models.Message) smsgateway.MessageState {
 		IsHashed:    input.IsHashed,
 		IsEncrypted: input.IsEncrypted,
 		Recipients:  slices.Map(input.Recipients, modelToRecipientState),
+		States: slices.Associate(
+			input.States,
+			func(state models.MessageState) string { return string(state.State) },
+			func(state models.MessageState) time.Time { return state.UpdatedAt },
+		),
 	}
 }
 

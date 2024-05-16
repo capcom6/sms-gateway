@@ -45,7 +45,7 @@ Authorization: Basic {{credentials}}
 }
 
 ###
-GET {{baseUrl}}/api/3rdparty/v1/message/-rnEaUz7KObDdokPrzKpM HTTP/1.1
+GET {{baseUrl}}/api/3rdparty/v1/message/2dcIAhcLg81cez7GE_Pdp HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###
@@ -63,7 +63,7 @@ Content-Type: application/json
 
 [
   {
-    "id": "RqqnKoakAc82f6e4SwoMe",
+    "id": "2dcIAhcLg81cez7GE_Pdp",
     "state": "Failed",
     "recipients": [
       {
@@ -72,8 +72,8 @@ Content-Type: application/json
       }
     ],
     "states": {
-      "Processed": "2024-05-13T16:49:17.357Z",
-      "Failed": "2024-05-13T16:49:17.357+04:00"
+      "Processed": "2024-05-13T16:49:17.357+07:00",
+      "Failed": "2024-05-13T16:49:17.357+07:00"
     }
   }
 ]
