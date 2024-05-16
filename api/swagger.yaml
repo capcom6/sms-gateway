@@ -109,9 +109,14 @@ definitions:
         type: array
       state:
         allOf:
-        - $ref: '#/definitions/smsgateway.ProcessState'
+        - $ref: '#/definitions/smsgateway.ProcessingState'
         description: State
         example: Pending
+      states:
+        additionalProperties:
+          type: string
+        description: History of states
+        type: object
     required:
     - recipients
     - state
@@ -160,7 +165,7 @@ definitions:
         maxLength: 256
         type: string
     type: object
-  smsgateway.ProcessState:
+  smsgateway.ProcessingState:
     enum:
     - Pending
     - Processed
@@ -169,17 +174,17 @@ definitions:
     - Failed
     type: string
     x-enum-comments:
-      MessageStateDelivered: Delivered
-      MessageStateFailed: Failed
-      MessageStatePending: Pending
-      MessageStateProcessed: Processed (received by device)
-      MessageStateSent: Sent
+      ProcessingStateDelivered: Delivered
+      ProcessingStateFailed: Failed
+      ProcessingStatePending: Pending
+      ProcessingStateProcessed: Processed (received by device)
+      ProcessingStateSent: Sent
     x-enum-varnames:
-    - MessageStatePending
-    - MessageStateProcessed
-    - MessageStateSent
-    - MessageStateDelivered
-    - MessageStateFailed
+    - ProcessingStatePending
+    - ProcessingStateProcessed
+    - ProcessingStateSent
+    - ProcessingStateDelivered
+    - ProcessingStateFailed
   smsgateway.PushNotification:
     properties:
       token:
@@ -203,7 +208,7 @@ definitions:
         type: string
       state:
         allOf:
-        - $ref: '#/definitions/smsgateway.ProcessState'
+        - $ref: '#/definitions/smsgateway.ProcessingState'
         description: State
         example: Pending
     required:
