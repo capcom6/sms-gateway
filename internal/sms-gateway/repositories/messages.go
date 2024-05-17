@@ -6,6 +6,7 @@ import (
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const HashingLockName = "36444143-1ace-4dbf-891c-cc505911497e"
@@ -18,7 +19,7 @@ type MessagesRepository struct {
 
 func (r *MessagesRepository) SelectPending(deviceID string) (messages []models.Message, err error) {
 	err = r.db.
-		Where("device_id = ? AND state = ?", deviceID, models.MessageStatePending).
+		Where("device_id = ? AND state = ?", deviceID, models.ProcessingStatePending).
 		Order("id").
 		Preload("Recipients").
 		Find(&messages).
@@ -42,6 +43,9 @@ func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options
 		if options[0].WithDevice {
 			query = query.Joins("Device")
 		}
+		if options[0].WithStates {
+			query = query.Preload("States")
+		}
 	}
 
 	err = query.Take(&message).Error
@@ -57,6 +61,15 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(message).Select("State").Updates(message).Error; err != nil {
 			return err
+		}
+
+		for _, v := range message.States {
+			v.MessageID = message.ID
+			if err := tx.Model(&v).Clauses(clause.OnConflict{
+				DoNothing: true,
+			}).Create(&v).Error; err != nil {
+				return err
+			}
 		}
 
 		for _, v := range message.Recipients {
@@ -110,4 +123,5 @@ type MessagesSelectFilter struct {
 type MessagesSelectOptions struct {
 	WithRecipients bool
 	WithDevice     bool
+	WithStates     bool
 }

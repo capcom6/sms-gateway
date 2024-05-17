@@ -6,12 +6,20 @@ import (
 )
 
 const (
-	MessageStatePending   ProcessState = "Pending"   // Pending
-	MessageStateProcessed ProcessState = "Processed" // Processed (received by device)
-	MessageStateSent      ProcessState = "Sent"      // Sent
-	MessageStateDelivered ProcessState = "Delivered" // Delivered
-	MessageStateFailed    ProcessState = "Failed"    // Failed
+	ProcessingStatePending   ProcessingState = "Pending"   // Pending
+	ProcessingStateProcessed ProcessingState = "Processed" // Processed (received by device)
+	ProcessingStateSent      ProcessingState = "Sent"      // Sent
+	ProcessingStateDelivered ProcessingState = "Delivered" // Delivered
+	ProcessingStateFailed    ProcessingState = "Failed"    // Failed
 )
+
+var allProcessStates = map[ProcessingState]struct{}{
+	ProcessingStatePending:   {},
+	ProcessingStateProcessed: {},
+	ProcessingStateSent:      {},
+	ProcessingStateDelivered: {},
+	ProcessingStateFailed:    {},
+}
 
 // Device
 type Device struct {
@@ -47,18 +55,29 @@ func (m Message) Validate() error {
 
 // Message state
 type MessageState struct {
-	ID          string           `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"` // Message ID
-	State       ProcessState     `json:"state" validate:"required" example:"Pending"`                              // State
-	IsHashed    bool             `json:"isHashed" example:"false"`                                                 // Hashed
-	IsEncrypted bool             `json:"isEncrypted" example:"false"`                                              // Encrypted
-	Recipients  []RecipientState `json:"recipients" validate:"required,min=1,dive"`                                // Recipients states
+	ID          string               `json:"id,omitempty" validate:"omitempty,max=36" example:"PyDmBQZZXYmyxMwED8Fzy"` // Message ID
+	State       ProcessingState      `json:"state" validate:"required" example:"Pending"`                              // State
+	IsHashed    bool                 `json:"isHashed" example:"false"`                                                 // Hashed
+	IsEncrypted bool                 `json:"isEncrypted" example:"false"`                                              // Encrypted
+	Recipients  []RecipientState     `json:"recipients" validate:"required,min=1,dive"`                                // Recipients states
+	States      map[string]time.Time `json:"states"`                                                                   // History of states
+}
+
+func (m MessageState) Validate() error {
+	for k := range m.States {
+		if _, ok := allProcessStates[ProcessingState(k)]; !ok {
+			return fmt.Errorf("invalid state value: %s", k)
+		}
+	}
+
+	return nil
 }
 
 // Recipient state
 type RecipientState struct {
-	PhoneNumber string       `json:"phoneNumber" validate:"required,min=10,max=128" example:"79990001234"` // Phone number or first 16 symbols of SHA256 hash
-	State       ProcessState `json:"state" validate:"required" example:"Pending"`                          // State
-	Error       *string      `json:"error,omitempty" example:"timeout"`                                    // Error (for `Failed` state)
+	PhoneNumber string          `json:"phoneNumber" validate:"required,min=10,max=128" example:"79990001234"` // Phone number or first 16 symbols of SHA256 hash
+	State       ProcessingState `json:"state" validate:"required" example:"Pending"`                          // State
+	Error       *string         `json:"error,omitempty" example:"timeout"`                                    // Error (for `Failed` state)
 }
 
 // Push notification

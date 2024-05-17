@@ -579,10 +579,17 @@
                     "description": "State",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/smsgateway.ProcessState"
+                            "$ref": "#/definitions/smsgateway.ProcessingState"
                         }
                     ],
                     "example": "Pending"
+                },
+                "states": {
+                    "description": "History of states",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -644,7 +651,7 @@
                 }
             }
         },
-        "smsgateway.ProcessState": {
+        "smsgateway.ProcessingState": {
             "type": "string",
             "enum": [
                 "Pending",
@@ -654,18 +661,18 @@
                 "Failed"
             ],
             "x-enum-comments": {
-                "MessageStateDelivered": "Delivered",
-                "MessageStateFailed": "Failed",
-                "MessageStatePending": "Pending",
-                "MessageStateProcessed": "Processed (received by device)",
-                "MessageStateSent": "Sent"
+                "ProcessingStateDelivered": "Delivered",
+                "ProcessingStateFailed": "Failed",
+                "ProcessingStatePending": "Pending",
+                "ProcessingStateProcessed": "Processed (received by device)",
+                "ProcessingStateSent": "Sent"
             },
             "x-enum-varnames": [
-                "MessageStatePending",
-                "MessageStateProcessed",
-                "MessageStateSent",
-                "MessageStateDelivered",
-                "MessageStateFailed"
+                "ProcessingStatePending",
+                "ProcessingStateProcessed",
+                "ProcessingStateSent",
+                "ProcessingStateDelivered",
+                "ProcessingStateFailed"
             ]
         },
         "smsgateway.PushNotification": {
@@ -704,7 +711,7 @@
                     "description": "State",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/smsgateway.ProcessState"
+                            "$ref": "#/definitions/smsgateway.ProcessingState"
                         }
                     ],
                     "example": "Pending"

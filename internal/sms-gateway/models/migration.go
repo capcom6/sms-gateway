@@ -10,5 +10,5 @@ import (
 var migrations embed.FS
 
 func Migrate(db *gorm.DB) error {
-	return db.AutoMigrate(&User{}, &Device{}, &Message{}, &MessageRecipient{})
+	return db.AutoMigrate(&User{}, &Device{}, &Message{}, &MessageRecipient{}, &MessageState{})
 }

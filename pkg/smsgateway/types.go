@@ -2,6 +2,6 @@ package smsgateway
 
 import "errors"
 
-type ProcessState string
+type ProcessingState string
 
 var ErrConflictFields = errors.New("conflict fields")

@@ -3,13 +3,17 @@
 @phone={{$dotenv PHONE}}
 
 ###
+GET {{localUrl}}/device HTTP/1.1
+Authorization: Basic {{localCredentials}}
+
+###
 POST {{localUrl}}/message?skipPhoneValidation=true HTTP/1.1
 Content-Type: application/json
 Authorization: Basic {{localCredentials}}
 
 {
     "message": "{{$localDatetime iso8601}}",
-    "validUntil": "2024-02-10T12:00:00+00:00",
+    "ttl": 600,
     "phoneNumbers": [
         "{{phone}}"
     ],
@@ -48,5 +52,5 @@ Authorization: Basic {{localCredentials}}
 }
 
 ###
-GET {{localUrl}}/message/2a1hOxM1zuZVygvE3uX0j HTTP/1.1
+GET {{localUrl}}/message/8GN2Pz-fzu73NL3398ROE HTTP/1.1
 Authorization: Basic {{localCredentials}}
