@@ -6,9 +6,11 @@ import (
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
+	"github.com/capcom6/sms-gateway/pkg/maps"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/go-playground/validator/v10"
@@ -28,6 +30,7 @@ type ThirdPartyHandlerParams struct {
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
 	DevicesSvc  *services.DevicesService
+	HealthSvc   *health.Service
 
 	Logger    *zap.Logger
 	Validator *validator.Validate
@@ -39,6 +42,44 @@ type thirdPartyHandler struct {
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
 	devicesSvc  *services.DevicesService
+	healthSvc   *health.Service
+}
+
+//	@Summary		Health check
+//	@Description	Checks if service is healthy
+//	@Tags			User
+//	@Produce		json
+//	@Success		200	{object}	smsgateway.HealthResponse	"Health check result"
+//	@Failure		500	{object}	smsgateway.HealthResponse	"Service is unhealthy"
+//	@Router			/3rdparty/v1/health [get]
+//
+// Health check
+func (h *thirdPartyHandler) getHealth(c *fiber.Ctx) error {
+	check, err := h.healthSvc.HealthCheck(c.Context())
+	if err != nil {
+		return err
+	}
+
+	res := smsgateway.HealthResponse{
+		Status: smsgateway.HealthStatus(check.Status),
+		Checks: maps.MapValues(
+			check.Checks,
+			func(c health.CheckDetail) smsgateway.HealthCheck {
+				return smsgateway.HealthCheck{
+					Description:   c.Description,
+					ObservedUnit:  c.ObservedUnit,
+					ObservedValue: c.ObservedValue,
+					Status:        smsgateway.HealthStatus(c.Status),
+				}
+			},
+		),
+	}
+
+	if check.Status == health.StatusFail {
+		return c.Status(fiber.StatusInternalServerError).JSON(res)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 //	@Summary		List devices
@@ -180,6 +221,8 @@ func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) erro
 func (h *thirdPartyHandler) Register(router fiber.Router) {
 	router = router.Group("/3rdparty/v1")
 
+	router.Get("/health", h.getHealth)
+
 	router.Use(basicauth.New(basicauth.Config{
 		Authorizer: func(username string, password string) bool {
 			return len(username) > 0 && len(password) > 0
@@ -198,5 +241,6 @@ func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
 		authSvc:     params.AuthSvc,
 		messagesSvc: params.MessagesSvc,
 		devicesSvc:  params.DevicesSvc,
+		healthSvc:   params.HealthSvc,
 	}
 }
