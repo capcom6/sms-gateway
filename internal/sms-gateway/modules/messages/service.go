@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/capcom6/go-helpers/slices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/pkg/slices"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/jaevor/go-nanoid"

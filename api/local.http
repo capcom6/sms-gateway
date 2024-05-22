@@ -3,6 +3,9 @@
 @phone={{$dotenv PHONE}}
 
 ###
+GET {{localUrl}}/health HTTP/1.1
+
+###
 GET {{localUrl}}/device HTTP/1.1
 Authorization: Basic {{localCredentials}}
 

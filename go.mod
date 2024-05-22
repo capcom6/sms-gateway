@@ -1,11 +1,10 @@
 module github.com/capcom6/sms-gateway
 
-go 1.21.3
-
-toolchain go1.21.5
+go 1.22.0
 
 require (
 	firebase.google.com/go/v4 v4.12.1
+	github.com/capcom6/go-helpers v0.0.0-20240521035030-5f57bddeecee
 	github.com/capcom6/go-infra-fx v0.0.2
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/gofiber/fiber/v2 v2.52.1
