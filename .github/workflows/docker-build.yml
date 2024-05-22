@@ -19,6 +19,7 @@ jobs:
   build:
     name: Docker image
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]' # skip on dependabot because it's not allowed to access secrets
     permissions:
       contents: read
     outputs:
