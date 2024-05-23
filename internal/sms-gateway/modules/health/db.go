@@ -29,15 +29,17 @@ func (p *DBProvider) HealthCheck(ctx context.Context) (Checks, error) {
 
 	err := p.db.PingContext(ctx)
 	if err != nil {
-		p.counter.Store(-1)
+		p.counter.Add(1)
 		status = StatusFail
+	} else {
+		p.counter.Store(0)
 	}
 
 	return Checks{
 		"ping": {
-			Description:   "Successful pings since startup or last failure",
+			Description:   "Failed sequential pings count",
 			ObservedUnit:  "",
-			ObservedValue: int(p.counter.Add(1)),
+			ObservedValue: int(p.counter.Load()),
 			Status:        status,
 		},
 	}, err
