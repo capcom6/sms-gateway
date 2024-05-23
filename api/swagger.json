@@ -61,32 +61,6 @@
                 }
             }
         },
-        "/3rdparty/v1/health": {
-            "get": {
-                "description": "Checks if service is healthy",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Health check",
-                "responses": {
-                    "200": {
-                        "description": "Health check result",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.HealthResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Service is unhealthy",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.HealthResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/3rdparty/v1/message": {
             "get": {
                 "security": [
@@ -203,6 +177,58 @@
                         "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/3rdparty/v1/health": {
+            "get": {
+                "description": "Checks if service is healthy",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health check result",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service is unhealthy",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Checks if service is healthy",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health check result",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service is unhealthy",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
                         }
                     }
                 }

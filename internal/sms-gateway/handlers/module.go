@@ -17,4 +17,8 @@ var Module = fx.Module(
 		http.AsApiHandler(newMobileHandler),
 		http.AsApiHandler(newUpstreamHandler),
 	),
+	fx.Provide(
+		newHealthHandler,
+		fx.Private,
+	),
 )

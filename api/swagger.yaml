@@ -306,23 +306,6 @@ paths:
       summary: List devices
       tags:
       - User
-  /3rdparty/v1/health:
-    get:
-      description: Checks if service is healthy
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Health check result
-          schema:
-            $ref: '#/definitions/smsgateway.HealthResponse'
-        "500":
-          description: Service is unhealthy
-          schema:
-            $ref: '#/definitions/smsgateway.HealthResponse'
-      summary: Health check
-      tags:
-      - User
   /3rdparty/v1/message:
     get:
       description: Returns message state by ID
@@ -402,6 +385,40 @@ paths:
       tags:
       - User
       - Messages
+  /api/3rdparty/v1/health:
+    get:
+      description: Checks if service is healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health check result
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+        "500":
+          description: Service is unhealthy
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+      summary: Health check
+      tags:
+      - System
+  /health:
+    get:
+      description: Checks if service is healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health check result
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+        "500":
+          description: Service is unhealthy
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+      summary: Health check
+      tags:
+      - System
   /mobile/v1/device:
     patch:
       consumes:
