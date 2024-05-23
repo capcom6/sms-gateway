@@ -1,6 +1,7 @@
 package health
 
 import (
+	"github.com/capcom6/go-infra-fx/cli"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -18,3 +19,7 @@ var Module = fx.Module(
 		NewService,
 	),
 )
+
+func init() {
+	cli.Register("health", testHealth)
+}

@@ -46,5 +46,6 @@ COPY --from=build /go/src/app /app
 EXPOSE 3000
 
 USER guest
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 --start-period=5s CMD [ "/app/app" "health" ]
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
