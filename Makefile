@@ -6,6 +6,8 @@ ifeq ($(OS),Windows_NT)
 	extension = .exe
 endif
 
+.DEFAULT_GOAL := build
+
 init:
 	go mod download
 
