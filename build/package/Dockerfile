@@ -2,6 +2,8 @@
 FROM golang:1.22-alpine AS build
 
 ARG APP
+ARG APP_VERSION=1.0.0
+ARG APP_RELEASE_ID=1
 WORKDIR /go/src
 
 # Copy go.mod and go.sum
@@ -15,7 +17,7 @@ COPY . .
 
 # Builds the application as a staticly linked one, to allow it to run on alpine
 # RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o app .
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app ./cmd/${APP}/main.go
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="-w -s -X github.com/capcom6/${APP}/internal/version.AppVersion=${APP_VERSION} -X github.com/capcom6/${APP}/internal/version.AppRelease=${APP_RELEASE_ID}" -o app ./cmd/${APP}/main.go
 
 # Build MkDocs
 FROM squidfunk/mkdocs-material:9.5.15 AS mkdocs

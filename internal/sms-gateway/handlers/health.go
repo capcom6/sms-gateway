@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
+	"github.com/capcom6/sms-gateway/internal/version"
 	"github.com/capcom6/sms-gateway/pkg/maps"
 	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/gofiber/fiber/v2"
@@ -42,7 +43,9 @@ func (h *healthHandler) getHealth(c *fiber.Ctx) error {
 	}
 
 	res := smsgateway.HealthResponse{
-		Status: smsgateway.HealthStatus(check.Status),
+		Status:    smsgateway.HealthStatus(check.Status),
+		Version:   version.AppVersion,
+		ReleaseID: version.AppReleaseID(),
 		Checks: maps.MapValues(
 			check.Checks,
 			func(c health.CheckDetail) smsgateway.HealthCheck {

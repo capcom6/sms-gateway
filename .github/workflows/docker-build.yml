@@ -46,11 +46,19 @@ jobs:
           username: ${{ secrets.username }}
           password: ${{ secrets.password }}
 
+      - name: Set APP_VERSION env
+        run: echo APP_VERSION=$(echo ${GITHUB_REF} | rev | cut -d'/' -f 1 | rev ) >> ${GITHUB_ENV}
+      - name: Set APP_RELEASE env
+        run: echo APP_RELEASE=$(( ($(date +%s) - $(date -d "2022-06-15" +%s)) / 86400 )) >> ${GITHUB_ENV}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           file: build/package/Dockerfile
-          build-args: APP=${{ inputs.app-name }}
+          build-args: |
+            APP=${{ inputs.app-name }}
+            APP_VERSION=${{ env.APP_VERSION }}
+            APP_RELEASE_ID=${{ env.APP_RELEASE }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
