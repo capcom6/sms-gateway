@@ -69,7 +69,7 @@ func (h *healthHandler) Register(router fiber.Router) {
 
 func newHealthHandler(params healthHanlderParams) *healthHandler {
 	return &healthHandler{
-		Handler:   Handler{Logger: params.Logger, Validator: nil},
+		Handler:   Handler{Logger: params.Logger.Named("HealthHandler"), Validator: nil},
 		healthSvc: params.HealthSvc,
 		logger:    params.Logger,
 	}
