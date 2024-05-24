@@ -1,6 +1,7 @@
 package health
 
 import (
+	"io"
 	httpclient "net/http"
 	"time"
 
@@ -14,8 +15,24 @@ func testHealth(shutdowner fx.Shutdowner, logger *zap.Logger, config http.Config
 		Timeout: 1 * time.Second,
 	}
 
-	_, err := client.Get("http://" + config.Listen + "/health")
+	res, err := client.Get("http://" + config.Listen + "/health")
 	if err != nil {
+		logger.Error("Failed to send request", zap.Error(err))
+		if err := shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+			logger.Error("Failed to shutdown", zap.Error(err))
+		}
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		logger.Error("Failed to read body", zap.Error(err))
+	}
+
+	logger.Info(string(body))
+
+	if res.StatusCode >= 400 {
 		if err := shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
 			logger.Error("Failed to shutdown", zap.Error(err))
 		}
