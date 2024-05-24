@@ -45,3 +45,7 @@ LICENSE
 
 # Ignore the Go build directory
 tmp/
+
+# Ignore build and deployments directories
+deployments/
+build/

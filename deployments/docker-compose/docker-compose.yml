@@ -1,4 +1,3 @@
-version: '3'
 services:
   backend:
     image: capcom6/sms-gateway
@@ -8,7 +7,7 @@ services:
       args:
         - APP=sms-gateway
     environment:
-      - DEBUG=1
+      - DEBUG=
       - CONFIG_PATH=config.yml
       - GOOSE_DBSTRING=sms:sms@tcp(db:3306)/sms
       - HTTP__LISTEN=0.0.0.0:3000
@@ -21,21 +20,22 @@ services:
       - "3000:3000"
     volumes:
       - ../../configs/config.yml:/app/config.yml:ro
-    restart: 'no'
+    restart: 'unless-stopped'
     depends_on:
       db:
         condition: service_healthy
 
   db:
-    image: mariadb:10.6
+    image: mariadb:10.11
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=sms
       - MYSQL_USER=sms
       - MYSQL_PASSWORD=sms
+      - MARIADB_AUTO_UPGRADE=1
     volumes:
       - mariadb-data:/var/lib/mysql
-    restart: 'no'
+    restart: 'unless-stopped'
     healthcheck:
       test:
         [

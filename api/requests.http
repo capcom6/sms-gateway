@@ -4,7 +4,7 @@
 @phone={{$dotenv PHONE}}
 
 ###
-GET http://localhost:3000/health HTTP/1.1
+GET {{baseUrl}}/health HTTP/1.1
 
 ###
 GET {{baseUrl}}/api/3rdparty/v1/health HTTP/1.1
