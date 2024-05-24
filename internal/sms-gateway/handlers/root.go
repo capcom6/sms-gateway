@@ -5,12 +5,16 @@ import (
 )
 
 type rootHandler struct {
+	healthHandler *healthHandler
 }
 
 func (h *rootHandler) Register(app *fiber.App) {
+	h.healthHandler.Register(app)
 	app.Static("/", "static")
 }
 
-func newRootHandler() *rootHandler {
-	return &rootHandler{}
+func newRootHandler(healthHandler *healthHandler) *rootHandler {
+	return &rootHandler{
+		healthHandler: healthHandler,
+	}
 }

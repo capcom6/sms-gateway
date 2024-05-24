@@ -182,6 +182,58 @@
                 }
             }
         },
+        "/api/3rdparty/v1/health": {
+            "get": {
+                "description": "Checks if service is healthy",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health check result",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service is unhealthy",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Checks if service is healthy",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health check result",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service is unhealthy",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/mobile/v1/device": {
             "post": {
                 "description": "Registers new device and returns credentials",
@@ -387,7 +439,6 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Device",
                     "Upstream"
                 ],
                 "summary": "Send push notifications",
@@ -483,6 +534,79 @@
                     "example": "An error occurred"
                 }
             }
+        },
+        "smsgateway.HealthCheck": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "A human-readable description of the check.",
+                    "type": "string"
+                },
+                "observedUnit": {
+                    "description": "Unit of measurement for the observed value.",
+                    "type": "string"
+                },
+                "observedValue": {
+                    "description": "Observed value of the check.",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Status of the check.\nIt can be one of the following values: \"pass\", \"warn\", or \"fail\".",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.HealthStatus"
+                        }
+                    ]
+                }
+            }
+        },
+        "smsgateway.HealthChecks": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/smsgateway.HealthCheck"
+            }
+        },
+        "smsgateway.HealthResponse": {
+            "type": "object",
+            "properties": {
+                "checks": {
+                    "description": "A map of check names to their respective details.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.HealthChecks"
+                        }
+                    ]
+                },
+                "releaseId": {
+                    "description": "Release ID of the application.\nIt is used to identify the version of the application.",
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Overall status of the application.\nIt can be one of the following values: \"pass\", \"warn\", or \"fail\".",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.HealthStatus"
+                        }
+                    ]
+                },
+                "version": {
+                    "description": "Version of the application.",
+                    "type": "string"
+                }
+            }
+        },
+        "smsgateway.HealthStatus": {
+            "type": "string",
+            "enum": [
+                "pass",
+                "warn",
+                "fail"
+            ],
+            "x-enum-varnames": [
+                "HealthStatusPass",
+                "HealthStatusWarn",
+                "HealthStatusFail"
+            ]
         },
         "smsgateway.Message": {
             "type": "object",

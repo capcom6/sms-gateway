@@ -4,6 +4,12 @@
 @phone={{$dotenv PHONE}}
 
 ###
+GET {{baseUrl}}/health HTTP/1.1
+
+###
+GET {{baseUrl}}/api/3rdparty/v1/health HTTP/1.1
+
+###
 POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1
 Authorization: Bearer 123456789
 Content-Type: application/json

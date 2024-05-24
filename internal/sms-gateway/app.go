@@ -12,6 +12,7 @@ import (
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
@@ -35,6 +36,7 @@ var Module = fx.Module(
 	repositories.Module,
 	db.Module,
 	messages.Module,
+	health.Module,
 )
 
 func Run() {

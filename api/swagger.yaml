@@ -39,6 +39,59 @@ definitions:
         example: An error occurred
         type: string
     type: object
+  smsgateway.HealthCheck:
+    properties:
+      description:
+        description: A human-readable description of the check.
+        type: string
+      observedUnit:
+        description: Unit of measurement for the observed value.
+        type: string
+      observedValue:
+        description: Observed value of the check.
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/smsgateway.HealthStatus'
+        description: |-
+          Status of the check.
+          It can be one of the following values: "pass", "warn", or "fail".
+    type: object
+  smsgateway.HealthChecks:
+    additionalProperties:
+      $ref: '#/definitions/smsgateway.HealthCheck'
+    type: object
+  smsgateway.HealthResponse:
+    properties:
+      checks:
+        allOf:
+        - $ref: '#/definitions/smsgateway.HealthChecks'
+        description: A map of check names to their respective details.
+      releaseId:
+        description: |-
+          Release ID of the application.
+          It is used to identify the version of the application.
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/smsgateway.HealthStatus'
+        description: |-
+          Overall status of the application.
+          It can be one of the following values: "pass", "warn", or "fail".
+      version:
+        description: Version of the application.
+        type: string
+    type: object
+  smsgateway.HealthStatus:
+    enum:
+    - pass
+    - warn
+    - fail
+    type: string
+    x-enum-varnames:
+    - HealthStatusPass
+    - HealthStatusWarn
+    - HealthStatusFail
   smsgateway.Message:
     properties:
       id:
@@ -332,6 +385,40 @@ paths:
       tags:
       - User
       - Messages
+  /api/3rdparty/v1/health:
+    get:
+      description: Checks if service is healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health check result
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+        "500":
+          description: Service is unhealthy
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+      summary: Health check
+      tags:
+      - System
+  /health:
+    get:
+      description: Checks if service is healthy
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health check result
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+        "500":
+          description: Service is unhealthy
+          schema:
+            $ref: '#/definitions/smsgateway.HealthResponse'
+      summary: Health check
+      tags:
+      - System
   /mobile/v1/device:
     patch:
       consumes:
@@ -490,7 +577,6 @@ paths:
             $ref: '#/definitions/smsgateway.ErrorResponse'
       summary: Send push notifications
       tags:
-      - Device
       - Upstream
 schemes:
 - https

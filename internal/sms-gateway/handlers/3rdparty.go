@@ -25,6 +25,8 @@ const (
 type ThirdPartyHandlerParams struct {
 	fx.In
 
+	HealthHandler *healthHandler
+
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
 	DevicesSvc  *services.DevicesService
@@ -35,6 +37,8 @@ type ThirdPartyHandlerParams struct {
 
 type thirdPartyHandler struct {
 	Handler
+
+	healthHandler *healthHandler
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
@@ -173,12 +177,16 @@ func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) erro
 			return fiber.ErrUnauthorized
 		}
 
+		c.Locals("user", user)
+
 		return handler(user, c)
 	}
 }
 
 func (h *thirdPartyHandler) Register(router fiber.Router) {
 	router = router.Group("/3rdparty/v1")
+
+	h.healthHandler.Register(router)
 
 	router.Use(basicauth.New(basicauth.Config{
 		Authorizer: func(username string, password string) bool {
@@ -194,9 +202,10 @@ func (h *thirdPartyHandler) Register(router fiber.Router) {
 
 func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
 	return &thirdPartyHandler{
-		Handler:     Handler{Logger: params.Logger.Named("ThirdPartyHandler"), Validator: params.Validator},
-		authSvc:     params.AuthSvc,
-		messagesSvc: params.MessagesSvc,
-		devicesSvc:  params.DevicesSvc,
+		Handler:       Handler{Logger: params.Logger.Named("ThirdPartyHandler"), Validator: params.Validator},
+		healthHandler: params.HealthHandler,
+		authSvc:       params.AuthSvc,
+		messagesSvc:   params.MessagesSvc,
+		devicesSvc:    params.DevicesSvc,
 	}
 }

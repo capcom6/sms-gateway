@@ -39,7 +39,7 @@ func newUpstreamHandler(params upstreamHandlerParams) *upstreamHandler {
 
 //	@Summary		Send push notifications
 //	@Description	Enqueues notifications for sending to devices
-//	@Tags			Device, Upstream
+//	@Tags			Upstream
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body	smsgateway.UpstreamPushRequest	true	"Push request"
