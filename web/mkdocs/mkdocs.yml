@@ -34,6 +34,7 @@ nav:
       - Local Server: getting-started/local-server.md
       - Public Cloud Server: getting-started/public-cloud-server.md
       - Private Server: getting-started/private-server.md
+      - Custom Gateway Setup: getting-started/custom-gateway.md
   - API: api.md
   - Pricing: pricing.md
   - Privacy:
