@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"

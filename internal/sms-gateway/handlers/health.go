@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
 	"github.com/capcom6/sms-gateway/internal/version"
 	"github.com/capcom6/sms-gateway/pkg/maps"
-	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

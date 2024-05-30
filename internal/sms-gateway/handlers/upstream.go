@@ -3,8 +3,8 @@ package handlers
 import (
 	"time"
 
+	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
-	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/capcom6/sms-gateway/pkg/smsgateway"
+	"github.com/android-sms-gateway/client-go/smsgateway"
 )
 
 const BASE_URL = "https://sms.capcom.me/api/upstream/v1"
