@@ -76,7 +76,7 @@ resource "docker_service" "app" {
   }
   labels {
     label = "traefik.http.routers.${var.app-name}.rule"
-    value = "Host(`${var.app-host}`)"
+    value = "Host(`${var.app-host}`) && PathPrefix(`/api`)"
   }
   labels {
     label = "traefik.http.routers.${var.app-name}.entrypoints"
