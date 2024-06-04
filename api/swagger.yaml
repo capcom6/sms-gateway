@@ -273,9 +273,9 @@ info:
   contact:
     email: i@capcom.me
     name: Aleksandr Soloshenko
-  description: End-user authentication key
+  description: Provides an API for (Android) SMS Gateway
   title: SMS Gateway - API
-  version: 1.0.0
+  version: '{APP_VERSION}'
 paths:
   /3rdparty/v1/device:
     get:

@@ -4,13 +4,13 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "End-user authentication key",
+        "description": "Provides an API for (Android) SMS Gateway",
         "title": "SMS Gateway - API",
         "contact": {
             "name": "Aleksandr Soloshenko",
             "email": "i@capcom.me"
         },
-        "version": "1.0.0"
+        "version": "{APP_VERSION}"
     },
     "host": "sms.capcom.me",
     "basePath": "/api",
