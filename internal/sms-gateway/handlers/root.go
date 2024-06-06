@@ -10,7 +10,7 @@ type rootHandler struct {
 
 func (h *rootHandler) Register(app *fiber.App) {
 	h.healthHandler.Register(app)
-	app.Static("/", "static")
+	app.Static("/api", "api")
 }
 
 func newRootHandler(healthHandler *healthHandler) *rootHandler {
