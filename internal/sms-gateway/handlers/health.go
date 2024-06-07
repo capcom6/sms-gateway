@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
 	"github.com/capcom6/sms-gateway/internal/version"
 	"github.com/capcom6/sms-gateway/pkg/maps"
@@ -19,7 +20,7 @@ type healthHanlderParams struct {
 }
 
 type healthHandler struct {
-	Handler
+	base.Handler
 
 	healthSvc *health.Service
 
@@ -72,7 +73,7 @@ func (h *healthHandler) Register(router fiber.Router) {
 
 func newHealthHandler(params healthHanlderParams) *healthHandler {
 	return &healthHandler{
-		Handler:   Handler{Logger: params.Logger.Named("HealthHandler"), Validator: nil},
+		Handler:   base.Handler{Logger: params.Logger.Named("HealthHandler"), Validator: nil},
 		healthSvc: params.HealthSvc,
 		logger:    params.Logger,
 	}

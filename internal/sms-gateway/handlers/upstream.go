@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -13,7 +14,7 @@ import (
 )
 
 type upstreamHandler struct {
-	Handler
+	base.Handler
 
 	config  Config
 	pushSvc *push.Service
@@ -31,7 +32,7 @@ type upstreamHandlerParams struct {
 
 func newUpstreamHandler(params upstreamHandlerParams) *upstreamHandler {
 	return &upstreamHandler{
-		Handler: Handler{Logger: params.Logger, Validator: params.Validator},
+		Handler: base.Handler{Logger: params.Logger, Validator: params.Validator},
 		config:  params.Config,
 		pushSvc: params.PushSvc,
 	}
@@ -62,7 +63,7 @@ func (h *upstreamHandler) postPush(c *fiber.Ctx) error {
 	}
 
 	for _, v := range req {
-		if err := h.validateStruct(v); err != nil {
+		if err := h.ValidateStruct(v); err != nil {
 			return err
 		}
 

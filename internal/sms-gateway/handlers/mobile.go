@@ -7,6 +7,7 @@ import (
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/go-infra-fx/http/apikey"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
@@ -20,7 +21,7 @@ import (
 )
 
 type mobileHandler struct {
-	Handler
+	base.Handler
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
@@ -142,7 +143,7 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 	}
 
 	for _, v := range req {
-		if err := h.validateStruct(v); err != nil {
+		if err := h.ValidateStruct(v); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())
 		}
 
@@ -205,7 +206,7 @@ func newMobileHandler(params MobileHandlerParams) *mobileHandler {
 	idGen, _ := nanoid.Standard(21)
 
 	return &mobileHandler{
-		Handler:     Handler{Logger: params.Logger, Validator: params.Validator},
+		Handler:     base.Handler{Logger: params.Logger, Validator: params.Validator},
 		authSvc:     params.AuthSvc,
 		messagesSvc: params.MessagesSvc,
 		idGen:       idGen,

@@ -57,3 +57,23 @@ Authorization: Basic {{localCredentials}}
 ###
 GET {{localUrl}}/message/8GN2Pz-fzu73NL3398ROE HTTP/1.1
 Authorization: Basic {{localCredentials}}
+
+###
+GET {{localUrl}}/webhooks HTTP/1.1
+Authorization: Basic {{localCredentials}}
+
+###
+POST {{localUrl}}/webhooks HTTP/1.1
+Authorization: Basic {{localCredentials}}
+Content-Type: application/json
+
+{
+    "id": "LreFUt-Z3sSq0JufY9uWB",
+    "url": "https://webhook.site/280a6655-eb68-40b9-b857-af5be37c5303",
+    "event": "sms:received"
+}
+
+###
+DELETE {{localUrl}}/webhooks/LreFUt-Z3sSq0JufY9uWB HTTP/1.1
+Authorization: Basic {{localCredentials}}
+

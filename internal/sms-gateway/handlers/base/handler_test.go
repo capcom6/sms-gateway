@@ -1,4 +1,4 @@
-package handlers
+package base
 
 import (
 	"bytes"
@@ -197,7 +197,7 @@ func TestHandler_validateStruct(t *testing.T) {
 				Logger:    tt.fields.Logger,
 				Validator: tt.fields.Validator,
 			}
-			if err := h.validateStruct(tt.args.out); (err != nil) != tt.wantErr {
+			if err := h.ValidateStruct(tt.args.out); (err != nil) != tt.wantErr {
 				t.Errorf("Handler.validateStruct() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
