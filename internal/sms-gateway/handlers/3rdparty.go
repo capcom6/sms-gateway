@@ -6,10 +6,10 @@ import (
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/types"
@@ -28,7 +28,7 @@ type ThirdPartyHandlerParams struct {
 	fx.In
 
 	HealthHandler   *healthHandler
-	WebhooksHandler *webhooks.Handler
+	WebhooksHandler *webhooks.ThirdPartyController
 
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
@@ -42,7 +42,7 @@ type thirdPartyHandler struct {
 	base.Handler
 
 	healthHandler   *healthHandler
-	webhooksHandler *webhooks.Handler
+	webhooksHandler *webhooks.ThirdPartyController
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service

@@ -14,7 +14,6 @@ var Module = fx.Module(
 	fx.Provide(NewRepository, fx.Private),
 	fx.Provide(
 		NewService,
-		NewHandler,
 	),
 )
 

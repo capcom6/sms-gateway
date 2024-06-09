@@ -5,6 +5,7 @@ import (
 
 	"github.com/capcom6/go-helpers/slices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
+	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 )
 
 type Service struct {
@@ -20,7 +21,7 @@ func NewService(idgen db.IDGen, webhooks *Repository) *Service {
 	}
 }
 
-func (s *Service) Select(userID string, filters ...SelectFilter) ([]WebhookDTO, error) {
+func (s *Service) Select(userID string, filters ...SelectFilter) ([]smsgateway.WebhookDTO, error) {
 	filters = append(filters, WithUserID(userID))
 
 	items, err := s.webhooks.Select(filters...)
@@ -31,7 +32,7 @@ func (s *Service) Select(userID string, filters ...SelectFilter) ([]WebhookDTO, 
 	return slices.Map(items, webhookToDTO), nil
 }
 
-func (s *Service) Replace(userID string, webhook WebhookDTO) error {
+func (s *Service) Replace(userID string, webhook *smsgateway.WebhookDTO) error {
 	if webhook.ID == "" {
 		webhook.ID = s.idgen()
 	}

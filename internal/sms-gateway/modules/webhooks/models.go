@@ -2,6 +2,7 @@ package webhooks
 
 import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"gorm.io/gorm"
 )
 
@@ -10,8 +11,8 @@ type Webhook struct {
 	ExtID  string `json:"id"   gorm:"not null;type:varchar(36);uniqueIndex:unq_webhooks_user_extid,priority:2"`
 	UserID string `json:"-"    gorm:"<-:create;not null;type:varchar(32);uniqueIndex:unq_webhooks_user_extid,priority:1"`
 
-	URL   string `json:"url"   validate:"required,http_url"   gorm:"not null;type:varchar(256)"`
-	Event Event  `json:"event" gorm:"not null;type:varchar(32)"`
+	URL   string                  `json:"url"   validate:"required,http_url"   gorm:"not null;type:varchar(256)"`
+	Event smsgateway.WebhookEvent `json:"event" gorm:"not null;type:varchar(32)"`
 
 	User models.User `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 

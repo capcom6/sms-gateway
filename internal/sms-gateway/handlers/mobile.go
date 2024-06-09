@@ -8,6 +8,7 @@ import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
@@ -25,6 +26,8 @@ type mobileHandler struct {
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
+
+	webhooksCtrl *webhooks.MobileController
 
 	idGen func() string
 }
@@ -156,20 +159,6 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-func (h *mobileHandler) authorize(handler func(models.Device, *fiber.Ctx) error) fiber.Handler {
-	return func(c *fiber.Ctx) error {
-		token := c.Locals("token").(string)
-
-		device, err := h.authSvc.AuthorizeDevice(token)
-		if err != nil {
-			h.Logger.Error("Can't authorize device", zap.Error(err))
-			return fiber.ErrUnauthorized
-		}
-
-		return handler(device, c)
-	}
-}
-
 func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
@@ -184,15 +173,29 @@ func (h *mobileHandler) Register(router fiber.Router) {
 		Authorizer: func(token string) bool {
 			return len(token) > 0
 		},
-	}))
+	}), func(c *fiber.Ctx) error {
+		token := c.Locals("token").(string)
 
-	router.Patch("/device", h.authorize(h.patchDevice))
+		device, err := h.authSvc.AuthorizeDevice(token)
+		if err != nil {
+			h.Logger.Error("Can't authorize device", zap.Error(err))
+			return fiber.ErrUnauthorized
+		}
 
-	router.Get("/message", h.authorize(h.getMessage))
-	router.Patch("/message", h.authorize(h.patchMessage))
+		c.Locals("device", device)
+
+		return c.Next()
+	})
+
+	router.Patch("/device", auth.WithDevice(h.patchDevice))
+
+	router.Get("/message", auth.WithDevice(h.getMessage))
+	router.Patch("/message", auth.WithDevice(h.patchMessage))
+
+	h.webhooksCtrl.Register(router.Group("/webhooks"))
 }
 
-type MobileHandlerParams struct {
+type mobileHandlerParams struct {
 	fx.In
 
 	Logger    *zap.Logger
@@ -200,15 +203,18 @@ type MobileHandlerParams struct {
 
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
+
+	WebhooksCtrl *webhooks.MobileController
 }
 
-func newMobileHandler(params MobileHandlerParams) *mobileHandler {
+func newMobileHandler(params mobileHandlerParams) *mobileHandler {
 	idGen, _ := nanoid.Standard(21)
 
 	return &mobileHandler{
-		Handler:     base.Handler{Logger: params.Logger, Validator: params.Validator},
-		authSvc:     params.AuthSvc,
-		messagesSvc: params.MessagesSvc,
-		idGen:       idGen,
+		Handler:      base.Handler{Logger: params.Logger, Validator: params.Validator},
+		authSvc:      params.AuthSvc,
+		messagesSvc:  params.MessagesSvc,
+		webhooksCtrl: params.WebhooksCtrl,
+		idGen:        idGen,
 	}
 }
