@@ -70,8 +70,8 @@ func (s *Service) Run(ctx context.Context) {
 }
 
 // Enqueue adds the data to the cache and immediately sends all messages if the debounce is 0.
-func (s *Service) Enqueue(ctx context.Context, token string, data map[string]string) error {
-	s.cache.Set(token, data)
+func (s *Service) Enqueue(ctx context.Context, token string, event *Event) error {
+	s.cache.Set(token, event.Map())
 
 	return nil
 }

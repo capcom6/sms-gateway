@@ -3,11 +3,11 @@ package webhooks
 import (
 	"fmt"
 
+	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/webhooks"
-	"github.com/capcom6/sms-gateway/pkg/smsgateway"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
@@ -64,7 +64,7 @@ func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
 //
 // Register webhook
 func (h *ThirdPartyController) post(user models.User, c *fiber.Ctx) error {
-	dto := &smsgateway.WebhookDTO{}
+	dto := &smsgateway.Webhook{}
 
 	if err := h.BodyParserValidator(c, dto); err != nil {
 		return err
