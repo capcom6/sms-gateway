@@ -31,7 +31,7 @@ type MobileController struct {
 //	@Security		MobileToken
 //	@Tags			Device, Webhooks
 //	@Produce		json
-//	@Success		200	{object}	[]smsgateway.WebhookDTO		"Webhook list"
+//	@Success		200	{object}	[]smsgateway.Webhook		"Webhook list"
 //	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/mobile/v1/webhooks [get]

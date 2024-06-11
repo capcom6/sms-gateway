@@ -34,7 +34,7 @@ type ThirdPartyController struct {
 //	@Security		ApiAuth
 //	@Tags			User, Webhooks
 //	@Produce		json
-//	@Success		200	{object}	[]smsgateway.WebhookDTO		"Webhook list"
+//	@Success		200	{object}	[]smsgateway.Webhook		"Webhook list"
 //	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Router			/api/v1/3rdparty/webhooks [get]
@@ -55,8 +55,8 @@ func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
 //	@Tags			User, Webhooks
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		smsgateway.WebhookDTO		true	"Webhook"
-//	@Success		201		{object}	smsgateway.WebhookDTO		"Created"
+//	@Param			request	body		smsgateway.Webhook			true	"Webhook"
+//	@Success		201		{object}	smsgateway.Webhook			"Created"
 //	@Failure		400		{object}	smsgateway.ErrorResponse	"Invalid request"
 //	@Failure		401		{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Internal server error"

@@ -1,28 +1,5 @@
 basePath: /api
 definitions:
-  github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO:
-    properties:
-      event:
-        allOf:
-        - $ref: '#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookEvent'
-        example: sms:received
-      id:
-        example: 123e4567-e89b-12d3-a456-426614174000
-        maxLength: 36
-        type: string
-      url:
-        example: https://example.com/webhook
-        type: string
-    required:
-    - event
-    - url
-    type: object
-  github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookEvent:
-    enum:
-    - sms:received
-    type: string
-    x-enum-varnames:
-    - WebhookEventSmsReceived
   smsgateway.Device:
     properties:
       createdAt:
@@ -261,10 +238,32 @@ definitions:
     - ProcessingStateSent
     - ProcessingStateDelivered
     - ProcessingStateFailed
+  smsgateway.PushEventType:
+    enum:
+    - MessageEnqueued
+    - WebhooksUpdated
+    type: string
+    x-enum-varnames:
+    - PushMessageEnqueued
+    - PushWebhooksUpdated
   smsgateway.PushNotification:
     properties:
+      data:
+        additionalProperties:
+          type: string
+        description: The additional data associated with the event.
+        type: object
+      event:
+        allOf:
+        - $ref: '#/definitions/smsgateway.PushEventType'
+        default: MessageEnqueued
+        description: The type of event.
+        enum:
+        - MessageEnqueued
+        - WebhooksUpdated
+        example: MessageEnqueued
       token:
-        description: Device FCM token
+        description: The token of the device that receives the notification.
         example: PyDmBQZZXYmyxMwED8Fzy
         type: string
     required:
@@ -291,6 +290,32 @@ definitions:
     - phoneNumber
     - state
     type: object
+  smsgateway.Webhook:
+    properties:
+      event:
+        allOf:
+        - $ref: '#/definitions/smsgateway.WebhookEvent'
+        description: The type of event the webhook is triggered for.
+        example: sms:received
+      id:
+        description: The unique identifier of the webhook.
+        example: 123e4567-e89b-12d3-a456-426614174000
+        maxLength: 36
+        type: string
+      url:
+        description: The URL the webhook will be sent to.
+        example: https://example.com/webhook
+        type: string
+    required:
+    - event
+    - url
+    type: object
+  smsgateway.WebhookEvent:
+    enum:
+    - sms:received
+    type: string
+    x-enum-varnames:
+    - WebhookEventSmsReceived
 host: sms.capcom.me
 info:
   contact:
@@ -435,7 +460,7 @@ paths:
           description: Webhook list
           schema:
             items:
-              $ref: '#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO'
+              $ref: '#/definitions/smsgateway.Webhook'
             type: array
         "401":
           description: Unauthorized
@@ -462,14 +487,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO'
+          $ref: '#/definitions/smsgateway.Webhook'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO'
+            $ref: '#/definitions/smsgateway.Webhook'
         "400":
           description: Invalid request
           schema:
@@ -670,7 +695,7 @@ paths:
           description: Webhook list
           schema:
             items:
-              $ref: '#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO'
+              $ref: '#/definitions/smsgateway.Webhook'
             type: array
         "401":
           description: Unauthorized

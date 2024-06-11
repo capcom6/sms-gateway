@@ -62,7 +62,7 @@ func (h *mobileHandler) postDevice(c *fiber.Ctx) error {
 		return fmt.Errorf("can't create user: %w", err)
 	}
 
-	device, err := h.authSvc.RegisterDevice(user.ID, req.Name, req.PushToken)
+	device, err := h.authSvc.RegisterDevice(user, req.Name, req.PushToken)
 	if err != nil {
 		return fmt.Errorf("can't register device: %w", err)
 	}

@@ -230,7 +230,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO"
+                                "$ref": "#/definitions/smsgateway.Webhook"
                             }
                         }
                     },
@@ -273,7 +273,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO"
+                            "$ref": "#/definitions/smsgateway.Webhook"
                         }
                     }
                 ],
@@ -281,7 +281,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO"
+                            "$ref": "#/definitions/smsgateway.Webhook"
                         }
                     },
                     "400": {
@@ -595,7 +595,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO"
+                                "$ref": "#/definitions/smsgateway.Webhook"
                             }
                         }
                     },
@@ -668,41 +668,6 @@
         }
     },
     "definitions": {
-        "github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookDTO": {
-            "type": "object",
-            "required": [
-                "event",
-                "url"
-            ],
-            "properties": {
-                "event": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookEvent"
-                        }
-                    ],
-                    "example": "sms:received"
-                },
-                "id": {
-                    "type": "string",
-                    "maxLength": 36,
-                    "example": "123e4567-e89b-12d3-a456-426614174000"
-                },
-                "url": {
-                    "type": "string",
-                    "example": "https://example.com/webhook"
-                }
-            }
-        },
-        "github_com_capcom6_sms-gateway_pkg_smsgateway.WebhookEvent": {
-            "type": "string",
-            "enum": [
-                "sms:received"
-            ],
-            "x-enum-varnames": [
-                "WebhookEventSmsReceived"
-            ]
-        },
         "smsgateway.Device": {
             "type": "object",
             "properties": {
@@ -1019,14 +984,46 @@
                 "ProcessingStateFailed"
             ]
         },
+        "smsgateway.PushEventType": {
+            "type": "string",
+            "enum": [
+                "MessageEnqueued",
+                "WebhooksUpdated"
+            ],
+            "x-enum-varnames": [
+                "PushMessageEnqueued",
+                "PushWebhooksUpdated"
+            ]
+        },
         "smsgateway.PushNotification": {
             "type": "object",
             "required": [
                 "token"
             ],
             "properties": {
+                "data": {
+                    "description": "The additional data associated with the event.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "event": {
+                    "description": "The type of event.",
+                    "default": "MessageEnqueued",
+                    "enum": [
+                        "MessageEnqueued",
+                        "WebhooksUpdated"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.PushEventType"
+                        }
+                    ],
+                    "example": "MessageEnqueued"
+                },
                 "token": {
-                    "description": "Device FCM token",
+                    "description": "The token of the device that receives the notification.",
                     "type": "string",
                     "example": "PyDmBQZZXYmyxMwED8Fzy"
                 }
@@ -1061,6 +1058,44 @@
                     "example": "Pending"
                 }
             }
+        },
+        "smsgateway.Webhook": {
+            "type": "object",
+            "required": [
+                "event",
+                "url"
+            ],
+            "properties": {
+                "event": {
+                    "description": "The type of event the webhook is triggered for.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.WebhookEvent"
+                        }
+                    ],
+                    "example": "sms:received"
+                },
+                "id": {
+                    "description": "The unique identifier of the webhook.",
+                    "type": "string",
+                    "maxLength": 36,
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "url": {
+                    "description": "The URL the webhook will be sent to.",
+                    "type": "string",
+                    "example": "https://example.com/webhook"
+                }
+            }
+        },
+        "smsgateway.WebhookEvent": {
+            "type": "string",
+            "enum": [
+                "sms:received"
+            ],
+            "x-enum-varnames": [
+                "WebhookEventSmsReceived"
+            ]
         }
     },
     "securityDefinitions": {

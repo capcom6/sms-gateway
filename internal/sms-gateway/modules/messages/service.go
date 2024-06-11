@@ -214,10 +214,7 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 	}
 
 	go func(token string) {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		if err := s.PushSvc.Enqueue(ctx, token, push.NewMessageEnqueuedEvent()); err != nil {
+		if err := s.PushSvc.Enqueue(token, push.NewMessageEnqueuedEvent()); err != nil {
 			s.Logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
 		}
 	}(*device.PushToken)

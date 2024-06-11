@@ -6,18 +6,43 @@ import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/go-helpers/slices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
+
+type ServiceParams struct {
+	fx.In
+
+	idgen db.IDGen
+
+	webhooks *Repository
+
+	devicesSvc *devices.Service
+	pushSvc    *push.Service
+
+	logger *zap.Logger
+}
 
 type Service struct {
 	idgen db.IDGen
 
 	webhooks *Repository
+
+	devicesSvc *devices.Service
+	pushSvc    *push.Service
+
+	logger *zap.Logger
 }
 
-func NewService(idgen db.IDGen, webhooks *Repository) *Service {
+func NewService(params ServiceParams) *Service {
 	return &Service{
-		idgen:    idgen,
-		webhooks: webhooks,
+		idgen:      params.idgen,
+		webhooks:   params.webhooks,
+		devicesSvc: params.devicesSvc,
+		pushSvc:    params.pushSvc,
+		logger:     params.logger,
 	}
 }
 
@@ -44,10 +69,44 @@ func (s *Service) Replace(userID string, webhook *smsgateway.Webhook) error {
 		Event:  webhook.Event,
 	}
 
-	return s.webhooks.Replace(&model)
+	if err := s.webhooks.Replace(&model); err != nil {
+		return fmt.Errorf("can't replace webhook: %w", err)
+	}
+
+	go s.notifyDevices(userID)
+
+	return nil
 }
 
 func (s *Service) Delete(userID string, filters ...SelectFilter) error {
 	filters = append(filters, WithUserID(userID))
-	return s.webhooks.Delete(filters...)
+	if err := s.webhooks.Delete(filters...); err != nil {
+		return fmt.Errorf("can't delete webhooks: %w", err)
+	}
+
+	go s.notifyDevices(userID)
+
+	return nil
+}
+
+func (s *Service) notifyDevices(userID string) {
+	s.logger.Info("Notifying devices", zap.String("user_id", userID))
+
+	devices, err := s.devicesSvc.Select(devices.WithUserID(userID))
+	if err != nil {
+		s.logger.Error("Failed to select devices", zap.String("user_id", userID), zap.Error(err))
+		return
+	}
+
+	for _, device := range devices {
+		if device.PushToken == nil {
+			continue
+		}
+
+		if err := s.pushSvc.Enqueue(*device.PushToken, push.NewWebhooksUpdatedEvent()); err != nil {
+			s.logger.Error("Failed to send push notification", zap.String("user_id", userID), zap.Error(err))
+		}
+	}
+
+	s.logger.Info("Notified devices", zap.String("user_id", userID), zap.Int("count", len(devices)))
 }

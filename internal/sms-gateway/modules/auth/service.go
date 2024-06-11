@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/crypto"
 	"github.com/jaevor/go-nanoid"
@@ -21,8 +22,8 @@ type Params struct {
 
 	Config Config
 
-	Users   *repositories.UsersRepository
-	Devices *repositories.DevicesRepository
+	Users      *repositories.UsersRepository
+	DevicesSvc *devices.Service
 
 	Logger *zap.Logger
 }
@@ -30,8 +31,8 @@ type Params struct {
 type Service struct {
 	config Config
 
-	users   *repositories.UsersRepository
-	devices *repositories.DevicesRepository
+	users      *repositories.UsersRepository
+	devicesSvc *devices.Service
 
 	logger *zap.Logger
 
@@ -42,11 +43,11 @@ func New(params Params) *Service {
 	idgen, _ := nanoid.Standard(21)
 
 	return &Service{
-		config:  params.Config,
-		users:   params.Users,
-		devices: params.Devices,
-		logger:  params.Logger.Named("Service"),
-		idgen:   idgen,
+		config:     params.Config,
+		users:      params.Users,
+		devicesSvc: params.DevicesSvc,
+		logger:     params.Logger.Named("Service"),
+		idgen:      idgen,
 	}
 }
 
@@ -67,20 +68,17 @@ func (s *Service) RegisterUser(login, password string) (models.User, error) {
 	return user, nil
 }
 
-func (s *Service) RegisterDevice(userID string, name, pushToken *string) (models.Device, error) {
+func (s *Service) RegisterDevice(user models.User, name, pushToken *string) (models.Device, error) {
 	device := models.Device{
-		ID:        s.idgen(),
 		Name:      name,
-		AuthToken: s.idgen(),
 		PushToken: pushToken,
-		UserID:    userID,
 	}
 
-	return device, s.devices.Insert(&device)
+	return device, s.devicesSvc.Insert(user, &device)
 }
 
 func (s *Service) UpdateDevice(id, pushToken string) error {
-	return s.devices.UpdateToken(id, pushToken)
+	return s.devicesSvc.UpdateToken(id, pushToken)
 }
 
 func (s *Service) IsPublic() bool {
@@ -100,12 +98,12 @@ func (s *Service) AuthorizeRegistration(token string) error {
 }
 
 func (s *Service) AuthorizeDevice(token string) (models.Device, error) {
-	device, err := s.devices.GetByToken(token)
+	device, err := s.devicesSvc.Get(devices.WithToken(token))
 	if err != nil {
 		return device, err
 	}
 
-	if err := s.devices.UpdateLastSeen(device.ID); err != nil {
+	if err := s.devicesSvc.UpdateLastSeen(device.ID); err != nil {
 		s.logger.Error("can't update last seen", zap.Error(err))
 	}
 

@@ -9,9 +9,9 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -32,7 +32,7 @@ type ThirdPartyHandlerParams struct {
 
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
-	DevicesSvc  *services.DevicesService
+	DevicesSvc  *devices.Service
 
 	Logger    *zap.Logger
 	Validator *validator.Validate
@@ -46,7 +46,7 @@ type thirdPartyHandler struct {
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
-	devicesSvc  *services.DevicesService
+	devicesSvc  *devices.Service
 }
 
 //	@Summary		List devices
@@ -62,7 +62,7 @@ type thirdPartyHandler struct {
 //
 // List devices
 func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
-	devices, err := h.devicesSvc.Select(user)
+	devices, err := h.devicesSvc.Select(devices.WithUserID(user.ID))
 	if err != nil {
 		return fmt.Errorf("can't select devices: %w", err)
 	}
@@ -110,7 +110,7 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 
 	skipPhoneValidation := c.QueryBool("skipPhoneValidation", false)
 
-	devices, err := h.devicesSvc.Select(user)
+	devices, err := h.devicesSvc.Select(devices.WithUserID(user.ID))
 	if err != nil {
 		return fmt.Errorf("can't select devices: %w", err)
 	}
