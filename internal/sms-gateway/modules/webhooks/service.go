@@ -15,14 +15,14 @@ import (
 type ServiceParams struct {
 	fx.In
 
-	idgen db.IDGen
+	IDGen db.IDGen
 
-	webhooks *Repository
+	Webhooks *Repository
 
-	devicesSvc *devices.Service
-	pushSvc    *push.Service
+	DevicesSvc *devices.Service
+	PushSvc    *push.Service
 
-	logger *zap.Logger
+	Logger *zap.Logger
 }
 
 type Service struct {
@@ -38,11 +38,11 @@ type Service struct {
 
 func NewService(params ServiceParams) *Service {
 	return &Service{
-		idgen:      params.idgen,
-		webhooks:   params.webhooks,
-		devicesSvc: params.devicesSvc,
-		pushSvc:    params.pushSvc,
-		logger:     params.logger,
+		idgen:      params.IDGen,
+		webhooks:   params.Webhooks,
+		devicesSvc: params.DevicesSvc,
+		pushSvc:    params.PushSvc,
+		logger:     params.Logger,
 	}
 }
 
