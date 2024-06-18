@@ -33,8 +33,7 @@ type healthHandler struct {
 //	@Produce		json
 //	@Success		200	{object}	smsgateway.HealthResponse	"Health check result"
 //	@Failure		500	{object}	smsgateway.HealthResponse	"Service is unhealthy"
-//	@Router			/health [get]
-//	@Router			/api/3rdparty/v1/health [get]
+//	@Router			/3rdparty/v1/health [get]
 //
 // Health check
 func (h *healthHandler) getHealth(c *fiber.Ctx) error {

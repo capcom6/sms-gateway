@@ -37,7 +37,7 @@ type ThirdPartyController struct {
 //	@Success		200	{object}	[]smsgateway.Webhook		"Webhook list"
 //	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
-//	@Router			/api/v1/3rdparty/webhooks [get]
+//	@Router			/3rdparty/v1/webhooks [get]
 //
 // List webhooks
 func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
@@ -60,7 +60,7 @@ func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
 //	@Failure		400		{object}	smsgateway.ErrorResponse	"Invalid request"
 //	@Failure		401		{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500		{object}	smsgateway.ErrorResponse	"Internal server error"
-//	@Router			/api/v1/3rdparty/webhooks [post]
+//	@Router			/3rdparty/v1/webhooks [post]
 //
 // Register webhook
 func (h *ThirdPartyController) post(user models.User, c *fiber.Ctx) error {
@@ -86,7 +86,7 @@ func (h *ThirdPartyController) post(user models.User, c *fiber.Ctx) error {
 //	@Success		204	{object}	object						"Webhook deleted"
 //	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
-//	@Router			/api/v1/3rdparty/webhooks/{id} [delete]
+//	@Router			/3rdparty/v1/webhooks/{id} [delete]
 //
 // Delete webhook
 func (h *ThirdPartyController) delete(user models.User, c *fiber.Ctx) error {
