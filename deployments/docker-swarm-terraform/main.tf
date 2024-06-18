@@ -82,9 +82,13 @@ resource "docker_service" "app" {
     label = "traefik.http.routers.${var.app-name}.entrypoints"
     value = "https"
   }
+  # labels {
+  #   label = "traefik.http.routers.${var.app-name}.tls"
+  #   value = true
+  # }
   labels {
-    label = "traefik.http.routers.${var.app-name}.tls"
-    value = true
+    label = "traefik.http.routers.${var.app-name}.tls.certresolver"
+    value = "le"
   }
 
   labels {
