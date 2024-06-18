@@ -12,11 +12,13 @@ import (
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	appdb "github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -27,16 +29,18 @@ var Module = fx.Module(
 	"server",
 	logger.Module,
 	appconfig.Module,
+	appdb.Module,
 	http.Module,
 	validator.Module,
 	handlers.Module,
-	services.Module,
 	auth.Module,
 	push.Module,
 	repositories.Module,
 	db.Module,
 	messages.Module,
 	health.Module,
+	webhooks.Module,
+	devices.Module,
 )
 
 func Run() {

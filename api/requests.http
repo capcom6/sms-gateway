@@ -10,16 +10,6 @@ GET {{baseUrl}}/health HTTP/1.1
 GET {{baseUrl}}/api/3rdparty/v1/health HTTP/1.1
 
 ###
-POST {{baseUrl}}/api/mobile/v1/device HTTP/1.1
-Authorization: Bearer 123456789
-Content-Type: application/json
-
-{
-  "name": "Android Phone",
-  "pushToken": "eTxx88nfSla87gZuJcW5mS:APA91bHGxVgSqqRtxwFHD1q9em5Oa6xSP4gO_OZRrqOoP1wjf_7UMfXKsc4uws6rWkqn73jYCc1owyATB1v61mqak4ntpqtmRkNtTey7NQXa0Wz3uQZBWY-Ecbn2rWG2VJRihOzXRId-"
-}
-
-###
 POST {{baseUrl}}/api/3rdparty/v1/message?skipPhoneValidation=false HTTP/1.1
 Content-Type: application/json
 Authorization: Basic {{credentials}}
@@ -59,32 +49,6 @@ GET {{baseUrl}}/api/3rdparty/v1/device HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###
-GET {{baseUrl}}/api/mobile/v1/message HTTP/1.1
-Authorization: Bearer {{mobileToken}}
-
-###
-PATCH {{baseUrl}}/api/mobile/v1/message HTTP/1.1
-Authorization: Bearer {{mobileToken}}
-Content-Type: application/json
-
-[
-  {
-    "id": "2dcIAhcLg81cez7GE_Pdp",
-    "state": "Failed",
-    "recipients": [
-      {
-        "phoneNumber": "{{phone}}",
-        "state": "Failed"
-      }
-    ],
-    "states": {
-      "Processed": "2024-05-13T16:49:17.357+07:00",
-      "Failed": "2024-05-13T16:49:17.357+07:00"
-    }
-  }
-]
-
-###
 POST {{baseUrl}}/api/upstream/v1/push HTTP/1.1
 Content-Type: application/json
 
@@ -93,3 +57,23 @@ Content-Type: application/json
     "token": "eTxx88nfSla87gZuJcW5mS:APA91bHGxVgSqqRtxwFHD1q9em5Oa6xSP4gO_OZRrqOoP1wjf_7UMfXKsc4uws6rWkqn73jYCc1owyATB1v61mqak4ntpqtmRkNtTey7NQXa0Wz3uQZBWY-Ecbn2rWG2VJRihOzXRId-"
   }
 ]
+
+###
+GET {{baseUrl}}/api/3rdparty/v1/webhooks HTTP/1.1
+Authorization: Basic {{credentials}}
+
+###
+POST {{baseUrl}}/api/3rdparty/v1/webhooks HTTP/1.1
+Authorization: Basic {{credentials}}
+Content-Type: application/json
+
+{
+    "id": "MYofX8bTd5Bov0wWFZLRP",
+    "url": "https://webhook.site/280a6655-eb68-40b9-b857-af5be37c5303",
+    "event": "sms:received"
+}
+
+###
+DELETE {{baseUrl}}/api/3rdparty/v1/webhooks/MYofX8bTd5Bov0wWFZLRP HTTP/1.1
+Authorization: Basic {{credentials}}
+

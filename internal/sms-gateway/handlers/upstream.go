@@ -4,7 +4,9 @@ import (
 	"time"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
+	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -13,7 +15,7 @@ import (
 )
 
 type upstreamHandler struct {
-	Handler
+	base.Handler
 
 	config  Config
 	pushSvc *push.Service
@@ -31,7 +33,7 @@ type upstreamHandlerParams struct {
 
 func newUpstreamHandler(params upstreamHandlerParams) *upstreamHandler {
 	return &upstreamHandler{
-		Handler: Handler{Logger: params.Logger, Validator: params.Validator},
+		Handler: base.Handler{Logger: params.Logger, Validator: params.Validator},
 		config:  params.Config,
 		pushSvc: params.PushSvc,
 	}
@@ -62,11 +64,16 @@ func (h *upstreamHandler) postPush(c *fiber.Ctx) error {
 	}
 
 	for _, v := range req {
-		if err := h.validateStruct(v); err != nil {
+		if err := h.ValidateStruct(v); err != nil {
 			return err
 		}
 
-		if err := h.pushSvc.Enqueue(c.Context(), v.Token, map[string]string{}); err != nil {
+		event := push.Event{
+			Event: types.ZeroDefault(v.Event, smsgateway.PushMessageEnqueued),
+			Data:  v.Data,
+		}
+
+		if err := h.pushSvc.Enqueue(v.Token, &event); err != nil {
 			h.Logger.Error("Can't push message", zap.Error(err))
 		}
 	}

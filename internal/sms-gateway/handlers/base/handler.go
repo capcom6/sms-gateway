@@ -1,4 +1,4 @@
-package handlers
+package base
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func (h *Handler) BodyParserValidator(c *fiber.Ctx, out any) error {
 		return fmt.Errorf("can't parse body: %w", err)
 	}
 
-	return h.validateStruct(out)
+	return h.ValidateStruct(out)
 }
 
 func (h *Handler) QueryParserValidator(c *fiber.Ctx, out any) error {
@@ -30,7 +30,7 @@ func (h *Handler) QueryParserValidator(c *fiber.Ctx, out any) error {
 		return fmt.Errorf("can't parse query: %w", err)
 	}
 
-	return h.validateStruct(out)
+	return h.ValidateStruct(out)
 }
 
 func (h *Handler) ParamsParserValidator(c *fiber.Ctx, out any) error {
@@ -38,10 +38,10 @@ func (h *Handler) ParamsParserValidator(c *fiber.Ctx, out any) error {
 		return fmt.Errorf("can't parse params: %w", err)
 	}
 
-	return h.validateStruct(out)
+	return h.ValidateStruct(out)
 }
 
-func (h *Handler) validateStruct(out any) error {
+func (h *Handler) ValidateStruct(out any) error {
 	if h.Validator != nil {
 		if err := h.Validator.Struct(out); err != nil {
 			return fiber.NewError(fiber.StatusBadRequest, err.Error())

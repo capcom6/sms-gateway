@@ -208,6 +208,150 @@
                 }
             }
         },
+        "/api/v1/3rdparty/webhooks": {
+            "get": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Returns list of registered webhooks",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User",
+                    "Webhooks"
+                ],
+                "summary": "List webhooks",
+                "responses": {
+                    "200": {
+                        "description": "Webhook list",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smsgateway.Webhook"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Registers webhook. If webhook with same ID already exists, it will be replaced",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User",
+                    "Webhooks"
+                ],
+                "summary": "Register webhook",
+                "parameters": [
+                    {
+                        "description": "Webhook",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.Webhook"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.Webhook"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/3rdparty/webhooks/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Deletes webhook",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User",
+                    "Webhooks"
+                ],
+                "summary": "Delete webhook",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Webhook ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Webhook deleted",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Checks if service is healthy",
@@ -416,6 +560,47 @@
                     },
                     "400": {
                         "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/mobile/v1/webhooks": {
+            "get": {
+                "security": [
+                    {
+                        "MobileToken": []
+                    }
+                ],
+                "description": "Returns list of registered webhooks for device",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device",
+                    "Webhooks"
+                ],
+                "summary": "List webhooks",
+                "responses": {
+                    "200": {
+                        "description": "Webhook list",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smsgateway.Webhook"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/smsgateway.ErrorResponse"
                         }
@@ -799,14 +984,46 @@
                 "ProcessingStateFailed"
             ]
         },
+        "smsgateway.PushEventType": {
+            "type": "string",
+            "enum": [
+                "MessageEnqueued",
+                "WebhooksUpdated"
+            ],
+            "x-enum-varnames": [
+                "PushMessageEnqueued",
+                "PushWebhooksUpdated"
+            ]
+        },
         "smsgateway.PushNotification": {
             "type": "object",
             "required": [
                 "token"
             ],
             "properties": {
+                "data": {
+                    "description": "The additional data associated with the event.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "event": {
+                    "description": "The type of event.",
+                    "default": "MessageEnqueued",
+                    "enum": [
+                        "MessageEnqueued",
+                        "WebhooksUpdated"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.PushEventType"
+                        }
+                    ],
+                    "example": "MessageEnqueued"
+                },
                 "token": {
-                    "description": "Device FCM token",
+                    "description": "The token of the device that receives the notification.",
                     "type": "string",
                     "example": "PyDmBQZZXYmyxMwED8Fzy"
                 }
@@ -841,6 +1058,44 @@
                     "example": "Pending"
                 }
             }
+        },
+        "smsgateway.Webhook": {
+            "type": "object",
+            "required": [
+                "event",
+                "url"
+            ],
+            "properties": {
+                "event": {
+                    "description": "The type of event the webhook is triggered for.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.WebhookEvent"
+                        }
+                    ],
+                    "example": "sms:received"
+                },
+                "id": {
+                    "description": "The unique identifier of the webhook.",
+                    "type": "string",
+                    "maxLength": 36,
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "url": {
+                    "description": "The URL the webhook will be sent to.",
+                    "type": "string",
+                    "example": "https://example.com/webhook"
+                }
+            }
+        },
+        "smsgateway.WebhookEvent": {
+            "type": "string",
+            "enum": [
+                "sms:received"
+            ],
+            "x-enum-varnames": [
+                "WebhookEventSmsReceived"
+            ]
         }
     },
     "securityDefinitions": {

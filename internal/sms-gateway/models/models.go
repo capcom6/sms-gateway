@@ -15,9 +15,9 @@ const (
 )
 
 type TimedModel struct {
-	CreatedAt time.Time `gorm:"not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
-	UpdatedAt time.Time `gorm:"not null;autoupdatetime:false;default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
-	DeletedAt *time.Time
+	CreatedAt time.Time  `gorm:"->;not null;autocreatetime:false;default:CURRENT_TIMESTAMP(3)"`
+	UpdatedAt time.Time  `gorm:"->;not null;autoupdatetime:false;default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
+	DeletedAt *time.Time `gorm:"<-:update"`
 }
 
 type User struct {

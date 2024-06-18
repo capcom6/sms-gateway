@@ -5,11 +5,13 @@ import (
 	"fmt"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/services"
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -25,24 +27,26 @@ const (
 type ThirdPartyHandlerParams struct {
 	fx.In
 
-	HealthHandler *healthHandler
+	HealthHandler   *healthHandler
+	WebhooksHandler *webhooks.ThirdPartyController
 
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
-	DevicesSvc  *services.DevicesService
+	DevicesSvc  *devices.Service
 
 	Logger    *zap.Logger
 	Validator *validator.Validate
 }
 
 type thirdPartyHandler struct {
-	Handler
+	base.Handler
 
-	healthHandler *healthHandler
+	healthHandler   *healthHandler
+	webhooksHandler *webhooks.ThirdPartyController
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
-	devicesSvc  *services.DevicesService
+	devicesSvc  *devices.Service
 }
 
 //	@Summary		List devices
@@ -58,7 +62,7 @@ type thirdPartyHandler struct {
 //
 // List devices
 func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
-	devices, err := h.devicesSvc.Select(user)
+	devices, err := h.devicesSvc.Select(devices.WithUserID(user.ID))
 	if err != nil {
 		return fmt.Errorf("can't select devices: %w", err)
 	}
@@ -106,7 +110,7 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 
 	skipPhoneValidation := c.QueryBool("skipPhoneValidation", false)
 
-	devices, err := h.devicesSvc.Select(user)
+	devices, err := h.devicesSvc.Select(devices.WithUserID(user.ID))
 	if err != nil {
 		return fmt.Errorf("can't select devices: %w", err)
 	}
@@ -166,8 +170,16 @@ func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
 	return c.JSON(state)
 }
 
-func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) error) fiber.Handler {
-	return func(c *fiber.Ctx) error {
+func (h *thirdPartyHandler) Register(router fiber.Router) {
+	router = router.Group("/3rdparty/v1")
+
+	h.healthHandler.Register(router)
+
+	router.Use(basicauth.New(basicauth.Config{
+		Authorizer: func(username string, password string) bool {
+			return len(username) > 0 && len(password) > 0
+		},
+	}), func(c *fiber.Ctx) error {
 		username := c.Locals("username").(string)
 		password := c.Locals("password").(string)
 
@@ -179,33 +191,24 @@ func (h *thirdPartyHandler) authorize(handler func(models.User, *fiber.Ctx) erro
 
 		c.Locals("user", user)
 
-		return handler(user, c)
-	}
-}
+		return c.Next()
+	})
 
-func (h *thirdPartyHandler) Register(router fiber.Router) {
-	router = router.Group("/3rdparty/v1")
+	router.Get("/device", auth.WithUser(h.getDevice))
 
-	h.healthHandler.Register(router)
+	router.Post("/message", auth.WithUser(h.postMessage))
+	router.Get("/message/:id", auth.WithUser(h.getMessage)).Name(route3rdPartyGetMessage)
 
-	router.Use(basicauth.New(basicauth.Config{
-		Authorizer: func(username string, password string) bool {
-			return len(username) > 0 && len(password) > 0
-		},
-	}))
-
-	router.Get("/device", h.authorize(h.getDevice))
-
-	router.Post("/message", h.authorize(h.postMessage))
-	router.Get("/message/:id", h.authorize(h.getMessage)).Name(route3rdPartyGetMessage)
+	h.webhooksHandler.Register(router.Group("/webhooks"))
 }
 
 func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
 	return &thirdPartyHandler{
-		Handler:       Handler{Logger: params.Logger.Named("ThirdPartyHandler"), Validator: params.Validator},
-		healthHandler: params.HealthHandler,
-		authSvc:       params.AuthSvc,
-		messagesSvc:   params.MessagesSvc,
-		devicesSvc:    params.DevicesSvc,
+		Handler:         base.Handler{Logger: params.Logger.Named("ThirdPartyHandler"), Validator: params.Validator},
+		healthHandler:   params.HealthHandler,
+		webhooksHandler: params.WebhooksHandler,
+		authSvc:         params.AuthSvc,
+		messagesSvc:     params.MessagesSvc,
+		devicesSvc:      params.DevicesSvc,
 	}
 }

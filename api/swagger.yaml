@@ -238,10 +238,32 @@ definitions:
     - ProcessingStateSent
     - ProcessingStateDelivered
     - ProcessingStateFailed
+  smsgateway.PushEventType:
+    enum:
+    - MessageEnqueued
+    - WebhooksUpdated
+    type: string
+    x-enum-varnames:
+    - PushMessageEnqueued
+    - PushWebhooksUpdated
   smsgateway.PushNotification:
     properties:
+      data:
+        additionalProperties:
+          type: string
+        description: The additional data associated with the event.
+        type: object
+      event:
+        allOf:
+        - $ref: '#/definitions/smsgateway.PushEventType'
+        default: MessageEnqueued
+        description: The type of event.
+        enum:
+        - MessageEnqueued
+        - WebhooksUpdated
+        example: MessageEnqueued
       token:
-        description: Device FCM token
+        description: The token of the device that receives the notification.
         example: PyDmBQZZXYmyxMwED8Fzy
         type: string
     required:
@@ -268,6 +290,32 @@ definitions:
     - phoneNumber
     - state
     type: object
+  smsgateway.Webhook:
+    properties:
+      event:
+        allOf:
+        - $ref: '#/definitions/smsgateway.WebhookEvent'
+        description: The type of event the webhook is triggered for.
+        example: sms:received
+      id:
+        description: The unique identifier of the webhook.
+        example: 123e4567-e89b-12d3-a456-426614174000
+        maxLength: 36
+        type: string
+      url:
+        description: The URL the webhook will be sent to.
+        example: https://example.com/webhook
+        type: string
+    required:
+    - event
+    - url
+    type: object
+  smsgateway.WebhookEvent:
+    enum:
+    - sms:received
+    type: string
+    x-enum-varnames:
+    - WebhookEventSmsReceived
 host: sms.capcom.me
 info:
   contact:
@@ -402,6 +450,99 @@ paths:
       summary: Health check
       tags:
       - System
+  /api/v1/3rdparty/webhooks:
+    get:
+      description: Returns list of registered webhooks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook list
+          schema:
+            items:
+              $ref: '#/definitions/smsgateway.Webhook'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: List webhooks
+      tags:
+      - User
+      - Webhooks
+    post:
+      consumes:
+      - application/json
+      description: Registers webhook. If webhook with same ID already exists, it will
+        be replaced
+      parameters:
+      - description: Webhook
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/smsgateway.Webhook'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/smsgateway.Webhook'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: Register webhook
+      tags:
+      - User
+      - Webhooks
+  /api/v1/3rdparty/webhooks/{id}:
+    delete:
+      description: Deletes webhook
+      parameters:
+      - description: Webhook ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Webhook deleted
+          schema:
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: Delete webhook
+      tags:
+      - User
+      - Webhooks
   /health:
     get:
       description: Checks if service is healthy
@@ -544,6 +685,32 @@ paths:
       tags:
       - Device
       - Messages
+  /mobile/v1/webhooks:
+    get:
+      description: Returns list of registered webhooks for device
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Webhook list
+          schema:
+            items:
+              $ref: '#/definitions/smsgateway.Webhook'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - MobileToken: []
+      summary: List webhooks
+      tags:
+      - Device
+      - Webhooks
   /upstream/v1/push:
     post:
       consumes:

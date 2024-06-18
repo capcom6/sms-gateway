@@ -10,10 +10,10 @@ import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/go-helpers/slices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/types"
-	"github.com/jaevor/go-nanoid"
 	"github.com/nyaruka/phonenumbers"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -37,6 +37,8 @@ type EnqueueOptions struct {
 type ServiceParams struct {
 	fx.In
 
+	IDGen db.IDGen
+
 	Messages    *repositories.MessagesRepository
 	HashingTask *HashingTask
 
@@ -55,8 +57,6 @@ type Service struct {
 }
 
 func NewService(params ServiceParams) *Service {
-	idgen, _ := nanoid.Standard(21)
-
 	return &Service{
 		Messages:    params.Messages,
 		HashingTask: params.HashingTask,
@@ -64,7 +64,7 @@ func NewService(params ServiceParams) *Service {
 		PushSvc: params.PushSvc,
 		Logger:  params.Logger.Named("Service"),
 
-		idgen: idgen,
+		idgen: params.IDGen,
 	}
 }
 
@@ -214,10 +214,7 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 	}
 
 	go func(token string) {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		if err := s.PushSvc.Enqueue(ctx, token, map[string]string{}); err != nil {
+		if err := s.PushSvc.Enqueue(token, push.NewMessageEnqueuedEvent()); err != nil {
 			s.Logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
 		}
 	}(*device.PushToken)
