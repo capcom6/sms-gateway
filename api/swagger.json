@@ -61,6 +61,32 @@
                 }
             }
         },
+        "/3rdparty/v1/health": {
+            "get": {
+                "description": "Checks if service is healthy",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "Health check result",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service is unhealthy",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/3rdparty/v1/message": {
             "get": {
                 "security": [
@@ -182,33 +208,7 @@
                 }
             }
         },
-        "/api/3rdparty/v1/health": {
-            "get": {
-                "description": "Checks if service is healthy",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "System"
-                ],
-                "summary": "Health check",
-                "responses": {
-                    "200": {
-                        "description": "Health check result",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.HealthResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Service is unhealthy",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.HealthResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/3rdparty/webhooks": {
+        "/3rdparty/v1/webhooks": {
             "get": {
                 "security": [
                     {
@@ -305,7 +305,7 @@
                 }
             }
         },
-        "/api/v1/3rdparty/webhooks/{id}": {
+        "/3rdparty/v1/webhooks/{id}": {
             "delete": {
                 "security": [
                     {
@@ -347,32 +347,6 @@
                         "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/smsgateway.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/health": {
-            "get": {
-                "description": "Checks if service is healthy",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "System"
-                ],
-                "summary": "Health check",
-                "responses": {
-                    "200": {
-                        "description": "Health check result",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.HealthResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Service is unhealthy",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.HealthResponse"
                         }
                     }
                 }
