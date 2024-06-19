@@ -321,8 +321,10 @@ info:
   contact:
     email: i@capcom.me
     name: Aleksandr Soloshenko
-  description: Provides an API for (Android) SMS Gateway
-  title: SMS Gateway - API
+  description: This API provides programmatic access to sending SMS messages on Android
+    devices. Features include sending SMS, checking message status, device management,
+    webhook configuration, and system health checks.
+  title: SMS Gateway for Android™ API
   version: '{APP_VERSION}'
 paths:
   /3rdparty/v1/device:

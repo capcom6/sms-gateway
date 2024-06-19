@@ -11,9 +11,9 @@ import (
 //	@name						Authorization
 //	@description				Mobile device token
 
-//	@title			SMS Gateway - API
+//	@title			SMS Gateway for Android™ API
 //	@version		{APP_VERSION}
-//	@description	Provides an API for (Android) SMS Gateway
+//	@description	This API provides programmatic access to sending SMS messages on Android devices. Features include sending SMS, checking message status, device management, webhook configuration, and system health checks.
 
 //	@contact.name	Aleksandr Soloshenko
 //	@contact.email	i@capcom.me
