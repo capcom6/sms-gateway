@@ -4,8 +4,8 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "Provides an API for (Android) SMS Gateway",
-        "title": "SMS Gateway - API",
+        "description": "This API provides programmatic access to sending SMS messages on Android devices. Features include sending SMS, checking message status, device management, webhook configuration, and system health checks.",
+        "title": "SMS Gateway for Android™ API",
         "contact": {
             "name": "Aleksandr Soloshenko",
             "email": "i@capcom.me"

@@ -4,13 +4,13 @@
 [![Issues][issues-shield]][issues-url]
 [![Apache 2.0 License][license-shield]][license-url]
 
-# Android SMS Gateway Server
+# SMS Gateway for Android™ Server
 
-This server acts as the backend component of the [Android SMS Gateway](https://github.com/capcom6/android-sms-gateway), facilitating the sending of SMS messages through connected Android devices. It includes a RESTful API for message management, integration with Firebase Cloud Messaging (FCM), and a database for persistent storage.
+This server acts as the backend component of the [SMS Gateway for Android](https://github.com/capcom6/android-sms-gateway), facilitating the sending of SMS messages through connected Android devices. It includes a RESTful API for message management, integration with Firebase Cloud Messaging (FCM), and a database for persistent storage.
 
 ## Table of Contents
 
-- [Android SMS Gateway Server](#android-sms-gateway-server)
+- [SMS Gateway for Android™ Server](#sms-gateway-for-android-server)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
@@ -18,13 +18,16 @@ This server acts as the backend component of the [Android SMS Gateway](https://g
   - [Work modes](#work-modes)
   - [Contributing](#contributing)
   - [License](#license)
+  - [Legal Notice](#legal-notice)
 
 ## Features
 
-- Send SMS messages via a RESTful API.
-- Get message status.
-- Get the list of connected devices.
-- Public and private modes.
+- **SMS Messaging**: Dispatch SMS messages through a RESTful API.
+- **Message Status**: Retrieve status for sent messages.
+- **Device Management**: View information about connected Android devices.
+- **Webhooks**: Configure webhooks for event-driven notifications.
+- **Health Monitoring**: Access health check endpoints to ensure system integrity.
+- **Access Control**: Operate in either public mode for open access or private mode for restricted access.
 
 ## Prerequisites
 
@@ -73,6 +76,10 @@ Don't forget to give the project a star! Thanks again!
 ## License
 
 Distributed under the Apache-2.0 license. See [LICENSE](LICENSE) for more information.
+
+## Legal Notice
+
+Android is a trademark of Google LLC.
 
 [contributors-shield]: https://img.shields.io/github/contributors/capcom6/sms-gateway.svg?style=for-the-badge
 [contributors-url]: https://github.com/capcom6/sms-gateway/graphs/contributors
