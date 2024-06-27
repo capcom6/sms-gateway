@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	firebase.google.com/go/v4 v4.12.1
 	github.com/android-sms-gateway/client-go v1.0.1-0.20240610222412-894fc9370287
-	github.com/capcom6/go-helpers v0.0.0-20240521035030-5f57bddeecee
+	github.com/capcom6/go-helpers v0.0.0-20240521035631-865ee2879fa3
 	github.com/capcom6/go-infra-fx v0.0.2
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/gofiber/fiber/v2 v2.52.1

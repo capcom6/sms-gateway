@@ -28,12 +28,6 @@ github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migc
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEVMRuU21PR1EtLVZJmdB18Gu3Rw=
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8D7ML55dXQrVaamCz2vxCfdQBasLZfHKk=
-github.com/android-sms-gateway/client-go v0.0.0-20240530135354-8d1ce85b9734 h1:dwNjhVdfNICWeCbLEcTklMFWtJdCRyA8BWnk4LKfFO0=
-github.com/android-sms-gateway/client-go v0.0.0-20240530135354-8d1ce85b9734/go.mod h1:DQsReciU1xcaVW3T5Z2bqslNdsAwCFCtghawmA6g6L4=
-github.com/android-sms-gateway/client-go v1.0.0 h1:TPRNHlgcEW6jThsx0y4AG1J7wH5Iry+c6h+ailrSQW4=
-github.com/android-sms-gateway/client-go v1.0.0/go.mod h1:DQsReciU1xcaVW3T5Z2bqslNdsAwCFCtghawmA6g6L4=
-github.com/android-sms-gateway/client-go v1.0.1-0.20240610220902-94dc5641aa00 h1:GUtH5Pw57cxhpQ3y8EYQFTqbpjQ2dZR6G7BjcHK6lAM=
-github.com/android-sms-gateway/client-go v1.0.1-0.20240610220902-94dc5641aa00/go.mod h1:DQsReciU1xcaVW3T5Z2bqslNdsAwCFCtghawmA6g6L4=
 github.com/android-sms-gateway/client-go v1.0.1-0.20240610222412-894fc9370287 h1:4Q6TuWQcTrKb+nyMrdBTBIV0b4R/xQgmOJhOygHWIkg=
 github.com/android-sms-gateway/client-go v1.0.1-0.20240610222412-894fc9370287/go.mod h1:DQsReciU1xcaVW3T5Z2bqslNdsAwCFCtghawmA6g6L4=
 github.com/andybalholm/brotli v1.0.6 h1:Yf9fFpf49Zrxb9NlQaluyE92/+X7UVHlhMNJN2sxfOI=
@@ -43,6 +37,8 @@ github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT
 github.com/benbjohnson/clock v1.3.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
 github.com/capcom6/go-helpers v0.0.0-20240521035030-5f57bddeecee h1:kDssavIxfu5WAPcsW5iTAXXmqmcYguvpV2pQUxs5OKs=
 github.com/capcom6/go-helpers v0.0.0-20240521035030-5f57bddeecee/go.mod h1:WDqc7HZNqHxUTisArkYIBZtqUfJBVyPWeQI+FMwEzAw=
+github.com/capcom6/go-helpers v0.0.0-20240521035631-865ee2879fa3 h1:mq9rmBMCCzqGnZtbQqFSd+Ua3fahqUOYaTf26YFhWJc=
+github.com/capcom6/go-helpers v0.0.0-20240521035631-865ee2879fa3/go.mod h1:WDqc7HZNqHxUTisArkYIBZtqUfJBVyPWeQI+FMwEzAw=
 github.com/capcom6/go-infra-fx v0.0.2 h1:Vj2bHqCokDRa5qfHoPa4zVVKIo1QGzCPF+9EMQ9upQc=
 github.com/capcom6/go-infra-fx v0.0.2/go.mod h1:Mc7KClD8Z5wMiUAF9rxifMc39E9mMrSrylpqHzVfPM4=
 github.com/cenkalti/backoff/v4 v4.2.1 h1:y4OZtCnogmCPw98Zjyt5a6+QwPLGkiQsYW5oUqylYbM=
