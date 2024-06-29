@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/capcom6/sms-gateway/pkg/types/cache"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -35,6 +37,8 @@ type Service struct {
 
 	cache *cache.Cache[Event]
 
+	enqueuedCounter *prometheus.CounterVec
+
 	logger *zap.Logger
 }
 
@@ -46,11 +50,19 @@ func New(params Params) *Service {
 		params.Config.Debounce = 5 * time.Second
 	}
 
+	enqueuedCounter := promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "sms",
+		Subsystem: "push",
+		Name:      "enqueued_total",
+		Help:      "Total number of messages enqueued",
+	}, []string{"event"})
+
 	return &Service{
-		config: params.Config,
-		client: params.Client,
-		cache:  cache.New[Event](),
-		logger: params.Logger,
+		config:          params.Config,
+		client:          params.Client,
+		cache:           cache.New[Event](),
+		enqueuedCounter: enqueuedCounter,
+		logger:          params.Logger,
 	}
 }
 
@@ -72,6 +84,8 @@ func (s *Service) Run(ctx context.Context) {
 // Enqueue adds the data to the cache and immediately sends all messages if the debounce is 0.
 func (s *Service) Enqueue(token string, event *Event) error {
 	s.cache.Set(token, *event)
+
+	s.enqueuedCounter.WithLabelValues(string(event.Event)).Inc()
 
 	return nil
 }
