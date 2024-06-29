@@ -16,6 +16,7 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/metrics"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
@@ -41,6 +42,7 @@ var Module = fx.Module(
 	health.Module,
 	webhooks.Module,
 	devices.Module,
+	metrics.Module,
 )
 
 func Run() {
