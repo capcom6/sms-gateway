@@ -15,6 +15,8 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/nyaruka/phonenumbers"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/exp/maps"
@@ -53,16 +55,27 @@ type Service struct {
 	PushSvc *push.Service
 	Logger  *zap.Logger
 
+	messagesCounter *prometheus.CounterVec
+
 	idgen func() string
 }
 
 func NewService(params ServiceParams) *Service {
+	messagesCounter := promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "sms",
+		Subsystem: "messages",
+		Name:      "total",
+		Help:      "Total number of messages by state",
+	}, []string{"state"})
+
 	return &Service{
 		Messages:    params.Messages,
 		HashingTask: params.HashingTask,
 
 		PushSvc: params.PushSvc,
 		Logger:  params.Logger.Named("Service"),
+
+		messagesCounter: messagesCounter,
 
 		idgen: params.IDGen,
 	}
@@ -136,6 +149,8 @@ func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) 
 	}
 
 	s.HashingTask.Enqeue(existing.ID)
+
+	s.messagesCounter.WithLabelValues(string(existing.State)).Inc()
 
 	return nil
 }
@@ -218,6 +233,8 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 			s.Logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
 		}
 	}(*device.PushToken)
+
+	s.messagesCounter.WithLabelValues(string(state.State)).Inc()
 
 	return state, nil
 }
