@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/domain"
 )
 
 const BASE_URL = "https://sms.capcom.me/api/upstream/v1"
@@ -40,12 +41,14 @@ func (c *Client) Open(ctx context.Context) error {
 	return nil
 }
 
-func (c *Client) Send(ctx context.Context, messages map[string]map[string]string) error {
+func (c *Client) Send(ctx context.Context, messages map[string]domain.Event) error {
 	payload := make(smsgateway.UpstreamPushRequest, 0, len(messages))
 
-	for address := range messages {
+	for address, data := range messages {
 		payload = append(payload, smsgateway.PushNotification{
 			Token: address,
+			Event: data.Event,
+			Data:  data.Data,
 		})
 	}
 

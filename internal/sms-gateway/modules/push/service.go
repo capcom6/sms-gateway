@@ -33,7 +33,7 @@ type Service struct {
 
 	client client
 
-	cache *cache.Cache[map[string]string]
+	cache *cache.Cache[Event]
 
 	logger *zap.Logger
 }
@@ -49,7 +49,7 @@ func New(params Params) *Service {
 	return &Service{
 		config: params.Config,
 		client: params.Client,
-		cache:  cache.New[map[string]string](),
+		cache:  cache.New[Event](),
 		logger: params.Logger,
 	}
 }
@@ -71,7 +71,7 @@ func (s *Service) Run(ctx context.Context) {
 
 // Enqueue adds the data to the cache and immediately sends all messages if the debounce is 0.
 func (s *Service) Enqueue(token string, event *Event) error {
-	s.cache.Set(token, event.Map())
+	s.cache.Set(token, *event)
 
 	return nil
 }
