@@ -1,4 +1,4 @@
-package push
+package domain
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 
 type Event struct {
 	Event smsgateway.PushEventType
-	Data  any
+	Data  map[string]string
 }
 
 func (e *Event) Map() map[string]string {
@@ -20,17 +20,9 @@ func (e *Event) Map() map[string]string {
 	}
 }
 
-func NewEvent(event smsgateway.PushEventType, data any) *Event {
+func NewEvent(event smsgateway.PushEventType, data map[string]string) *Event {
 	return &Event{
 		Event: event,
 		Data:  data,
 	}
-}
-
-func NewMessageEnqueuedEvent() *Event {
-	return NewEvent(smsgateway.PushMessageEnqueued, nil)
-}
-
-func NewWebhooksUpdatedEvent() *Event {
-	return NewEvent(smsgateway.PushWebhooksUpdated, nil)
 }

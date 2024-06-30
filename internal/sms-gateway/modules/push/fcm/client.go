@@ -8,6 +8,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/domain"
 	"google.golang.org/api/option"
 )
 
@@ -52,11 +53,11 @@ func (c *Client) Open(ctx context.Context) error {
 	return nil
 }
 
-func (c *Client) Send(ctx context.Context, messages map[string]map[string]string) error {
+func (c *Client) Send(ctx context.Context, messages map[string]domain.Event) error {
 	errs := make([]error, 0, len(messages))
 	for address, payload := range messages {
 		_, err := c.client.Send(ctx, &messaging.Message{
-			Data: payload,
+			Data: payload.Map(),
 			Android: &messaging.AndroidConfig{
 				Priority: "high",
 			},
