@@ -47,7 +47,7 @@ func (h *MobileController) get(device models.Device, c *fiber.Ctx) error {
 }
 
 func (h *MobileController) Register(router fiber.Router) {
-	router.Get("/", auth.WithDevice(h.get))
+	router.Get("", auth.WithDevice(h.get))
 }
 
 func NewMobileController(params mobileControllerParams) *MobileController {

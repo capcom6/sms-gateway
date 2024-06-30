@@ -100,8 +100,8 @@ func (h *ThirdPartyController) delete(user models.User, c *fiber.Ctx) error {
 }
 
 func (h *ThirdPartyController) Register(router fiber.Router) {
-	router.Get("/", auth.WithUser(h.get))
-	router.Post("/", auth.WithUser(h.post))
+	router.Get("", auth.WithUser(h.get))
+	router.Post("", auth.WithUser(h.post))
 	router.Delete("/:id", auth.WithUser(h.delete))
 }
 
