@@ -8,7 +8,7 @@ require (
 	github.com/capcom6/go-helpers v0.0.0-20240521035631-865ee2879fa3
 	github.com/capcom6/go-infra-fx v0.0.2
 	github.com/go-playground/validator/v10 v10.16.0
-	github.com/gofiber/fiber/v2 v2.52.1
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/nyaruka/phonenumbers v1.3.0
 	go.uber.org/fx v1.20.1
