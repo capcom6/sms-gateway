@@ -2,6 +2,10 @@ data "docker_network" "proxy" {
   name = "proxy"
 }
 
+data "docker_network" "internal" {
+  name = "internal"
+}
+
 resource "docker_image" "app" {
   name         = "capcom6/${var.app-name}:${var.app-version}"
   keep_locally = true
@@ -40,6 +44,10 @@ resource "docker_service" "app" {
       name = data.docker_network.proxy.id
     }
 
+    networks_advanced {
+      name = data.docker_network.internal.id
+    }
+
     resources {
       limits {
         memory_bytes = var.memory-limit
@@ -49,20 +57,6 @@ resource "docker_service" "app" {
         memory_bytes = 16 * 1024 * 1024
       }
     }
-  }
-
-  # Swarm Gateway support
-  labels {
-    label = "gateway.enabled"
-    value = true
-  }
-  labels {
-    label = "gateway.server.host"
-    value = var.app-host
-  }
-  labels {
-    label = "gateway.server.port"
-    value = 3000
   }
 
   # Traefik support
@@ -94,6 +88,12 @@ resource "docker_service" "app" {
   labels {
     label = "traefik.http.services.${var.app-name}.loadbalancer.server.port"
     value = 3000
+  }
+
+  # Prometheus support
+  labels {
+    label = "prometheus.enabled"
+    value = true
   }
 
   update_config {
