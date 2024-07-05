@@ -1065,10 +1065,12 @@
         "smsgateway.WebhookEvent": {
             "type": "string",
             "enum": [
-                "sms:received"
+                "sms:received",
+                "system:ping"
             ],
             "x-enum-varnames": [
-                "WebhookEventSmsReceived"
+                "WebhookEventSmsReceived",
+                "WebhookEventSystemPing"
             ]
         }
     },
