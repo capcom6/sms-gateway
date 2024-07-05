@@ -313,9 +313,11 @@ definitions:
   smsgateway.WebhookEvent:
     enum:
     - sms:received
+    - system:ping
     type: string
     x-enum-varnames:
     - WebhookEventSmsReceived
+    - WebhookEventSystemPing
 host: sms.capcom.me
 info:
   contact:
