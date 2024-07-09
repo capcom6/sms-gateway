@@ -94,6 +94,7 @@ func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
 //	@Success		202					{object}	smsgateway.MessageState		"Message enqueued"
 //	@Failure		400					{object}	smsgateway.ErrorResponse	"Invalid request"
 //	@Failure		401					{object}	smsgateway.ErrorResponse	"Unauthorized"
+//	@Failure		409					{object}	smsgateway.ErrorResponse	"Message with such ID already exists"
 //	@Failure		500					{object}	smsgateway.ErrorResponse	"Internal server error"
 //	@Header			202					{string}	Location					"Get message state URL"
 //	@Router			/3rdparty/v1/message [post]
@@ -104,37 +105,38 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 	if err := h.BodyParserValidator(c, &req); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
-	if err := req.Validate(); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
 
 	skipPhoneValidation := c.QueryBool("skipPhoneValidation", false)
 
 	devices, err := h.devicesSvc.Select(devices.WithUserID(user.ID))
 	if err != nil {
-		return fmt.Errorf("can't select devices: %w", err)
+		h.Logger.Error("Failed to select devices", zap.Error(err), zap.String("user_id", user.ID))
+		return fiber.NewError(fiber.StatusInternalServerError, "Can't select devices. Please contact support")
 	}
 
 	if len(devices) < 1 {
-		return fiber.NewError(fiber.StatusBadRequest, "Нет ни одного устройства в учетной записи")
+		return fiber.NewError(fiber.StatusBadRequest, "No devices registered")
 	}
 
 	device := devices[0]
 	state, err := h.messagesSvc.Enqeue(device, req, messages.EnqueueOptions{SkipPhoneValidation: skipPhoneValidation})
 	if err != nil {
-		var err400 messages.ErrValidation
-		if errors.As(err, &err400) {
-			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		var errValidation messages.ErrValidation
+		if isBadRequest := errors.As(err, &errValidation); isBadRequest {
+			return fiber.NewError(fiber.StatusBadRequest, errValidation.Error())
+		}
+		if isConflict := errors.Is(err, messages.ErrMessageAlreadyExists); isConflict {
+			return fiber.NewError(fiber.StatusConflict, err.Error())
 		}
 
-		return err
+		return fmt.Errorf("can't enqueue message: %w", err)
 	}
 
 	location, err := c.GetRouteURL(route3rdPartyGetMessage, fiber.Map{
 		"id": state.ID,
 	})
 	if err != nil {
-		h.Logger.Error("Failed to get route URL", zap.String("route", route3rdPartyGetMessage), zap.Error(err))
+		h.Logger.Warn("Failed to get route URL", zap.String("route", route3rdPartyGetMessage), zap.Error(err))
 	} else {
 		c.Location(location)
 	}

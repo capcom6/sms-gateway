@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -12,6 +13,7 @@ import (
 const HashingLockName = "36444143-1ace-4dbf-891c-cc505911497e"
 
 var ErrMessageNotFound = gorm.ErrRecordNotFound
+var ErrMessageAlreadyExists = errors.New("duplicate id")
 
 type MessagesRepository struct {
 	db *gorm.DB
@@ -54,7 +56,15 @@ func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options
 }
 
 func (r *MessagesRepository) Insert(message *models.Message) error {
-	return r.db.Omit("Device").Create(message).Error
+	err := r.db.Omit("Device").Create(message).Error
+	if err == nil {
+		return nil
+	}
+
+	if mysqlErr := err.(*mysql.MySQLError); mysqlErr != nil && mysqlErr.Number == 1062 {
+		return ErrMessageAlreadyExists
+	}
+	return err
 }
 
 func (r *MessagesRepository) UpdateState(message *models.Message) error {

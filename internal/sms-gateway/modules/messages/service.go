@@ -32,6 +32,8 @@ func (e ErrValidation) Error() string {
 	return string(e)
 }
 
+var ErrMessageAlreadyExists = repositories.ErrMessageAlreadyExists
+
 type EnqueueOptions struct {
 	SkipPhoneValidation bool
 }

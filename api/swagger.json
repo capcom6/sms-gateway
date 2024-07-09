@@ -199,6 +199,12 @@
                             "$ref": "#/definitions/smsgateway.ErrorResponse"
                         }
                     },
+                    "409": {
+                        "description": "Message with such ID already exists",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
