@@ -108,7 +108,7 @@ func (h *ThirdPartyController) Register(router fiber.Router) {
 func NewThirdPartyController(params thirdPartyControllerParams) *ThirdPartyController {
 	return &ThirdPartyController{
 		Handler: base.Handler{
-			Logger:    params.Logger.Named("controller"),
+			Logger:    params.Logger.Named("webhooks"),
 			Validator: params.Validator,
 		},
 		webhooksSvc: params.WebhooksSvc,
