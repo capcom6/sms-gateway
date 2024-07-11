@@ -53,7 +53,7 @@ func (h *MobileController) Register(router fiber.Router) {
 func NewMobileController(params mobileControllerParams) *MobileController {
 	return &MobileController{
 		Handler: base.Handler{
-			Logger: params.Logger.Named("mobile"),
+			Logger: params.Logger.Named("webhooks"),
 		},
 		webhooksSvc: params.WebhooksServices,
 	}

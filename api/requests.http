@@ -45,7 +45,7 @@ GET {{baseUrl}}/api/3rdparty/v1/message/2dcIAhcLg81cez7GE_Pdp HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###
-GET {{baseUrl}}/api/3rdparty/v1/device HTTP/1.1
+GET {{baseUrl}}/api/3rdparty/v1/devices HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###

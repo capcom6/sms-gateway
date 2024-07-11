@@ -6,13 +6,13 @@ import (
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
+	devicesCtrl "github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
-	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
@@ -29,6 +29,7 @@ type ThirdPartyHandlerParams struct {
 
 	HealthHandler   *healthHandler
 	WebhooksHandler *webhooks.ThirdPartyController
+	DevicesHandler  *devicesCtrl.ThirdPartyController
 
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
@@ -43,44 +44,11 @@ type thirdPartyHandler struct {
 
 	healthHandler   *healthHandler
 	webhooksHandler *webhooks.ThirdPartyController
+	devicesHandler  *devicesCtrl.ThirdPartyController
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
 	devicesSvc  *devices.Service
-}
-
-//	@Summary		List devices
-//	@Description	Returns list of registered devices
-//	@Security		ApiAuth
-//	@Tags			User
-//	@Produce		json
-//	@Success		200	{object}	[]smsgateway.Device			"Device list"
-//	@Failure		400	{object}	smsgateway.ErrorResponse	"Invalid request"
-//	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
-//	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
-//	@Router			/3rdparty/v1/device [get]
-//
-// List devices
-func (h *thirdPartyHandler) getDevice(user models.User, c *fiber.Ctx) error {
-	devices, err := h.devicesSvc.Select(devices.WithUserID(user.ID))
-	if err != nil {
-		return fmt.Errorf("can't select devices: %w", err)
-	}
-
-	response := make([]smsgateway.Device, 0, len(devices))
-
-	for _, device := range devices {
-		response = append(response, smsgateway.Device{
-			ID:        device.ID,
-			Name:      types.OrDefault[string](device.Name, ""),
-			CreatedAt: device.CreatedAt,
-			UpdatedAt: device.UpdatedAt,
-			DeletedAt: device.DeletedAt,
-			LastSeen:  device.LastSeen,
-		})
-	}
-
-	return c.JSON(response)
 }
 
 //	@Summary		Enqueue message
@@ -196,11 +164,11 @@ func (h *thirdPartyHandler) Register(router fiber.Router) {
 		return c.Next()
 	})
 
-	router.Get("/device", auth.WithUser(h.getDevice))
-
 	router.Post("/message", auth.WithUser(h.postMessage))
 	router.Get("/message/:id", auth.WithUser(h.getMessage)).Name(route3rdPartyGetMessage)
 
+	h.devicesHandler.Register(router.Group("/device")) // TODO: remove after 2025-07-11
+	h.devicesHandler.Register(router.Group("/devices"))
 	h.webhooksHandler.Register(router.Group("/webhooks"))
 }
 
@@ -209,6 +177,7 @@ func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
 		Handler:         base.Handler{Logger: params.Logger.Named("ThirdPartyHandler"), Validator: params.Validator},
 		healthHandler:   params.HealthHandler,
 		webhooksHandler: params.WebhooksHandler,
+		devicesHandler:  params.DevicesHandler,
 		authSvc:         params.AuthSvc,
 		messagesSvc:     params.MessagesSvc,
 		devicesSvc:      params.DevicesSvc,
