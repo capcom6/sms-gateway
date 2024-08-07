@@ -78,5 +78,9 @@ DELETE {{baseUrl}}/api/3rdparty/v1/webhooks/MYofX8bTd5Bov0wWFZLRP HTTP/1.1
 Authorization: Basic {{credentials}}
 
 ###
+GET {{baseUrl}}/api/3rdparty/v1/logs HTTP/1.1
+Authorization: Basic {{credentials}}
+
+###
 GET http://localhost:3000/metrics HTTP/1.1
 

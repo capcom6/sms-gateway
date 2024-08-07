@@ -7,6 +7,7 @@ import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	devicesCtrl "github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/devices"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/logs"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
@@ -30,6 +31,7 @@ type ThirdPartyHandlerParams struct {
 	HealthHandler   *healthHandler
 	WebhooksHandler *webhooks.ThirdPartyController
 	DevicesHandler  *devicesCtrl.ThirdPartyController
+	LogsHandler     *logs.ThirdPartyController
 
 	AuthSvc     *auth.Service
 	MessagesSvc *messages.Service
@@ -45,6 +47,7 @@ type thirdPartyHandler struct {
 	healthHandler   *healthHandler
 	webhooksHandler *webhooks.ThirdPartyController
 	devicesHandler  *devicesCtrl.ThirdPartyController
+	logsHandler     *logs.ThirdPartyController
 
 	authSvc     *auth.Service
 	messagesSvc *messages.Service
@@ -170,6 +173,7 @@ func (h *thirdPartyHandler) Register(router fiber.Router) {
 	h.devicesHandler.Register(router.Group("/device")) // TODO: remove after 2025-07-11
 	h.devicesHandler.Register(router.Group("/devices"))
 	h.webhooksHandler.Register(router.Group("/webhooks"))
+	h.logsHandler.Register(router.Group("/logs"))
 }
 
 func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
@@ -178,6 +182,7 @@ func newThirdPartyHandler(params ThirdPartyHandlerParams) *thirdPartyHandler {
 		healthHandler:   params.HealthHandler,
 		webhooksHandler: params.WebhooksHandler,
 		devicesHandler:  params.DevicesHandler,
+		logsHandler:     params.LogsHandler,
 		authSvc:         params.AuthSvc,
 		messagesSvc:     params.MessagesSvc,
 		devicesSvc:      params.DevicesSvc,

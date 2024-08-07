@@ -4,11 +4,12 @@ go 1.22.0
 
 require (
 	firebase.google.com/go/v4 v4.12.1
-	github.com/android-sms-gateway/client-go v1.0.1
+	github.com/android-sms-gateway/client-go v1.0.2
 	github.com/ansrivas/fiberprometheus/v2 v2.6.1
 	github.com/capcom6/go-helpers v0.0.0-20240521035631-865ee2879fa3
 	github.com/capcom6/go-infra-fx v0.0.2
 	github.com/go-playground/validator/v10 v10.16.0
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/nyaruka/phonenumbers v1.3.0
@@ -35,7 +36,6 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
 	github.com/gofiber/contrib/fiberzap/v2 v2.1.2 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect

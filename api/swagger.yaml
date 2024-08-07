@@ -92,6 +92,44 @@ definitions:
     - HealthStatusPass
     - HealthStatusWarn
     - HealthStatusFail
+  smsgateway.LogEntry:
+    properties:
+      context:
+        additionalProperties:
+          type: string
+        description: Additional context information related to the log entry, typically
+          including data relevant to the log event.
+        type: object
+      createdAt:
+        description: The timestamp when this log entry was created.
+        type: string
+      id:
+        description: A unique identifier for the log entry.
+        type: integer
+      message:
+        description: A message describing the log event.
+        type: string
+      module:
+        description: The module or component of the system that generated the log
+          entry.
+        type: string
+      priority:
+        allOf:
+        - $ref: '#/definitions/smsgateway.LogEntryPriority'
+        description: The priority level of the log entry.
+    type: object
+  smsgateway.LogEntryPriority:
+    enum:
+    - DEBUG
+    - INFO
+    - WARN
+    - ERROR
+    type: string
+    x-enum-varnames:
+    - LogEntryPriorityDebug
+    - LogEntryPriorityInfo
+    - LogEntryPriorityWarn
+    - LogEntryPriorityError
   smsgateway.Message:
     properties:
       id:
@@ -329,7 +367,7 @@ info:
   title: SMS Gateway for Android™ API
   version: '{APP_VERSION}'
 paths:
-  /3rdparty/v1/device:
+  /3rdparty/v1/devices:
     get:
       description: Returns list of registered devices
       produces:
@@ -375,6 +413,49 @@ paths:
       summary: Health check
       tags:
       - System
+  /3rdparty/v1/logs:
+    get:
+      description: Retrieve a list of log entries within a specified time range.
+      parameters:
+      - description: The start of the time range for the logs to retrieve. Logs created
+          after this timestamp will be included.
+        format: date-time
+        in: query
+        name: from
+        type: string
+      - description: The end of the time range for the logs to retrieve. Logs created
+          before this timestamp will be included.
+        format: date-time
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Log entries
+          schema:
+            items:
+              $ref: '#/definitions/smsgateway.LogEntry'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "501":
+          description: Not implemented
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: Get logs
+      tags:
+      - System
+      - Logs
   /3rdparty/v1/message:
     get:
       description: Returns message state by ID
