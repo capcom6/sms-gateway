@@ -69,7 +69,7 @@ Content-Type: application/json
 
 {
     "id": "LreFUt-Z3sSq0JufY9uWB",
-    "url": "https://webhook.site/280a6655-eb68-40b9-b857-af5be37c5303",
+    "url": "https://webhook.site/7598bc37-8765-4e7d-89e0-01e7f5ea5346",
     "event": "sms:received"
 }
 
@@ -77,3 +77,6 @@ Content-Type: application/json
 DELETE {{localUrl}}/webhooks/LreFUt-Z3sSq0JufY9uWB HTTP/1.1
 Authorization: Basic {{localCredentials}}
 
+###
+GET {{localUrl}}/logs?from=2024-08-01T13:19:02.093%2B07:00 HTTP/1.1
+Authorization: Basic {{localCredentials}}

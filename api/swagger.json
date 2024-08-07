@@ -15,7 +15,7 @@
     "host": "sms.capcom.me",
     "basePath": "/api",
     "paths": {
-        "/3rdparty/v1/device": {
+        "/3rdparty/v1/devices": {
             "get": {
                 "security": [
                     {
@@ -82,6 +82,69 @@
                         "description": "Service is unhealthy",
                         "schema": {
                             "$ref": "#/definitions/smsgateway.HealthResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/3rdparty/v1/logs": {
+            "get": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Retrieve a list of log entries within a specified time range.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System",
+                    "Logs"
+                ],
+                "summary": "Get logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The start of the time range for the logs to retrieve. Logs created after this timestamp will be included.",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The end of the time range for the logs to retrieve. Logs created before this timestamp will be included.",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Log entries",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/smsgateway.LogEntry"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "501": {
+                        "description": "Not implemented",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
                         }
                     }
                 }
@@ -771,6 +834,57 @@
                 "HealthStatusPass",
                 "HealthStatusWarn",
                 "HealthStatusFail"
+            ]
+        },
+        "smsgateway.LogEntry": {
+            "type": "object",
+            "properties": {
+                "context": {
+                    "description": "Additional context information related to the log entry, typically including data relevant to the log event.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "createdAt": {
+                    "description": "The timestamp when this log entry was created.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "A unique identifier for the log entry.",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "A message describing the log event.",
+                    "type": "string"
+                },
+                "module": {
+                    "description": "The module or component of the system that generated the log entry.",
+                    "type": "string"
+                },
+                "priority": {
+                    "description": "The priority level of the log entry.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.LogEntryPriority"
+                        }
+                    ]
+                }
+            }
+        },
+        "smsgateway.LogEntryPriority": {
+            "type": "string",
+            "enum": [
+                "DEBUG",
+                "INFO",
+                "WARN",
+                "ERROR"
+            ],
+            "x-enum-varnames": [
+                "LogEntryPriorityDebug",
+                "LogEntryPriorityInfo",
+                "LogEntryPriorityWarn",
+                "LogEntryPriorityError"
             ]
         },
         "smsgateway.Message": {
