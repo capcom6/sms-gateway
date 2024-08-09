@@ -3,7 +3,7 @@ package webhooks
 import (
 	"fmt"
 
-	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/android-sms-gateway/client-go/smsgateway/webhooks"
 	"github.com/capcom6/go-helpers/slices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
@@ -46,7 +46,7 @@ func NewService(params ServiceParams) *Service {
 	}
 }
 
-func (s *Service) Select(userID string, filters ...SelectFilter) ([]smsgateway.Webhook, error) {
+func (s *Service) Select(userID string, filters ...SelectFilter) ([]webhooks.Webhook, error) {
 	filters = append(filters, WithUserID(userID))
 
 	items, err := s.webhooks.Select(filters...)
@@ -57,7 +57,11 @@ func (s *Service) Select(userID string, filters ...SelectFilter) ([]smsgateway.W
 	return slices.Map(items, webhookToDTO), nil
 }
 
-func (s *Service) Replace(userID string, webhook *smsgateway.Webhook) error {
+func (s *Service) Replace(userID string, webhook *webhooks.Webhook) error {
+	if !webhooks.IsValidEventType(webhook.Event) {
+		return newValidationError("event", string(webhook.Event), fmt.Errorf("enum value expected"))
+	}
+
 	if webhook.ID == "" {
 		webhook.ID = s.idgen()
 	}
