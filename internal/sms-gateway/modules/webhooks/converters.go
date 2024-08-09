@@ -1,9 +1,11 @@
 package webhooks
 
-import "github.com/android-sms-gateway/client-go/smsgateway"
+import (
+	"github.com/android-sms-gateway/client-go/smsgateway/webhooks"
+)
 
-func webhookToDTO(model *Webhook) smsgateway.Webhook {
-	return smsgateway.Webhook{
+func webhookToDTO(model *Webhook) webhooks.Webhook {
+	return webhooks.Webhook{
 		ID:    model.ExtID,
 		URL:   model.URL,
 		Event: model.Event,

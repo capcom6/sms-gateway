@@ -3,7 +3,7 @@ package webhooks
 import (
 	"fmt"
 
-	"github.com/android-sms-gateway/client-go/smsgateway"
+	dto "github.com/android-sms-gateway/client-go/smsgateway/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
@@ -64,13 +64,17 @@ func (h *ThirdPartyController) get(user models.User, c *fiber.Ctx) error {
 //
 // Register webhook
 func (h *ThirdPartyController) post(user models.User, c *fiber.Ctx) error {
-	dto := &smsgateway.Webhook{}
+	dto := &dto.Webhook{}
 
 	if err := h.BodyParserValidator(c, dto); err != nil {
 		return err
 	}
 
 	if err := h.webhooksSvc.Replace(user.ID, dto); err != nil {
+		if webhooks.IsValidationError(err) {
+			return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		}
+
 		return fmt.Errorf("can't write webhook: %w", err)
 	}
 
