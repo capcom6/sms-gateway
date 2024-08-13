@@ -49,3 +49,6 @@ tmp/
 # Ignore build and deployments directories
 deployments/
 build/
+
+# Example requests files
+*.http
