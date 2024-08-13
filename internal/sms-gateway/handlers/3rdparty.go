@@ -125,7 +125,7 @@ func (h *thirdPartyHandler) postMessage(user models.User, c *fiber.Ctx) error {
 //	@Failure		400	{object}	smsgateway.ErrorResponse	"Invalid request"
 //	@Failure		401	{object}	smsgateway.ErrorResponse	"Unauthorized"
 //	@Failure		500	{object}	smsgateway.ErrorResponse	"Internal server error"
-//	@Router			/3rdparty/v1/message [get]
+//	@Router			/3rdparty/v1/message/{id} [get]
 //
 // Get message state
 func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
