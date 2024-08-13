@@ -332,7 +332,7 @@ definitions:
     properties:
       event:
         allOf:
-        - $ref: '#/definitions/smsgateway.WebhookEvent'
+        - $ref: '#/definitions/webhooks.EventType'
         description: The type of event the webhook is triggered for.
         example: sms:received
       id:
@@ -348,18 +348,20 @@ definitions:
     - event
     - url
     type: object
-  smsgateway.WebhookEvent:
+  webhooks.EventType:
     enum:
     - sms:received
+    - sms:sent
     - system:ping
     type: string
     x-enum-varnames:
-    - WebhookEventSmsReceived
-    - WebhookEventSystemPing
+    - EventTypeSmsReceived
+    - EventTypeSmsSent
+    - EventTypeSystemPing
 host: sms.capcom.me
 info:
   contact:
-    email: i@capcom.me
+    email: sms@capcom.me
     name: Aleksandr Soloshenko
   description: This API provides programmatic access to sending SMS messages on Android
     devices. Features include sending SMS, checking message status, device management,
@@ -457,39 +459,6 @@ paths:
       - System
       - Logs
   /3rdparty/v1/message:
-    get:
-      description: Returns message state by ID
-      parameters:
-      - description: Message ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Message state
-          schema:
-            $ref: '#/definitions/smsgateway.MessageState'
-        "400":
-          description: Invalid request
-          schema:
-            $ref: '#/definitions/smsgateway.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/smsgateway.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/smsgateway.ErrorResponse'
-      security:
-      - ApiAuth: []
-      summary: Get message state
-      tags:
-      - User
-      - Messages
     post:
       consumes:
       - application/json
@@ -536,6 +505,40 @@ paths:
       security:
       - ApiAuth: []
       summary: Enqueue message
+      tags:
+      - User
+      - Messages
+  /3rdparty/v1/message/{id}:
+    get:
+      description: Returns message state by ID
+      parameters:
+      - description: Message ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message state
+          schema:
+            $ref: '#/definitions/smsgateway.MessageState'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      security:
+      - ApiAuth: []
+      summary: Get message state
       tags:
       - User
       - Messages

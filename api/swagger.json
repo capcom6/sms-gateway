@@ -8,7 +8,7 @@
         "title": "SMS Gateway for Android™ API",
         "contact": {
             "name": "Aleksandr Soloshenko",
-            "email": "i@capcom.me"
+            "email": "sms@capcom.me"
         },
         "version": "{APP_VERSION}"
     },
@@ -151,57 +151,6 @@
             }
         },
         "/3rdparty/v1/message": {
-            "get": {
-                "security": [
-                    {
-                        "ApiAuth": []
-                    }
-                ],
-                "description": "Returns message state by ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User",
-                    "Messages"
-                ],
-                "summary": "Get message state",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Message ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Message state",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.MessageState"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/smsgateway.ErrorResponse"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -264,6 +213,59 @@
                     },
                     "409": {
                         "description": "Message with such ID already exists",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/3rdparty/v1/message/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiAuth": []
+                    }
+                ],
+                "description": "Returns message state by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User",
+                    "Messages"
+                ],
+                "summary": "Get message state",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Message ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Message state",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MessageState"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/smsgateway.ErrorResponse"
                         }
@@ -1164,7 +1166,7 @@
                     "description": "The type of event the webhook is triggered for.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/smsgateway.WebhookEvent"
+                            "$ref": "#/definitions/webhooks.EventType"
                         }
                     ],
                     "example": "sms:received"
@@ -1182,15 +1184,17 @@
                 }
             }
         },
-        "smsgateway.WebhookEvent": {
+        "webhooks.EventType": {
             "type": "string",
             "enum": [
                 "sms:received",
+                "sms:sent",
                 "system:ping"
             ],
             "x-enum-varnames": [
-                "WebhookEventSmsReceived",
-                "WebhookEventSystemPing"
+                "EventTypeSmsReceived",
+                "EventTypeSmsSent",
+                "EventTypeSystemPing"
             ]
         }
     },
