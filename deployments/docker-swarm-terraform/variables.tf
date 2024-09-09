@@ -35,6 +35,6 @@ variable "app-env-json-b64" {
 variable "memory-limit" {
   type        = number
   description = "Memory limit in bytes"
-  default     = 32 * 1024 * 1024
+  default     = 64 * 1024 * 1024
 }
 
