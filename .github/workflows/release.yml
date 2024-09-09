@@ -44,7 +44,6 @@ jobs:
         working-directory: deployments/docker-swarm-terraform
         env:
           CPU_LIMIT: ${{ vars.CPU_LIMIT }}
-          MEMORY_LIMIT: ${{ vars.MEMORY_LIMIT }}
         run: |
           eval "$(ssh-agent -s)"
           ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY }}")
@@ -54,4 +53,5 @@ jobs:
           -var "app-version=${{ needs.build.outputs.app-version }}" \
           -var 'app-host=${{ secrets.APP_HOST }}' \
           -var "app-config-b64=${{ secrets.APP_CONFIG_B64 }}" \
-          -var "app-env-json-b64=${{ secrets.APP_ENV_JSON_B64 }}"
+          -var "app-env-json-b64=${{ secrets.APP_ENV_JSON_B64 }}" \
+          -var "memory-limit=${{ vars.MEMORY_LIMIT }}"

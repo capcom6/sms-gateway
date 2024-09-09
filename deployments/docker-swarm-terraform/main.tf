@@ -54,7 +54,7 @@ resource "docker_service" "app" {
       }
 
       reservation {
-        memory_bytes = 16 * 1024 * 1024
+        memory_bytes = 32 * 1024 * 1024
       }
     }
   }
