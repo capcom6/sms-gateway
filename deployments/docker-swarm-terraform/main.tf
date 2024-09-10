@@ -76,12 +76,29 @@ resource "docker_service" "app" {
     label = "traefik.http.routers.${var.app-name}.entrypoints"
     value = "https"
   }
-  # labels {
-  #   label = "traefik.http.routers.${var.app-name}.tls"
-  #   value = true
-  # }
   labels {
     label = "traefik.http.routers.${var.app-name}.tls.certresolver"
+    value = "le"
+  }
+
+  labels {
+    label = "traefik.http.middlewares.${var.app-name}-new-addprefix.addprefix.prefix"
+    value = "/api"
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}-new.entrypoints"
+    value = "https"
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}-new.middlewares"
+    value = "${var.app-name}-new-addprefix"
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}-new.rule"
+    value = "Host(`api.sms-gate.app`)"
+  }
+  labels {
+    label = "traefik.http.routers.${var.app-name}-new.tls.certresolver"
     value = "le"
   }
 
@@ -96,7 +113,14 @@ resource "docker_service" "app" {
     value = true
   }
 
+  rolling_config {
+    order        = "start-first"
+    monitor      = "5s"
+  }
+
   update_config {
+    order          = "start-first"
     failure_action = "rollback"
+    monitor        = "5s"
   }
 }
