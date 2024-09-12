@@ -15,13 +15,12 @@ import (
 //	@version		{APP_VERSION}
 //	@description	This API provides programmatic access to sending SMS messages on Android devices. Features include sending SMS, checking message status, device management, webhook configuration, and system health checks.
 
-//	@contact.name	Aleksandr Soloshenko
-//	@contact.email	sms@capcom.me
+//	@contact.name	SMSGate Support
+//	@contact.email	support@sms-gate.app
 
-//	@host		localhost:3000
-//	@host		sms.capcom.me
+//	@host		localhost:3000/api
+//	@host		api.sms-gate.app
 //	@schemes	https
-//	@BasePath	/api
 //
 // SMS Gateway for Android
 func main() {
