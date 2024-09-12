@@ -45,18 +45,18 @@ The easiest way to get started with the server is to use the Docker-based setup 
    2. In `gateway.private_token` section set the access token for device registration in private mode. This token must be set on devices with private mode active.
 3. Start the server in Docker: `docker run -p 3000:3000 -v ./config.yml:/app/config.yml capcom6/sms-gateway:latest`.
 4. Set up private mode on devices.
-5. Use started private server with the same API as the public server at [sms.capcom.me](https://sms.capcom.me).
+5. Use started private server with the same API as the public server at [api.sms-gate.app](https://api.sms-gate.app).
 
 See also [docker-composee.yml](deployments/docker-compose/docker-compose.yml) for Docker-based setup.
 
 ## Work modes
 
-The server has two work modes: public and private. The public mode allows anonymous device registration and used at [sms.capcom.me](https://sms.capcom.me). Private mode can be used to send sensitive messages and running server in local infrastructure.
+The server has two work modes: public and private. The public mode allows anonymous device registration and used at [api.sms-gate.app](https://api.sms-gate.app). Private mode can be used to send sensitive messages and running server in local infrastructure.
 
 In most operations public and private modes are the same. But there are some differences:
 
 - `POST /api/mobile/v1/device` endpoint is protected by API key in private mode. So it is not possible to register a new device on private server without knowing the token.
-- FCM notifications from private server are sent through `sms.capcom.me`. Notifications don't contain any sensitive data like phone numbers or message text.
+- FCM notifications from private server are sent through `api.sms-gate.app`. Notifications don't contain any sensitive data like phone numbers or message text.
 
 See also [private mode discussion](https://github.com/capcom6/android-sms-gateway/issues/20).
 

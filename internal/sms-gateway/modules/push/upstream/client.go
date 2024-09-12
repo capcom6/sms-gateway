@@ -13,7 +13,7 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/domain"
 )
 
-const BASE_URL = "https://sms.capcom.me/api/upstream/v1"
+const BASE_URL = "https://api.sms-gate.app/upstream/v1"
 
 type Client struct {
 	options map[string]string

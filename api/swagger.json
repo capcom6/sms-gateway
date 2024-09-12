@@ -7,13 +7,12 @@
         "description": "This API provides programmatic access to sending SMS messages on Android devices. Features include sending SMS, checking message status, device management, webhook configuration, and system health checks.",
         "title": "SMS Gateway for Android™ API",
         "contact": {
-            "name": "Aleksandr Soloshenko",
-            "email": "sms@capcom.me"
+            "name": "SMSGate Support",
+            "email": "support@sms-gate.app"
         },
         "version": "{APP_VERSION}"
     },
-    "host": "sms.capcom.me",
-    "basePath": "/api",
+    "host": "api.sms-gate.app",
     "paths": {
         "/3rdparty/v1/devices": {
             "get": {
