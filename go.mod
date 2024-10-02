@@ -12,12 +12,12 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/jaevor/go-nanoid v1.3.0
-	github.com/nyaruka/phonenumbers v1.3.0
+	github.com/nyaruka/phonenumbers v1.4.0
 	github.com/prometheus/client_golang v1.19.1
 	go.uber.org/fx v1.20.1
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.24.0
-	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611
+	golang.org/x/exp v0.0.0-20240525044651-4c93da0ed11d
 	google.golang.org/api v0.148.0
 	gorm.io/gorm v1.25.7-0.20240204074919-46816ad31dde
 )
