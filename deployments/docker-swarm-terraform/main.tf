@@ -113,9 +113,9 @@ resource "docker_service" "app" {
     value = true
   }
 
-  rolling_config {
-    order        = "start-first"
-    monitor      = "5s"
+  rollback_config {
+    order   = "start-first"
+    monitor = "5s"
   }
 
   update_config {
