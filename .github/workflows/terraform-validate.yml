@@ -1,0 +1,33 @@
+name: Terraform Validate
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "**/*.tf"
+
+jobs:
+  validate:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    env:
+      AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.4.6
+
+      - name: Initialize Terraform
+        working-directory: deployments/docker-swarm-terraform
+        run: terraform init
+
+      - name: Validate Terraform
+        working-directory: deployments/docker-swarm-terraform
+        run: terraform validate
