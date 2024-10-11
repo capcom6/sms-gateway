@@ -12,7 +12,7 @@ init:
 	go mod download
 
 init-dev: init
-	go install github.com/cosmtrek/air@latest \
+	go install github.com/air-verse/air@latest \
 		&& go install github.com/swaggo/swag/cmd/swag@latest \
 		&& go install github.com/pressly/goose/v3/cmd/goose@latest
 

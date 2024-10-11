@@ -155,7 +155,7 @@ definitions:
         minItems: 1
         type: array
       simNumber:
-        description: SIM card number (1-3)
+        description: SIM card number (1-3), if not set - default SIM will be used
         example: 1
         maximum: 3
         type: integer
@@ -210,6 +210,17 @@ definitions:
     required:
     - recipients
     - state
+    type: object
+  smsgateway.MobileDeviceResponse:
+    properties:
+      device:
+        allOf:
+        - $ref: '#/definitions/smsgateway.Device'
+        description: Device information, empty if device is not registered on the
+          server
+      externalIp:
+        description: External IP
+        type: string
     type: object
   smsgateway.MobileRegisterRequest:
     properties:
@@ -331,7 +342,7 @@ definitions:
     properties:
       event:
         allOf:
-        - $ref: '#/definitions/webhooks.EventType'
+        - $ref: '#/definitions/smsgateway.WebhookEvent'
         description: The type of event the webhook is triggered for.
         example: sms:received
       id:
@@ -347,16 +358,20 @@ definitions:
     - event
     - url
     type: object
-  webhooks.EventType:
+  smsgateway.WebhookEvent:
     enum:
     - sms:received
     - sms:sent
+    - sms:delivered
+    - sms:failed
     - system:ping
     type: string
     x-enum-varnames:
-    - EventTypeSmsReceived
-    - EventTypeSmsSent
-    - EventTypeSystemPing
+    - WebhookEventSmsReceived
+    - WebhookEventSmsSent
+    - WebhookEventSmsDelivered
+    - WebhookEventSmsFailed
+    - WebhookEventSystemPing
 host: api.sms-gate.app
 info:
   contact:
@@ -635,6 +650,22 @@ paths:
       - User
       - Webhooks
   /mobile/v1/device:
+    get:
+      description: Returns device information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Device information
+          schema:
+            $ref: '#/definitions/smsgateway.MobileDeviceResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/smsgateway.ErrorResponse'
+      summary: Get device information
+      tags:
+      - Device
     patch:
       consumes:
       - application/json
