@@ -3,6 +3,10 @@
 @phone={{$dotenv PHONE}}
 
 ###
+GET {{baseUrl}}/device HTTP/1.1
+Authorization: Bearer {{mobileToken}}1
+
+###
 POST {{baseUrl}}/device HTTP/1.1
 Authorization: Bearer 123456789
 Content-Type: application/json

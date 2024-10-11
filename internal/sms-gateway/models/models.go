@@ -41,6 +41,14 @@ type Device struct {
 	TimedModel
 }
 
+func (d *Device) IsEmpty() bool {
+	if d == nil {
+		return true
+	}
+
+	return d.ID == ""
+}
+
 type Message struct {
 	ID                 uint64          `gorm:"primaryKey;type:BIGINT UNSIGNED;autoIncrement"`
 	DeviceID           string          `gorm:"not null;type:char(21);uniqueIndex:unq_messages_id_device,priority:2;index:idx_messages_device_state"`

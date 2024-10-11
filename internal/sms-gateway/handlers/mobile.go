@@ -8,9 +8,11 @@ import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
 	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/converters"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/webhooks"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/go-playground/validator/v10"
@@ -30,6 +32,24 @@ type mobileHandler struct {
 	webhooksCtrl *webhooks.MobileController
 
 	idGen func() string
+}
+
+//	@Summary		Get device information
+//	@Description	Returns device information
+//	@Tags			Device
+//	@Produce		json
+//	@Success		200	{object}	smsgateway.MobileDeviceResponse	"Device information"
+//	@Failure		500	{object}	smsgateway.ErrorResponse		"Internal server error"
+//	@Router			/mobile/v1/device [get]
+//
+// Get device information
+func (h *mobileHandler) getDevice(device models.Device, c *fiber.Ctx) error {
+	res := smsgateway.MobileDeviceResponse{
+		Device:     converters.DeviceToDTO(&device),
+		ExternalIP: c.IP(),
+	}
+
+	return c.JSON(res)
 }
 
 //	@Summary		Register device
@@ -169,20 +189,30 @@ func (h *mobileHandler) Register(router fiber.Router) {
 		},
 	}), h.postDevice)
 
-	router.Use(apikey.New(apikey.Config{
-		Authorizer: func(token string) bool {
-			return len(token) > 0
-		},
-	}), func(c *fiber.Ctx) error {
-		token := c.Locals("token").(string)
-
-		device, err := h.authSvc.AuthorizeDevice(token)
-		if err != nil {
-			h.Logger.Error("Can't authorize device", zap.Error(err))
-			return fiber.ErrUnauthorized
+	router.Use(func(c *fiber.Ctx) (err error) {
+		header := c.Get(fiber.HeaderAuthorization)
+		device := models.Device{}
+		if len(header) > 7 && header[:7] == "Bearer " {
+			token := header[7:]
+			device, err = h.authSvc.AuthorizeDevice(token)
+			if err != nil && err != devices.ErrNotFound {
+				h.Logger.Error("Can't authorize device", zap.Error(err))
+				return fiber.ErrUnauthorized
+			}
 		}
 
 		c.Locals("device", device)
+
+		return c.Next()
+	})
+
+	router.Get("/device", auth.WithDevice(h.getDevice))
+
+	router.Use(func(c *fiber.Ctx) error {
+		device := c.Locals("device").(models.Device)
+		if device.IsEmpty() {
+			return fiber.ErrUnauthorized
+		}
 
 		return c.Next()
 	})

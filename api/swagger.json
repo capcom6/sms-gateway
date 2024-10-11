@@ -423,6 +423,30 @@
             }
         },
         "/mobile/v1/device": {
+            "get": {
+                "description": "Returns device information",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Get device information",
+                "responses": {
+                    "200": {
+                        "description": "Device information",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.MobileDeviceResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/smsgateway.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Registers new device and returns credentials",
                 "consumes": [
@@ -925,7 +949,7 @@
                     ]
                 },
                 "simNumber": {
-                    "description": "SIM card number (1-3)",
+                    "description": "SIM card number (1-3), if not set - default SIM will be used",
                     "type": "integer",
                     "maximum": 3,
                     "example": 1
@@ -994,6 +1018,23 @@
                     "additionalProperties": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "smsgateway.MobileDeviceResponse": {
+            "type": "object",
+            "properties": {
+                "device": {
+                    "description": "Device information, empty if device is not registered on the server",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/smsgateway.Device"
+                        }
+                    ]
+                },
+                "externalIp": {
+                    "description": "External IP",
+                    "type": "string"
                 }
             }
         },
@@ -1165,7 +1206,7 @@
                     "description": "The type of event the webhook is triggered for.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/webhooks.EventType"
+                            "$ref": "#/definitions/smsgateway.WebhookEvent"
                         }
                     ],
                     "example": "sms:received"
@@ -1183,17 +1224,21 @@
                 }
             }
         },
-        "webhooks.EventType": {
+        "smsgateway.WebhookEvent": {
             "type": "string",
             "enum": [
                 "sms:received",
                 "sms:sent",
+                "sms:delivered",
+                "sms:failed",
                 "system:ping"
             ],
             "x-enum-varnames": [
-                "EventTypeSmsReceived",
-                "EventTypeSmsSent",
-                "EventTypeSystemPing"
+                "WebhookEventSmsReceived",
+                "WebhookEventSmsSent",
+                "WebhookEventSmsDelivered",
+                "WebhookEventSmsFailed",
+                "WebhookEventSystemPing"
             ]
         }
     },

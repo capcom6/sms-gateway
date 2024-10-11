@@ -1,6 +1,9 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
-# Created by https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,macos,linux,go,terraform
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,visualstudiocode,macos,linux,go,terraform
+# Created by https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,terraform,macos,linux,go,dotenv
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,visualstudiocode,terraform,macos,linux,go,dotenv
+
+### dotenv ###
+.env
 
 ### Go ###
 # If you prefer the allow list template instead of the deny list, see community template:
@@ -47,7 +50,8 @@ go.work
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -153,7 +157,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,macos,linux,go,terraform
+# End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,terraform,macos,linux,go,dotenv
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
@@ -166,4 +170,4 @@ $RECYCLE.BIN/
 
 /api/docs.go
 
-.env
+go.work*
