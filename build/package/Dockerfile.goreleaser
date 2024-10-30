@@ -7,7 +7,6 @@ RUN apk add --no-cache tzdata ca-certificates
 
 # Copy the Pre-built binary file from GoReleaser
 COPY ./scripts/docker-entrypoint.sh /docker-entrypoint.sh
-COPY ./api/*.png ./api/*.html ./api/swagger.* ./api/*.js ./api/*.css ./api/
 COPY ./smsgate-server ./app
 
 EXPOSE 3000

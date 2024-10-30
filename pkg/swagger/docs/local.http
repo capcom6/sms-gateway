@@ -1,0 +1,82 @@
+@localUrl={{$dotenv LOCAL__URL}}
+@localCredentials={{$dotenv LOCAL__CREDENTIALS}}
+@phone={{$dotenv PHONE}}
+
+###
+GET {{localUrl}}/health HTTP/1.1
+
+###
+GET {{localUrl}}/device HTTP/1.1
+Authorization: Basic {{localCredentials}}
+
+###
+POST {{localUrl}}/message?skipPhoneValidation=false HTTP/1.1
+Content-Type: application/json
+Authorization: Basic {{localCredentials}}
+
+{
+    "message": "{{$localDatetime iso8601}}",
+    "ttl": 600,
+    "phoneNumbers": [
+        "{{phone}}"
+    ],
+    "simNumber": 1,
+    "withDeliveryReport": true
+}
+
+###
+POST {{localUrl}}/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic {{localCredentials}}
+
+{
+    "message": "{{$localDatetime iso8601}}",
+    "ttl": 86400,
+    "phoneNumbers": [
+        "{{phone}}"
+    ],
+    "withDeliveryReport": true
+}
+
+###
+POST {{localUrl}}/message HTTP/1.1
+Content-Type: application/json
+Authorization: Basic {{localCredentials}}
+
+{
+    "message": "17wc9/ZRf1l84LHkEK3hgA==.aH1XrMHAeMyF4PeiavV3dk8o2fP0nSo92IqseLQfg14=",
+    "ttl": 600,
+    "phoneNumbers": [
+        "xkQeXzSDFj2xP6JBUMK0pA==.PfUHEa9QZv8h7JnUoBlmWw=="
+    ],
+    "simNumber": 1,
+    "withDeliveryReport": true,
+    "isEncrypted": true
+}
+
+###
+GET {{localUrl}}/message/8GN2Pz-fzu73NL3398ROE HTTP/1.1
+Authorization: Basic {{localCredentials}}
+
+###
+GET {{localUrl}}/webhooks HTTP/1.1
+Authorization: Basic {{localCredentials}}
+
+###
+POST {{localUrl}}/webhooks HTTP/1.1
+Authorization: Basic {{localCredentials}}
+Content-Type: application/json
+
+{
+    "id": "LreFUt-Z3sSq0JufY9uWB",
+    "url": "https://webhook.site/7598bc37-8765-4e7d-89e0-01e7f5ea5346",
+    "event": "sms:received"
+}
+
+###
+DELETE {{localUrl}}/webhooks/LreFUt-Z3sSq0JufY9uWB HTTP/1.1
+Authorization: Basic {{localCredentials}}
+
+###
+GET {{localUrl}}/logs?from=2024-08-01T13:19:02.093%2B07:00 HTTP/1.1
+Authorization: Basic {{localCredentials}}

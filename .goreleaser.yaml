@@ -12,10 +12,9 @@ before:
     # You may remove this if you don't use go modules.
     - go mod tidy
     # you may remove this if you don't need go generate
-    - go generate ./...
     - go install github.com/swaggo/swag/cmd/swag@latest
     # - sed -i "s/{APP_VERSION}/{{.Version}}/g" ./cmd/sms-gateway/main.go
-    - swag init --parseDependency -g ./cmd/sms-gateway/main.go -o ./api
+    - go generate ./...
 
 builds:
   - main: ./cmd/sms-gateway
@@ -43,11 +42,6 @@ archives:
       - goos: windows
         format: zip
     files:
-      - api/*.png
-      - api/*.html
-      - api/swagger.*
-      - api/*.js
-      - api/*.css
       - LICENSE
       - README.md
 
@@ -67,7 +61,6 @@ dockers:
       # - ghcr.io/android-sms-gateway/server:latest
     dockerfile: ./build/package/Dockerfile.goreleaser
     extra_files:
-      - api/
       - scripts/
     build_flag_templates:
       - "--label=org.opencontainers.image.created={{ .Date }}"

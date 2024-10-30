@@ -1,0 +1,47 @@
+@baseUrl={{$dotenv CLOUD__URL}}/api/mobile/v1
+@mobileToken={{$dotenv MOBILE__TOKEN}}
+@phone={{$dotenv PHONE}}
+
+###
+GET {{baseUrl}}/device HTTP/1.1
+Authorization: Bearer {{mobileToken}}1
+
+###
+POST {{baseUrl}}/device HTTP/1.1
+Authorization: Bearer 123456789
+Content-Type: application/json
+
+{
+  "name": "Android Phone",
+  "pushToken": "eTxx88nfSla87gZuJcW5mS:APA91bHGxVgSqqRtxwFHD1q9em5Oa6xSP4gO_OZRrqOoP1wjf_7UMfXKsc4uws6rWkqn73jYCc1owyATB1v61mqak4ntpqtmRkNtTey7NQXa0Wz3uQZBWY-Ecbn2rWG2VJRihOzXRId-"
+}
+
+###
+GET {{baseUrl}}/message HTTP/1.1
+Authorization: Bearer {{mobileToken}}
+
+###
+PATCH {{baseUrl}}/message HTTP/1.1
+Authorization: Bearer {{mobileToken}}
+Content-Type: application/json
+
+[
+  {
+    "id": "2dcIAhcLg81cez7GE_Pdp",
+    "state": "Failed",
+    "recipients": [
+      {
+        "phoneNumber": "{{phone}}",
+        "state": "Failed"
+      }
+    ],
+    "states": {
+      "Processed": "2024-05-13T16:49:17.357+07:00",
+      "Failed": "2024-05-13T16:49:17.357+07:00"
+    }
+  }
+]
+
+###
+GET {{baseUrl}}/webhooks HTTP/1.1
+Authorization: Bearer {{mobileToken}}
