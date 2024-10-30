@@ -1,0 +1,14 @@
+FROM alpine:latest  
+
+# Set the Current Working Directory inside the container
+WORKDIR /app
+
+RUN apk add --no-cache tzdata
+
+# Copy the Pre-built binary file from GoReleaser
+COPY smsgate-server .
+
+EXPOSE 3000
+
+# Command to run the executable
+ENTRYPOINT ["./smsgate-server"]
