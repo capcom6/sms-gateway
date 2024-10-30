@@ -13,7 +13,7 @@ before:
     - go mod tidy
     # you may remove this if you don't need go generate
     - go install github.com/swaggo/swag/cmd/swag@latest
-    # - sed -i "s/{APP_VERSION}/{{.Version}}/g" ./cmd/sms-gateway/main.go
+    - sed -i "s/{APP_VERSION}/{{.Version}}/g" ./cmd/sms-gateway/main.go
     - go generate ./...
 
 builds:
