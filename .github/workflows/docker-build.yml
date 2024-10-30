@@ -25,6 +25,8 @@ jobs:
     outputs:
       app-version: ${{ steps.releaser.outputs.metadata.tag }}
     steps:
+      - if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        run: echo "flags=--snapshot" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -51,7 +53,7 @@ jobs:
           distribution: goreleaser
           # 'latest', 'nightly', or a semver
           version: "~> v2"
-          args: release --clean
+          args: release --clean ${{ env.flags }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APP_RELEASE_ID: ${{ env.APP_RELEASE }}
