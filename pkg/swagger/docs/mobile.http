@@ -4,7 +4,7 @@
 
 ###
 GET {{baseUrl}}/device HTTP/1.1
-Authorization: Bearer {{mobileToken}}1
+Authorization: Bearer {{mobileToken}}
 
 ###
 POST {{baseUrl}}/device HTTP/1.1
