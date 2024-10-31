@@ -1,12 +1,16 @@
 package auth
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/crypto"
+	"github.com/capcom6/sms-gateway/pkg/types/cache"
 	"github.com/jaevor/go-nanoid"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -32,6 +36,8 @@ type Service struct {
 	config Config
 
 	users      *repositories.UsersRepository
+	usersCache *cache.Cache[models.User]
+
 	devicesSvc *devices.Service
 
 	logger *zap.Logger
@@ -48,6 +54,8 @@ func New(params Params) *Service {
 		devicesSvc: params.DevicesSvc,
 		logger:     params.Logger.Named("Service"),
 		idgen:      idgen,
+
+		usersCache: cache.New[models.User](cache.Config{TTL: 1 * time.Hour}),
 	}
 }
 
@@ -111,9 +119,21 @@ func (s *Service) AuthorizeDevice(token string) (models.Device, error) {
 }
 
 func (s *Service) AuthorizeUser(username, password string) (models.User, error) {
-	user, err := s.users.GetByLogin(username)
+	hash := sha256.Sum256([]byte(username + password))
+	cacheKey := hex.EncodeToString(hash[:])
+
+	user, err := s.usersCache.Get(cacheKey)
+	if err == nil {
+		return user, nil
+	}
+
+	user, err = s.users.GetByLogin(username)
 	if err != nil {
 		return user, err
+	}
+
+	if err := s.usersCache.Set(cacheKey, user); err != nil {
+		s.logger.Error("can't cache user", zap.Error(err))
 	}
 
 	return user, crypto.CompareBCryptHash(user.PasswordHash, password)

@@ -2,6 +2,7 @@ package push
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/capcom6/sms-gateway/pkg/types/cache"
@@ -60,7 +61,7 @@ func New(params Params) *Service {
 	return &Service{
 		config:          params.Config,
 		client:          params.Client,
-		cache:           cache.New[Event](),
+		cache:           cache.New[Event](cache.Config{TTL: 5 * time.Minute}),
 		enqueuedCounter: enqueuedCounter,
 		logger:          params.Logger,
 	}
@@ -83,7 +84,9 @@ func (s *Service) Run(ctx context.Context) {
 
 // Enqueue adds the data to the cache and immediately sends all messages if the debounce is 0.
 func (s *Service) Enqueue(token string, event *Event) error {
-	s.cache.Set(token, *event)
+	if err := s.cache.Set(token, *event); err != nil {
+		return fmt.Errorf("can't add message to cache: %w", err)
+	}
 
 	s.enqueuedCounter.WithLabelValues(string(event.Event)).Inc()
 
