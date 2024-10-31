@@ -38,7 +38,8 @@ type Service struct {
 	users      *repositories.UsersRepository
 	usersCache *cache.Cache[models.User]
 
-	devicesSvc *devices.Service
+	devicesSvc   *devices.Service
+	devicesCache *cache.Cache[models.Device]
 
 	logger *zap.Logger
 
@@ -55,7 +56,8 @@ func New(params Params) *Service {
 		logger:     params.Logger.Named("Service"),
 		idgen:      idgen,
 
-		usersCache: cache.New[models.User](cache.Config{TTL: 1 * time.Hour}),
+		usersCache:   cache.New[models.User](cache.Config{TTL: 1 * time.Hour}),
+		devicesCache: cache.New[models.Device](cache.Config{TTL: 10 * time.Minute}),
 	}
 }
 
@@ -106,14 +108,28 @@ func (s *Service) AuthorizeRegistration(token string) error {
 }
 
 func (s *Service) AuthorizeDevice(token string) (models.Device, error) {
-	device, err := s.devicesSvc.Get(devices.WithToken(token))
+	hash := sha256.Sum256([]byte(token))
+	cacheKey := hex.EncodeToString(hash[:])
+
+	device, err := s.devicesCache.Get(cacheKey)
 	if err != nil {
-		return device, err
+		device, err = s.devicesSvc.Get(devices.WithToken(token))
+		if err != nil {
+			return device, fmt.Errorf("can't get device: %w", err)
+		}
+
+		if err := s.devicesCache.Set(cacheKey, device); err != nil {
+			s.logger.Error("can't cache device", zap.Error(err))
+		}
 	}
 
-	if err := s.devicesSvc.UpdateLastSeen(device.ID); err != nil {
-		s.logger.Error("can't update last seen", zap.Error(err))
-	}
+	go func(id string) {
+		if err := s.devicesSvc.UpdateLastSeen(id); err != nil {
+			s.logger.Error("can't update last seen", zap.Error(err))
+		}
+	}(device.ID)
+
+	device.LastSeen = time.Now()
 
 	return device, nil
 }
