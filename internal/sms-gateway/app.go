@@ -96,7 +96,7 @@ func Start(p StartParams) error {
 
 			return nil
 		},
-		OnStop: func(_ context.Context) error {
+		OnStop: func(ctx context.Context) error {
 			cancel()
 			_ = p.Server.Stop(ctx)
 			wg.Wait()
