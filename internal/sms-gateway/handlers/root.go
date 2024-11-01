@@ -26,8 +26,10 @@ func (h *rootHandler) Register(app *fiber.App) {
 		Root:       http.FS(swagger.Docs),
 		PathPrefix: "docs",
 		MaxAge:     1 * 24 * 60 * 60,
-	}))
-	// app.Static("/api", "api")
+	}), func(c *fiber.Ctx) error {
+		// The filesystem middleware set 404 status before next, so we need to override it
+		return c.Status(fiber.StatusOK).Next()
+	})
 }
 
 func newRootHandler(healthHandler *healthHandler) *rootHandler {
