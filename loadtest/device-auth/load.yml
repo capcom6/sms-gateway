@@ -1,0 +1,13 @@
+phantom:
+  address: localhost:3000 # [Target's address]:[target's port]
+  uris:
+    - /api/mobile/v1/device
+  headers:
+    - "[Authorization: wQM8qhJhxw1fSE47uESt5V]"
+  load_profile:
+    load_type: rps # schedule load by defining requests per second
+    schedule: line(1, 10, 10m) # starting from 1rps growing linearly to 10rps during 10 minutes
+console:
+  enabled: true # enable console output
+telegraf:
+  enabled: false # let's disable telegraf monitoring for the first time
