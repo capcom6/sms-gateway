@@ -211,30 +211,30 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 		Message:            message.Message,
 		ValidUntil:         validUntil,
 		SimNumber:          message.SimNumber,
-		WithDeliveryReport: types.OrDefault[bool](message.WithDeliveryReport, true),
+		WithDeliveryReport: types.OrDefault(message.WithDeliveryReport, true),
 		IsEncrypted:        message.IsEncrypted,
 		Device:             device,
 		Recipients:         s.recipientsToModel(message.PhoneNumbers),
-		TimedModel:         models.TimedModel{},
 	}
 	if msg.ExtID == "" {
 		msg.ExtID = s.idgen()
 	}
 	state.ID = msg.ExtID
 
-	if err := s.Messages.Insert(&msg); err != nil {
-		return state, err
-	}
-
-	if device.PushToken == nil {
-		return state, nil
-	}
-
-	go func(token string) {
-		if err := s.PushSvc.Enqueue(token, push.NewMessageEnqueuedEvent()); err != nil {
-			s.Logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
+	go func(msg models.Message, pushToken string) {
+		// we need external queue storage to avoid data loss
+		if err := s.Messages.Insert(&msg); err != nil {
+			s.Logger.Error("Can't insert message", zap.Error(err))
 		}
-	}(*device.PushToken)
+
+		if pushToken == "" {
+			return
+		}
+
+		if err := s.PushSvc.Enqueue(pushToken, push.NewMessageEnqueuedEvent()); err != nil {
+			s.Logger.Error("Can't enqueue message", zap.String("token", pushToken), zap.Error(err))
+		}
+	}(msg, types.OrDefault(device.PushToken, ""))
 
 	s.messagesCounter.WithLabelValues(string(state.State)).Inc()
 
