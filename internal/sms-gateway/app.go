@@ -12,6 +12,7 @@ import (
 	appconfig "github.com/capcom6/sms-gateway/internal/config"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/cleaner"
 	appdb "github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/health"
@@ -43,6 +44,7 @@ var Module = fx.Module(
 	webhooks.Module,
 	devices.Module,
 	metrics.Module,
+	cleaner.Module,
 )
 
 func Run() {
@@ -68,6 +70,7 @@ type StartParams struct {
 	Server          *http.Server
 	MessagesService *messages.Service
 	PushService     *push.Service
+	CleanerService  *cleaner.Service
 }
 
 func Start(p StartParams) error {
@@ -90,6 +93,12 @@ func Start(p StartParams) error {
 					p.Logger.Error("Error starting server", zap.Error(err))
 					_ = p.Shut.Shutdown()
 				}
+			}()
+
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				p.CleanerService.Run(ctx)
 			}()
 
 			p.Logger.Info("Service started")
