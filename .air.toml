@@ -14,9 +14,9 @@ tmp_dir = "tmp"
   full_bin = ""
   include_dir = []
   include_ext = ["go", "tpl", "tmpl", "html", "yml"]
-  kill_delay = "0s"
+  kill_delay = "1s"
   log = "build-errors.log"
-  send_interrupt = false
+  send_interrupt = true
   stop_on_error = true
 
 [color]

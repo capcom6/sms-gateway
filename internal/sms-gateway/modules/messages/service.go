@@ -241,6 +241,13 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 	return state, nil
 }
 
+func (s *Service) Clean(ctx context.Context) error {
+	s.Logger.Info("Cleaning...")
+	return nil
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 func (s *Service) recipientsToDomain(input []models.MessageRecipient) []string {
 	output := make([]string, len(input))
 
