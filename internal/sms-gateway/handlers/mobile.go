@@ -14,7 +14,6 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -171,7 +170,7 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 		}
 
 		err := h.messagesSvc.UpdateState(device.ID, v)
-		if err != nil && !errors.Is(err, repositories.ErrMessageNotFound) {
+		if err != nil && !errors.Is(err, messages.ErrMessageNotFound) {
 			h.Logger.Error("Can't update message status", zap.Error(err))
 		}
 	}

@@ -11,7 +11,6 @@ var Module = fx.Module(
 		return log.Named("repositories")
 	}),
 	fx.Provide(
-		NewMessagesRepository,
 		NewUsersRepository,
 	),
 )

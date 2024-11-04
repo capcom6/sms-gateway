@@ -12,7 +12,6 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/types"
 	"github.com/nyaruka/phonenumbers"
 	"github.com/prometheus/client_golang/prometheus"
@@ -32,8 +31,6 @@ func (e ErrValidation) Error() string {
 	return string(e)
 }
 
-var ErrMessageAlreadyExists = repositories.ErrMessageAlreadyExists
-
 type EnqueueOptions struct {
 	SkipPhoneValidation bool
 }
@@ -43,7 +40,9 @@ type ServiceParams struct {
 
 	IDGen db.IDGen
 
-	Messages    *repositories.MessagesRepository
+	Config Config
+
+	Messages    *repository
 	HashingTask *HashingTask
 
 	PushSvc *push.Service
@@ -51,11 +50,13 @@ type ServiceParams struct {
 }
 
 type Service struct {
-	Messages    *repositories.MessagesRepository
-	HashingTask *HashingTask
+	config Config
 
-	PushSvc *push.Service
-	Logger  *zap.Logger
+	messages    *repository
+	hashingTask *HashingTask
+
+	pushSvc *push.Service
+	logger  *zap.Logger
 
 	messagesCounter *prometheus.CounterVec
 
@@ -71,11 +72,13 @@ func NewService(params ServiceParams) *Service {
 	}, []string{"state"})
 
 	return &Service{
-		Messages:    params.Messages,
-		HashingTask: params.HashingTask,
+		config: params.Config,
 
-		PushSvc: params.PushSvc,
-		Logger:  params.Logger.Named("Service"),
+		messages:    params.Messages,
+		hashingTask: params.HashingTask,
+
+		pushSvc: params.PushSvc,
+		logger:  params.Logger.Named("Service"),
 
 		messagesCounter: messagesCounter,
 
@@ -87,12 +90,12 @@ func (s *Service) RunBackgroundTasks(ctx context.Context, wg *sync.WaitGroup) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		s.HashingTask.Run(ctx)
+		s.hashingTask.Run(ctx)
 	}()
 }
 
 func (s *Service) SelectPending(deviceID string) ([]smsgateway.Message, error) {
-	messages, err := s.Messages.SelectPending(deviceID)
+	messages, err := s.messages.SelectPending(deviceID)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +130,7 @@ func (s *Service) SelectPending(deviceID string) ([]smsgateway.Message, error) {
 }
 
 func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) error {
-	existing, err := s.Messages.Get(message.ID, repositories.MessagesSelectFilter{DeviceID: deviceID})
+	existing, err := s.messages.Get(message.ID, MessagesSelectFilter{DeviceID: deviceID})
 	if err != nil {
 		return err
 	}
@@ -146,11 +149,11 @@ func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) 
 	})
 	existing.Recipients = s.recipientsStateToModel(message.Recipients, existing.IsHashed)
 
-	if err := s.Messages.UpdateState(&existing); err != nil {
+	if err := s.messages.UpdateState(&existing); err != nil {
 		return err
 	}
 
-	s.HashingTask.Enqeue(existing.ID)
+	s.hashingTask.Enqeue(existing.ID)
 
 	s.messagesCounter.WithLabelValues(string(existing.State)).Inc()
 
@@ -158,17 +161,17 @@ func (s *Service) UpdateState(deviceID string, message smsgateway.MessageState) 
 }
 
 func (s *Service) GetState(user models.User, ID string) (smsgateway.MessageState, error) {
-	message, err := s.Messages.Get(
+	message, err := s.messages.Get(
 		ID,
-		repositories.MessagesSelectFilter{},
-		repositories.MessagesSelectOptions{WithRecipients: true, WithDevice: true, WithStates: true},
+		MessagesSelectFilter{},
+		MessagesSelectOptions{WithRecipients: true, WithDevice: true, WithStates: true},
 	)
 	if err != nil {
-		return smsgateway.MessageState{}, repositories.ErrMessageNotFound
+		return smsgateway.MessageState{}, ErrMessageNotFound
 	}
 
 	if message.Device.UserID != user.ID {
-		return smsgateway.MessageState{}, repositories.ErrMessageNotFound
+		return smsgateway.MessageState{}, ErrMessageNotFound
 	}
 
 	return modelToMessageState(message), nil
@@ -222,7 +225,7 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 	}
 	state.ID = msg.ExtID
 
-	if err := s.Messages.Insert(&msg); err != nil {
+	if err := s.messages.Insert(&msg); err != nil {
 		return state, err
 	}
 
@@ -231,8 +234,8 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 	}
 
 	go func(token string) {
-		if err := s.PushSvc.Enqueue(token, push.NewMessageEnqueuedEvent()); err != nil {
-			s.Logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
+		if err := s.pushSvc.Enqueue(token, push.NewMessageEnqueuedEvent()); err != nil {
+			s.logger.Error("Can't enqueue message", zap.String("token", token), zap.Error(err))
 		}
 	}(*device.PushToken)
 
@@ -242,8 +245,11 @@ func (s *Service) Enqeue(device models.Device, message smsgateway.Message, opts 
 }
 
 func (s *Service) Clean(ctx context.Context) error {
-	s.Logger.Info("Cleaning...")
-	return nil
+	//TODO: use delete queue to optimize deletion
+	n, err := s.messages.removeProcessed(ctx, time.Now().Add(-s.config.ProcessedLifetime))
+
+	s.logger.Info("Cleaned processed messages", zap.Int64("count", n))
+	return err
 }
 
 ///////////////////////////////////////////////////////////////////////////////

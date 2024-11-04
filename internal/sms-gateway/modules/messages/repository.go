@@ -1,8 +1,10 @@
-package repositories
+package messages
 
 import (
+	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/go-sql-driver/mysql"
@@ -10,16 +12,16 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-const HashingLockName = "36444143-1ace-4dbf-891c-cc505911497e"
+const hashingLockName = "36444143-1ace-4dbf-891c-cc505911497e"
 
 var ErrMessageNotFound = gorm.ErrRecordNotFound
 var ErrMessageAlreadyExists = errors.New("duplicate id")
 
-type MessagesRepository struct {
+type repository struct {
 	db *gorm.DB
 }
 
-func (r *MessagesRepository) SelectPending(deviceID string) (messages []models.Message, err error) {
+func (r *repository) SelectPending(deviceID string) (messages []models.Message, err error) {
 	err = r.db.
 		Where("device_id = ? AND state = ?", deviceID, models.ProcessingStatePending).
 		Order("id DESC").
@@ -31,7 +33,7 @@ func (r *MessagesRepository) SelectPending(deviceID string) (messages []models.M
 	return
 }
 
-func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options ...MessagesSelectOptions) (message models.Message, err error) {
+func (r *repository) Get(ID string, filter MessagesSelectFilter, options ...MessagesSelectOptions) (message models.Message, err error) {
 	query := r.db.Model(&message).
 		Where("ext_id = ?", ID)
 
@@ -56,7 +58,7 @@ func (r *MessagesRepository) Get(ID string, filter MessagesSelectFilter, options
 	return
 }
 
-func (r *MessagesRepository) Insert(message *models.Message) error {
+func (r *repository) Insert(message *models.Message) error {
 	err := r.db.Omit("Device").Create(message).Error
 	if err == nil {
 		return nil
@@ -68,7 +70,7 @@ func (r *MessagesRepository) Insert(message *models.Message) error {
 	return err
 }
 
-func (r *MessagesRepository) UpdateState(message *models.Message) error {
+func (r *repository) UpdateState(message *models.Message) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(message).Select("State").Updates(message).Error; err != nil {
 			return err
@@ -93,7 +95,7 @@ func (r *MessagesRepository) UpdateState(message *models.Message) error {
 	})
 }
 
-func (r *MessagesRepository) HashProcessed(ids []uint64) error {
+func (r *repository) HashProcessed(ids []uint64) error {
 	rawSQL := "UPDATE `messages` `m`, `message_recipients` `r`\n" +
 		"SET `m`.`is_hashed` = true, `m`.`message` = SHA2(m.message, 256), `r`.`phone_number` = LEFT(SHA2(phone_number, 256), 16)\n" +
 		"WHERE `m`.`id` = `r`.`message_id` AND `m`.`is_hashed` = false AND `m`.`is_encrypted` = false AND `m`.`state` <> 'Pending'"
@@ -105,7 +107,7 @@ func (r *MessagesRepository) HashProcessed(ids []uint64) error {
 
 	return r.db.Transaction(func(tx *gorm.DB) error {
 		hasLock := sql.NullBool{}
-		lockRow := tx.Raw("SELECT GET_LOCK(?, 1)", HashingLockName).Row()
+		lockRow := tx.Raw("SELECT GET_LOCK(?, 1)", hashingLockName).Row()
 		err := lockRow.Scan(&hasLock)
 		if err != nil {
 			return err
@@ -114,25 +116,28 @@ func (r *MessagesRepository) HashProcessed(ids []uint64) error {
 		if !hasLock.Valid || !hasLock.Bool {
 			return errors.New("failed to acquire lock")
 		}
-		defer tx.Exec("SELECT RELEASE_LOCK(?)", HashingLockName)
+		defer tx.Exec("SELECT RELEASE_LOCK(?)", hashingLockName)
 
 		return tx.Exec(rawSQL, params...).Error
 	})
 }
 
-func NewMessagesRepository(db *gorm.DB) *MessagesRepository {
-	return &MessagesRepository{
+// removeProcessed removes messages older than the given time that are not in
+// the Pending state.
+//
+// This is useful for periodically cleaning up old messages that are not in the
+// Pending state.
+func (r *repository) removeProcessed(ctx context.Context, until time.Time) (int64, error) {
+	res := r.db.
+		WithContext(ctx).
+		Where("state <> ?", models.ProcessingStatePending).
+		Where("created_at < ?", until).
+		Delete(&models.Message{})
+	return res.RowsAffected, res.Error
+}
+
+func newRepository(db *gorm.DB) *repository {
+	return &repository{
 		db: db,
 	}
-}
-
-// /////////////////////////////////////////////////////////////////////////////
-type MessagesSelectFilter struct {
-	DeviceID string
-}
-
-type MessagesSelectOptions struct {
-	WithRecipients bool
-	WithDevice     bool
-	WithStates     bool
 }

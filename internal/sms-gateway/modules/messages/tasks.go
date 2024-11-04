@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/exp/maps"
@@ -18,13 +17,13 @@ type HashingTaskConfig struct {
 type HashingTaskParams struct {
 	fx.In
 
-	Messages *repositories.MessagesRepository
+	Messages *repository
 	Config   HashingTaskConfig
 	Logger   *zap.Logger
 }
 
 type HashingTask struct {
-	Messages *repositories.MessagesRepository
+	Messages *repository
 	Config   HashingTaskConfig
 	Logger   *zap.Logger
 

@@ -21,8 +21,6 @@ var Module = fx.Module(
 	fx.Decorate(func(log *zap.Logger) *zap.Logger {
 		return log.Named("messages")
 	}),
-	// fx.Provide(cleaner.AsCleanable(NewService)),
-	// fx.Provide(fx.Annotate(NewService, fx.ResultTags(`group:"cleaners"`))),
 	fx.Provide(func(p ServiceParams) FxResult {
 		svc := NewService(p)
 		return FxResult{
@@ -30,5 +28,6 @@ var Module = fx.Module(
 			AsCleaner: svc,
 		}
 	}),
+	fx.Provide(newRepository),
 	fx.Provide(NewHashingTask, fx.Private),
 )
