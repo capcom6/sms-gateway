@@ -21,7 +21,7 @@ func New(targets []Cleanable, logger *zap.Logger) *Service {
 }
 
 func (s *Service) Run(ctx context.Context) {
-	ticker := time.NewTicker(24 * time.Second)
+	ticker := time.NewTicker(24 * time.Hour)
 	defer ticker.Stop()
 
 	s.logger.Info("Cleaner started")

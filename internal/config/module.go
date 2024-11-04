@@ -74,4 +74,9 @@ var Module = fx.Module(
 			GatewayMode: handlers.GatewayMode(cfg.Gateway.Mode),
 		}
 	}),
+	fx.Provide(func(cfg Config) messages.Config {
+		return messages.Config{
+			ProcessedLifetime: 30 * 24 * time.Hour, //TODO: make it configurable
+		}
+	}),
 )

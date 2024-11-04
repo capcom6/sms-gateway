@@ -13,7 +13,6 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
@@ -133,7 +132,7 @@ func (h *thirdPartyHandler) getMessage(user models.User, c *fiber.Ctx) error {
 
 	state, err := h.messagesSvc.GetState(user, id)
 	if err != nil {
-		if errors.Is(err, repositories.ErrMessageNotFound) {
+		if errors.Is(err, messages.ErrMessageNotFound) {
 			return fiber.NewError(fiber.StatusNotFound, err.Error())
 		}
 
