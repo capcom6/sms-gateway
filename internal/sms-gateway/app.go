@@ -20,7 +20,6 @@ import (
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/metrics"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/webhooks"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -37,7 +36,6 @@ var Module = fx.Module(
 	handlers.Module,
 	auth.Module,
 	push.Module,
-	repositories.Module,
 	db.Module,
 	messages.Module,
 	health.Module,

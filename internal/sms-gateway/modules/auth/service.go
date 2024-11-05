@@ -8,7 +8,6 @@ import (
 
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/repositories"
 	"github.com/capcom6/sms-gateway/pkg/crypto"
 	"github.com/capcom6/sms-gateway/pkg/types/cache"
 	"github.com/jaevor/go-nanoid"
@@ -26,7 +25,7 @@ type Params struct {
 
 	Config Config
 
-	Users      *repositories.UsersRepository
+	Users      *repository
 	DevicesSvc *devices.Service
 
 	Logger *zap.Logger
@@ -35,7 +34,7 @@ type Params struct {
 type Service struct {
 	config Config
 
-	users      *repositories.UsersRepository
+	users      *repository
 	usersCache *cache.Cache[models.User]
 
 	devicesSvc   *devices.Service
