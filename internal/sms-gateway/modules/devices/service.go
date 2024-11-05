@@ -1,6 +1,9 @@
 package devices
 
 import (
+	"context"
+	"time"
+
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
 	"go.uber.org/fx"
@@ -10,6 +13,8 @@ import (
 type ServiceParams struct {
 	fx.In
 
+	Config Config
+
 	Devices *repository
 
 	IDGen db.IDGen
@@ -18,6 +23,8 @@ type ServiceParams struct {
 }
 
 type Service struct {
+	config Config
+
 	devices *repository
 
 	idGen db.IDGen
@@ -49,8 +56,16 @@ func (s *Service) UpdateLastSeen(deviceId string) error {
 	return s.devices.UpdateLastSeen(deviceId)
 }
 
+func (s *Service) Clean(ctx context.Context) error {
+	n, err := s.devices.removeUnused(ctx, time.Now().Add(-s.config.UnusedLifetime))
+
+	s.logger.Info("Cleaned unused devices", zap.Int64("count", n))
+	return err
+}
+
 func NewService(params ServiceParams) *Service {
 	return &Service{
+		config:  params.Config,
 		devices: params.Devices,
 		idGen:   params.IDGen,
 		logger:  params.Logger.Named("service"),
