@@ -8,6 +8,7 @@ import (
 	"github.com/capcom6/go-infra-fx/http"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
 	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"go.uber.org/fx"
@@ -77,6 +78,11 @@ var Module = fx.Module(
 	fx.Provide(func(cfg Config) messages.Config {
 		return messages.Config{
 			ProcessedLifetime: 30 * 24 * time.Hour, //TODO: make it configurable
+		}
+	}),
+	fx.Provide(func(cfg Config) devices.Config {
+		return devices.Config{
+			UnusedLifetime: 365 * 24 * time.Hour, //TODO: make it configurable
 		}
 	}),
 )

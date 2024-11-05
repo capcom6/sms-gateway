@@ -1,6 +1,7 @@
 package devices
 
 import (
+	"context"
 	"errors"
 	"time"
 
@@ -56,6 +57,15 @@ func (r *repository) UpdateToken(id, token string) error {
 
 func (r *repository) UpdateLastSeen(id string) error {
 	return r.db.Model(&models.Device{}).Where("id", id).Update("last_seen", time.Now()).Error
+}
+
+func (r *repository) removeUnused(ctx context.Context, since time.Time) (int64, error) {
+	res := r.db.
+		WithContext(ctx).
+		Where("updated_at < ?", since).
+		Delete(&models.Device{})
+
+	return res.RowsAffected, res.Error
 }
 
 func newDevicesRepository(db *gorm.DB) *repository {

@@ -1,9 +1,17 @@
 package devices
 
 import (
+	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/cleaner"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
+
+type FxResult struct {
+	fx.Out
+
+	Service   *Service
+	AsCleaner cleaner.Cleanable `group:"cleaners"`
+}
 
 var Module = fx.Module(
 	"devices",
@@ -14,7 +22,11 @@ var Module = fx.Module(
 		newDevicesRepository,
 		fx.Private,
 	),
-	fx.Provide(
-		NewService,
-	),
+	fx.Provide(func(p ServiceParams) FxResult {
+		svc := NewService(p)
+		return FxResult{
+			Service:   svc,
+			AsCleaner: svc,
+		}
+	}),
 )
