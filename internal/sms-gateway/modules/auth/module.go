@@ -11,4 +11,5 @@ var Module = fx.Module(
 		return log.Named("auth")
 	}),
 	fx.Provide(New),
+	fx.Provide(newRepository, fx.Private),
 )
