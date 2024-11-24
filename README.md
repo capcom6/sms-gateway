@@ -81,13 +81,13 @@ Distributed under the Apache-2.0 license. See [LICENSE](LICENSE) for more inform
 
 Android is a trademark of Google LLC.
 
-[contributors-shield]: https://img.shields.io/github/contributors/capcom6/sms-gateway.svg?style=for-the-badge
-[contributors-url]: https://github.com/capcom6/sms-gateway/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/capcom6/sms-gateway.svg?style=for-the-badge
-[forks-url]: https://github.com/capcom6/sms-gateway/network/members
-[stars-shield]: https://img.shields.io/github/stars/capcom6/sms-gateway.svg?style=for-the-badge
-[stars-url]: https://github.com/capcom6/sms-gateway/stargazers
-[issues-shield]: https://img.shields.io/github/issues/capcom6/sms-gateway.svg?style=for-the-badge
-[issues-url]: https://github.com/capcom6/sms-gateway/issues
-[license-shield]: https://img.shields.io/github/license/capcom6/sms-gateway.svg?style=for-the-badge
-[license-url]: https://github.com/capcom6/sms-gateway/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/android-sms-gateway/server.svg?style=for-the-badge
+[contributors-url]: https://github.com/android-sms-gateway/server/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/android-sms-gateway/server.svg?style=for-the-badge
+[forks-url]: https://github.com/android-sms-gateway/server/network/members
+[stars-shield]: https://img.shields.io/github/stars/android-sms-gateway/server.svg?style=for-the-badge
+[stars-url]: https://github.com/android-sms-gateway/server/stargazers
+[issues-shield]: https://img.shields.io/github/issues/android-sms-gateway/server.svg?style=for-the-badge
+[issues-url]: https://github.com/android-sms-gateway/server/issues
+[license-shield]: https://img.shields.io/github/license/android-sms-gateway/server.svg?style=for-the-badge
+[license-url]: https://github.com/android-sms-gateway/server/blob/master/LICENSE

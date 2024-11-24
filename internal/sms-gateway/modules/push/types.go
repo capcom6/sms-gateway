@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/domain"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push/domain"
 )
 
 type Mode string

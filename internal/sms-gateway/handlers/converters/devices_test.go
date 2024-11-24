@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/converters"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
-	"github.com/capcom6/sms-gateway/pkg/types"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/handlers/converters"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
+	"github.com/android-sms-gateway/server/pkg/types"
 	"github.com/go-playground/assert/v2"
 )
 

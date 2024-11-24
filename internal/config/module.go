@@ -3,14 +3,14 @@ package config
 import (
 	"time"
 
+	"github.com/android-sms-gateway/server/internal/sms-gateway/handlers"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/auth"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/devices"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/messages"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push"
 	"github.com/capcom6/go-infra-fx/config"
 	"github.com/capcom6/go-infra-fx/db"
 	"github.com/capcom6/go-infra-fx/http"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/messages"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

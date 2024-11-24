@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 
 [build]
   bin = "tmp/main.exe"
-  cmd = "go build -ldflags='-X github.com/capcom6/sms-gateway/internal/version.AppVersion=dev -X github.com/capcom6/sms-gateway/internal/version.AppRelease=1' -o ./tmp/main.exe ./cmd/sms-gateway"
+  cmd = "go build -ldflags='-X github.com/android-sms-gateway/server/internal/version.AppVersion=dev -X github.com/android-sms-gateway/server/internal/version.AppRelease=1' -o ./tmp/main.exe ./cmd/sms-gateway"
   delay = 1000
   exclude_dir = ["api", "assets", "tmp", "vendor", "testdata", "tmp", "web"]
   exclude_file = []

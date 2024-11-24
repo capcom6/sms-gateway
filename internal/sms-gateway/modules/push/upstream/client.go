@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/domain"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push/domain"
 )
 
 const BASE_URL = "https://api.sms-gate.app/upstream/v1"
