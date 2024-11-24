@@ -33,6 +33,7 @@ lint:
 
 test:
 	go test -race -coverprofile=coverage.out -covermode=atomic ./...
+	cd test/e2e && go test .
 
 build:
 	go build -o tmp/$(project_name) ./cmd/$(project_name)
