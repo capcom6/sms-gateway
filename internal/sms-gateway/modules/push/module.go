@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/fcm"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/upstream"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push/fcm"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push/upstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

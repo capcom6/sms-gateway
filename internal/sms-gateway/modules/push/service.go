@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/capcom6/sms-gateway/pkg/types/cache"
+	"github.com/android-sms-gateway/server/pkg/types/cache"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"

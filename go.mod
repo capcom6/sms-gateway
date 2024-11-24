@@ -1,4 +1,4 @@
-module github.com/capcom6/sms-gateway
+module github.com/android-sms-gateway/server
 
 go 1.22.0
 

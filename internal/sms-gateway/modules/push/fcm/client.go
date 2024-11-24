@@ -8,7 +8,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push/domain"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push/domain"
 	"google.golang.org/api/option"
 )
 

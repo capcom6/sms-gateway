@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/android-sms-gateway/client-go/smsgateway"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/db"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/devices"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/push"
 	"github.com/capcom6/go-helpers/slices"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/devices"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/push"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

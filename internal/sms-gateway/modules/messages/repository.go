@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
 	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"

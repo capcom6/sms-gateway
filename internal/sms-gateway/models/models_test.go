@@ -3,7 +3,7 @@ package models_test
 import (
 	"testing"
 
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
 )
 
 func TestDevice_IsEmpty(t *testing.T) {

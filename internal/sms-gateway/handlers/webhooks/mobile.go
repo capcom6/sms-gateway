@@ -3,10 +3,10 @@ package webhooks
 import (
 	"fmt"
 
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/handlers/base"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/auth"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/webhooks"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/handlers/base"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/auth"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/webhooks"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

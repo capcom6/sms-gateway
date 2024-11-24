@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/capcom6/sms-gateway/pkg/types/cache"
+	"github.com/android-sms-gateway/server/pkg/types/cache"
 )
 
 func TestCache_Set(t *testing.T) {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/db"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/db"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

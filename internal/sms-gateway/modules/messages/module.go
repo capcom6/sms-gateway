@@ -1,7 +1,7 @@
 package messages
 
 import (
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/modules/cleaner"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/cleaner"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

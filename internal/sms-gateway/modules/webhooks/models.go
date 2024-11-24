@@ -2,7 +2,7 @@ package webhooks
 
 import (
 	"github.com/android-sms-gateway/client-go/smsgateway"
-	"github.com/capcom6/sms-gateway/internal/sms-gateway/models"
+	"github.com/android-sms-gateway/server/internal/sms-gateway/models"
 	"gorm.io/gorm"
 )
 

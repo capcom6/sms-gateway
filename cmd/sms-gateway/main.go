@@ -1,7 +1,7 @@
 package main
 
 import (
-	smsgateway "github.com/capcom6/sms-gateway/internal/sms-gateway"
+	smsgateway "github.com/android-sms-gateway/server/internal/sms-gateway"
 )
 
 //	@securitydefinitions.basic	ApiAuth
