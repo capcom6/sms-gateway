@@ -2,6 +2,7 @@ package auth
 
 import (
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
 	"time"
@@ -99,7 +100,7 @@ func (s *Service) AuthorizeRegistration(token string) error {
 		return nil
 	}
 
-	if token == s.config.PrivateToken {
+	if subtle.ConstantTimeCompare([]byte(token), []byte(s.config.PrivateToken)) == 1 {
 		return nil
 	}
 
