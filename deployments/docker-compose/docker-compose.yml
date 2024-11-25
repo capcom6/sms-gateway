@@ -26,7 +26,7 @@ services:
         condition: service_healthy
 
   db:
-    image: mariadb:11.4
+    image: mariadb:lts
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=sms
