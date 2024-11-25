@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     name: Build
+    permissions:
+      packages: write
     uses: ./.github/workflows/docker-build.yml
     with:
       app-name: sms-gateway
