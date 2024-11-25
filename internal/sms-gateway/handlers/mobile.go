@@ -13,9 +13,9 @@ import (
 	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/auth"
 	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/devices"
 	"github.com/android-sms-gateway/server/internal/sms-gateway/modules/messages"
-	"github.com/capcom6/go-infra-fx/http/apikey"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/keyauth"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/jaevor/go-nanoid"
 	"go.uber.org/fx"
@@ -181,12 +181,17 @@ func (h *mobileHandler) patchMessage(device models.Device, c *fiber.Ctx) error {
 func (h *mobileHandler) Register(router fiber.Router) {
 	router = router.Group("/mobile/v1")
 
-	router.Post("/device", limiter.New(), apikey.New(apikey.Config{
-		Next: func(c *fiber.Ctx) bool { return h.authSvc.IsPublic() },
-		Authorizer: func(token string) bool {
-			return h.authSvc.AuthorizeRegistration(token) == nil
-		},
-	}), h.postDevice)
+	router.Post("/device",
+		limiter.New(),
+		keyauth.New(keyauth.Config{
+			Next: func(c *fiber.Ctx) bool { return h.authSvc.IsPublic() },
+			Validator: func(c *fiber.Ctx, token string) (bool, error) {
+				err := h.authSvc.AuthorizeRegistration(token)
+				return err == nil, err
+			},
+		}),
+		h.postDevice,
+	)
 
 	router.Use(func(c *fiber.Ctx) (err error) {
 		header := c.Get(fiber.HeaderAuthorization)
