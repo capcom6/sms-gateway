@@ -28,6 +28,8 @@ jobs:
 
   build:
     name: Build
+    permissions:
+      packages: write
     needs:
       - test
     uses: ./.github/workflows/docker-build.yml
