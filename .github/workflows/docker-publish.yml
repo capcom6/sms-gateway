@@ -48,7 +48,7 @@ jobs:
 
       # step 4: run test
       - name: Run e2e tests
-        run: cd test/e2e && go test .
+        run: cd test/e2e && go test -count=1 .
 
   build:
     name: Build
