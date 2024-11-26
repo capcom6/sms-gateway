@@ -50,6 +50,11 @@ jobs:
       - name: Run e2e tests
         run: cd test/e2e && go test -count=1 .
 
+      # step 5: stop services
+      - name: Stop services
+        run: docker compose -f test/e2e/docker-compose.yml down -v
+        continue-on-error: true
+
   build:
     name: Build
     permissions:
